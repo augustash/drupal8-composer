@@ -25,27 +25,10 @@
         "rvtraveller/qs-composer-installer": "^1.1",
         "zaporylie/composer-drupal-optimizations": "^1.0"
     },
-    "require-dev": {
-        "behat/behat": "3.*",
-        "behat/mink": "^1.7",
-        "behat/mink-extension": "^2.2",
-        "behat/mink-goutte-driver": "^1.2",
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
-        "dmore/behat-chrome-extension": "^1.3",
-        "drupal/coder": "^8.3.1",
-        "drupal/drupal-extension": "~3",
-        "genesis/behat-fail-aid": "^2.1",
-        "jcalderonzumba/gastonjs": "^1.0.2",
-        "jcalderonzumba/mink-phantomjs-driver": "^0.3.1",
-        "mikey179/vfsstream": "^1.2",
-        "phpunit/phpunit": "^6.5",
-        "squizlabs/php_codesniffer": "^3.4.0",
-        "symfony/css-selector": "^2.8"
-    },
     "conflict": {
-            "drupal/drupal": "*"
+        "drupal/drupal": "*"
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {
         "classmap": [
@@ -57,14 +40,6 @@
             "@prepare-for-pantheon",
             "composer install --optimize-autoloader --no-dev"
         ],
-        "lint": "find web/modules/custom web/themes/custom -name '*.php' -exec php -l {} \\;",
-        "code-sniff": [
-            "./vendor/bin/phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md --ignore=node_modules,bower_components,vendor ./web/modules/custom",
-            "./vendor/bin/phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md --ignore=node_modules,bower_components,vendor ./web/themes/custom",
-            "./vendor/bin/phpcs --standard=DrupalPractice --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md --ignore=node_modules,bower_components,vendor ./web/modules/custom",
-            "./vendor/bin/phpcs --standard=DrupalPractice --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md --ignore=node_modules,bower_components,vendor ./web/themes/custom"
-        ],
-        "unit-test": "echo 'No unit test step defined.'",
         "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
         "prepare-for-pantheon": "DrupalProject\\composer\\ScriptHandler::prepareForPantheon",
         "post-install-cmd": [
@@ -81,13 +56,27 @@
     },
     "extra": {
         "installer-paths": {
-            "web/core": ["type:drupal-core"],
-            "web/libraries/{$name}": ["type:drupal-library"],
-            "web/modules/contrib/{$name}": ["type:drupal-module"],
-            "web/profiles/contrib/{$name}": ["type:drupal-profile"],
-            "web/themes/contrib/{$name}": ["type:drupal-theme"],
-            "drush/Commands/contrib/{$name}": ["type:drupal-drush"],
-            "web/private/scripts/quicksilver/{$name}/": ["type:quicksilver-script"]
+            "web/core": [
+                "type:drupal-core"
+            ],
+            "web/libraries/{$name}": [
+                "type:drupal-library"
+            ],
+            "web/modules/contrib/{$name}": [
+                "type:drupal-module"
+            ],
+            "web/profiles/contrib/{$name}": [
+                "type:drupal-profile"
+            ],
+            "web/themes/contrib/{$name}": [
+                "type:drupal-theme"
+            ],
+            "drush/Commands/contrib/{$name}": [
+                "type:drupal-drush"
+            ],
+            "web/private/scripts/quicksilver/{$name}/": [
+                "type:quicksilver-script"
+            ]
         },
         "build-env": {
             "install-cms": [
@@ -104,7 +93,8 @@
             },
             "file-mapping": {
                 "[project-root]/.editorconfig": false
-            }            
+            },
+            "source": "https://raw.githubusercontent.com/pantheon-systems/drops-8-scaffolding/{version}/{path}"
         }
     },
     "config": {
