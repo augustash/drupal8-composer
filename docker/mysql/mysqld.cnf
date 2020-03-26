@@ -1,0 +1,34 @@
+[mysqld]
+character_set_client            = utf8
+character_set_server            = utf8
+collation_server                = utf8_general_ci
+skip-external-locking
+skip-host-cache
+skip-name-resolve
+
+# Fine Tuning
+bulk_insert_buffer_size         = 8388608
+concurrent_insert               = AUTO
+connect_timeout                 = 10
+key_buffer_size                 = 16777216
+max_allowed_packet              = 1073741824
+max_heap_table_size             = 536870912
+myisam_sort_buffer_size         = 8388608
+query_cache_limit               = 1048576
+query_cache_min_res_unit        = 4096
+query_cache_size                = 134217728
+read_buffer_size                = 1048576
+read_rnd_buffer_size            = 1048576
+sort_buffer_size                = 1048576
+table_open_cache                = 256
+table_open_cache_instances      = 8
+thread_cache_size               = 75
+thread_concurrency              = 75
+thread_stack                    = 299008
+tmp_table_size                  = 536870912
+wait_timeout                    = 120
+
+[mysqldump]
+quick
+quote-names
+max_allowed_packet              = 1073741824

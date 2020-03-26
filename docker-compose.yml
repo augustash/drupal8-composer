@@ -1,0 +1,52 @@
+version: "3"
+
+# will use the default driver which should be "bridge"; if run via stack,
+# will be a load-balanced overlay network
+networks:
+  public-net:
+  private-net:
+
+# will use the default driver which should be "local"
+volumes:
+  data-db:
+    labels:
+      com.augustash.keep: true
+
+services:
+  database:
+    image: mariadb:10.2.25
+    networks:
+      - private-net
+    ports:
+      - "3306:3306"
+    volumes:
+      - data-db:/var/lib/mysql
+      - ./docker/mysql/mysqld.cnf:/etc/mysql/conf.d/mysqld.cnf:ro
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=drupal8
+      - MYSQL_USER=drupal
+      - MYSQL_PASSWORD=drupal
+
+  redis:
+    image: redis:5.0.7-alpine
+    networks:
+      - private-net
+    ports:
+      - "6380:6379"
+    volumes:
+      - ./docker/redis/volatile.conf:/usr/local/etc/redis/redis.conf
+    command:
+      - /usr/local/etc/redis/redis.conf
+
+  mailhog:
+    image: augustash/alpine-mailhog:3.0.0
+    networks:
+      - public-net
+      - private-net
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    environment:
+      - PUID=501
+      - PGID=1000
