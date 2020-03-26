@@ -1,0 +1,130 @@
+@import 'exo-common';
+
+.exo-component-choose {
+
+  .exo-component-selection {
+    @include flex;
+    margin: $global-margin rem-calc(-10) 0;
+    padding: 0;
+    list-style-type: none;
+
+    > li {
+      flex: 1 1 50%;
+      width: 50%;
+      margin: 0;
+      list-style-type: none;
+    }
+
+    a {
+      display: block;
+      border: 1px solid color(theme-white);
+      box-shadow: 0 0 5px alpha(theme-black, 0.2);
+      transition: all $global-speed;
+      margin: 0 rem-calc(10) rem-calc(10);
+
+      &,
+      &:hover,
+      &:active {
+        color: color(theme-white);
+      }
+
+      img {
+        display: block;
+        width: 100%;
+      }
+
+      .exo-component-label {
+        background: color(theme-black);
+        font-size: rem-calc(13);
+        text-align: center;
+        padding: rem-calc(5);
+        margin: 0;
+        transition: all $global-speed;
+      }
+    }
+  }
+
+  .exo-component-filter {
+    display: block;
+    background-color: color(theme-gray);
+    color: color(theme-white);
+    font-weight: 700;
+    font-size: rem-calc(20);
+    line-height: 1;
+    padding: $global-padding / 2;
+    text-align: center;
+    transition: background-color $global-speed;
+    cursor: pointer;
+
+    &:after {
+      @include exo-triangle(bottom, 6px, 6px, color(theme-white));
+      margin-left: rem-calc(5);
+    }
+
+    &:hover {
+      background-color: darken(color(theme-gray), 10%);
+    }
+  }
+
+  .item-list {
+
+    &,
+    li {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+  }
+
+  .exo-component-categories {
+    position: relative;
+    z-index: 100;
+    visibility: hidden;
+
+    &.active {
+      visibility: visible;
+
+      ul {
+        top: -5px;
+        opacity: 1;
+      }
+    }
+
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      position: absolute;
+      top: 5px;
+      left: 10px;
+      right: 10px;
+      background: color(theme-white);
+      margin: 0;
+      padding: $global-padding / 2;
+      border-radius: $global-radius;
+      box-shadow: 0 5px 15px alpha(color(theme-black), 0.3);
+      opacity: 0;
+      transition: all $global-speed;
+
+      li {
+        flex: 1 1 50%;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      a {
+        display: block;
+        padding: $global-padding / 2;
+        color: color(theme-gray);
+        transition: color $global-speed;
+        font-size: rem-calc(17);
+        line-height: 1.2;
+        cursor: pointer;
+
+        &:hover,
+        &.active {
+          color: color(theme-black);
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+name: 'eXo Icon'
+type: module
+description: 'An IconMoon-based icon manager.'
+core: 8.x
+package: 'eXo'
+dependencies:
+  - exo_config_file

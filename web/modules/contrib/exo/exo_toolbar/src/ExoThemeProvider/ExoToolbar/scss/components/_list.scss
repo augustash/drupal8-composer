@@ -1,0 +1,38 @@
+.exo-toolbar-list {
+  @include flex;
+
+  [data-exo-align='vertical'] & {
+    width: 100%;
+  }
+
+  > .exo-toolbar-element {
+
+    &.as-link.is-active {
+      cursor: pointer;
+    }
+  }
+
+  .exo-toolbar-list-secondary {
+    visibility: hidden;
+    opacity: 0;
+
+    .exo-toolbar-element-inner {
+      height: auto;
+    }
+  }
+
+  &:hover {
+
+    .exo-toolbar-list-secondary {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  > .exo-toolbar-element {
+
+    &.is-active {
+      font-weight: bold;
+    }
+  }
+}

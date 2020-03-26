@@ -1,0 +1,9 @@
+name: 'eXo Config'
+type: module
+description: 'Provides base configuration for Config Split and Config Readonly and ties the two together in a best-practices workflow.'
+core: 8.x
+package: 'eXo'
+dependencies:
+  - config_split
+  - config_readonly
+  - config_ignore

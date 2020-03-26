@@ -1,0 +1,247 @@
+@import 'exo-common';
+
+fieldset.exo-element-options { // sass-lint:disable-line no-qualifying-elements force-element-nesting
+
+  .fieldset-wrapper > .description {
+    margin-bottom: $global-margin / 2;
+  }
+}
+
+div.exo-element-options { // sass-lint:disable-line no-qualifying-elements force-element-nesting
+
+  > div {
+
+    .form-item {
+      margin: 0;
+    }
+  }
+
+  .exo-icon {
+    vertical-align: middle;
+  }
+
+  .exo-icon-label,
+  .exo-form-checkbox .option, // sass-lint:disable-line no-qualifying-elements force-element-nesting
+  .option > .exo-form-radio-label {
+    font-size: rem-calc(10);
+    text-transform: uppercase;
+  }
+
+  .form-item {
+    margin: 0;
+
+    label {
+      display: block;
+      border: 1px solid grey(20);
+      padding: rem-calc(5 10);
+      margin: 0;
+      transition: color $global-speed ease, background-color $global-speed ease, border-color $global-speed ease, opacity $global-speed ease, text-shadow $global-speed ease !important;
+      box-sizing: content-box;
+      overflow: hidden;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    &.active {
+
+      label {
+        opacity: 1;
+        border-color: color(theme-primary);
+        background-color: color(theme-primary);
+        color: color(theme-white);
+        text-shadow: 0 1px alpha(theme-black, 0.5);
+      }
+    }
+
+    &.focused {
+
+      label {
+        outline: 1px dotted color(theme-primary);
+        outline-offset: 1px;
+      }
+    }
+  }
+
+  .form-radio,
+  .form-checkbox {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+  }
+
+  &.exo-stacked {
+
+    > div {
+      @include exo-flex-direction(column);
+      @include flex-align(center, middle);
+      display: inline-flex;
+      text-align: center;
+      width: auto;
+
+      > .form-item {
+        margin: 0;
+        width: 100%;
+      }
+    }
+
+    .form-item {
+
+      label {
+        border-bottom-width: 0;
+      }
+
+      &.active {
+
+        &.checkbox {
+
+          &:not(:first-child) {
+
+            label {
+              border-top-color: color(theme-white) !important;
+            }
+          }
+        }
+      }
+
+      &:first-child {
+
+        label {
+          border-radius: 5px 5px 0 0;
+        }
+      }
+
+      &:last-child {
+
+        label {
+          border-bottom-width: 1px;
+          border-radius: 0 0 5px 5px;
+        }
+      }
+    }
+  }
+
+  &.exo-inline {
+
+    > div {
+      @include flex;
+      @include flex-align(left, stretch);
+      @include exo-flex-direction(row);
+    }
+
+    .form-item {
+      @include flex;
+      @include flex-align(center, stretch);
+
+      label {
+        border-right-width: 0;
+        min-width: rem-calc(30);
+        text-align: center;
+        height: auto;
+      }
+
+      &.active {
+
+        &.checkbox {
+
+          &:not(:first-child) {
+
+            label {
+              border-left-color: color(theme-white);
+            }
+          }
+        }
+      }
+
+      &:first-child {
+
+        label {
+          border-radius: 5px 0 0 5px;
+        }
+      }
+
+      &:last-child {
+
+        label {
+          border-right-width: 1px;
+          border-radius: 0 5px 5px 0;
+        }
+      }
+    }
+  }
+
+  &.exo-grid,
+  &.exo-grid-compact {
+
+    > div {
+      @include flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin: rem-calc(-2);
+
+      > * {
+        flex-grow: 1;
+      }
+    }
+
+    .form-item {
+      margin: 0;
+
+      label {
+        margin: rem-calc(2 2);
+        height: auto;
+        border-radius: 5px;
+        text-align: center;
+      }
+
+      &.active {
+
+        &.checkbox {
+
+          label {
+            border-left-color: color(theme-white);
+          }
+        }
+
+        &:first-child {
+
+          label {
+            border-left-color: color(theme-primary);
+          }
+        }
+      }
+    }
+  }
+
+  &.exo-grid-compact {
+
+    > div {
+      justify-content: flex-start;
+
+      > * {
+        flex-grow: 0;
+      }
+    }
+  }
+
+  .active {
+
+    .exo-swatch {
+      border-color: color(theme-white);
+      box-shadow: 0 0 5px darken(color(theme-primary), 20%);
+    }
+  }
+}
+
+.exo-swatch {
+  display: inline-block;
+  width: rem-calc(10);
+  height: rem-calc(10);
+  border: 1px dotted grey(50);
+  vertical-align: middle;
+  margin-top: -2px;
+  margin-right: rem-calc(5);
+  transition: border-color 300ms, box-shadow 300ms;
+  box-sizing: border-box;
+}

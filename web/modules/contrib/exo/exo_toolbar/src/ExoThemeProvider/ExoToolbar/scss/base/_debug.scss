@@ -1,0 +1,21 @@
+.exo-toolbar-debug {
+  $region-color: #ff0;
+  $section-color: #ffa500;
+  $item-color: #adff2f;
+
+  .exo-toolbar-region {
+    outline: 1px dotted $region-color;
+    outline-offset: -2px;
+  }
+
+  .exo-toolbar-section {
+    outline: 1px dotted $section-color;
+    outline-offset: -5px;
+  }
+
+  .exo-toolbar-item {
+    outline: 1px dotted $item-color;
+    outline-offset: -8px;
+  }
+
+}

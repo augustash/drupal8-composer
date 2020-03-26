@@ -1,0 +1,4 @@
+services:
+  exo_fixed.settings:
+    class: Drupal\exo_fixed\ExoFixedSettings
+    arguments: ['@config.factory']

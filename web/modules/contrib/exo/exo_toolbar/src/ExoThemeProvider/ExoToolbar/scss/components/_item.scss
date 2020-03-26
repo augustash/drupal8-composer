@@ -1,0 +1,26 @@
+.exo-toolbar-item {
+  @include flex;
+  @include flex-align(left, top);
+  position: relative;
+  width: 100%;
+
+  .is-ie & {
+    width: auto;
+  }
+
+  .exo-toolbar-item-operations {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity $global-speed;
+    padding: rem-calc(10);
+    list-style: none;
+  }
+
+  &:hover {
+
+    .exo-toolbar-item-operations {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+}

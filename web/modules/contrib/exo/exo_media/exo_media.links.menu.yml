@@ -1,0 +1,6 @@
+exo_media.settings:
+  title: 'Media'
+  route_name: exo_media.settings
+  description: 'Media settings and configuration.'
+  parent: system.admin_config_exo
+  weight: 0

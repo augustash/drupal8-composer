@@ -1,0 +1,501 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_asset.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\exo_asset\Entity\ExoAsset;
+use Drupal\field\FieldConfigInterface;
+use Drupal\Core\Render\Element;
+use Drupal\exo_asset\Entity\ExoAssetInterface;
+use Drupal\Component\Utility\NestedArray;
+
+/**
+ * Implements hook_theme().
+ */
+function exo_asset_theme($existing, $type, $theme, $path) {
+  return [
+    'exo_asset' => [
+      'render element' => 'elements',
+      'file' => 'exo_asset.theme',
+    ],
+    'inline_entity_form_entity_table__exo_asset' => [
+      'render element' => 'form',
+      'function' => 'theme_exo_asset_inline_entity_form_entity_table',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_theme_suggestions_alter().
+ */
+function exo_asset_theme_suggestions_alter(array &$suggestions, array $variables, $hook) {
+  if ($hook == 'inline_entity_form_entity_table') {
+    if (isset($variables['form']['#entity_type']) && $variables['form']['#entity_type'] == 'exo_asset') {
+      $suggestions[] = $hook . '__exo_asset';
+    }
+  }
+}
+
+/**
+ * Get an attributes array for an asset.
+ */
+function exo_asset_attributes(ExoAssetInterface $exo_asset, $field_name) {
+  $attributes = [];
+  foreach ($exo_asset->getAttributeClasses('-' . str_replace('field_', '', $field_name) . '-') as $attribute_class) {
+    $attributes['class'][] = $attribute_class;
+  }
+  return $attributes;
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function exo_asset_entity_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  foreach ($display->getComponents() as $field_name => $component) {
+    if (isset($component['type']) && $component['type'] == 'exo_asset') {
+      $target_type = $entity->{$field_name}->getFieldDefinition()->getSetting('target_type');
+      if ($target_type == 'exo_asset') {
+        // We only support single value reference fields.
+        if (!$entity->{$field_name}->isEmpty() && $entity->{$field_name}->getFieldDefinition()->getFieldStorageDefinition()->getCardinality() == 1) {
+          $exo_asset = $entity->{$field_name}->first()->entity;
+          if ($exo_asset) {
+            $build += ['#attributes' => []];
+            $build['#attributes'] = NestedArray::mergeDeep($build['#attributes'], exo_asset_attributes($exo_asset, $field_name));
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_inline_entity_form_entity_form_alter().
+ */
+function exo_asset_inline_entity_form_entity_form_alter(&$form, FormStateInterface $form_state) {
+  if ($form['#entity_type'] == 'exo_asset') {
+    $target_field_config = $form_state->get([
+      'inline_entity_form',
+      $form['#ief_id'],
+      'instance',
+    ]);
+
+    $exo_asset_field_settings = $target_field_config->getThirdPartySetting('exo_asset', 'field_settings');
+    $form['#exo_asset_field_settings'] = $exo_asset_field_settings;
+    $form['#element_validate'][] = 'exo_asset_inline_entity_form_entity_form_validate';
+
+    if (empty($exo_asset_field_settings['allow_image'])) {
+      $form['image']['#access'] = FALSE;
+    }
+    elseif (!empty($exo_asset_field_settings['require_image'])) {
+      $form['image']['#required'] = TRUE;
+      $form['image']['widget']['#required'] = TRUE;
+      $form['image']['widget']['target_id']['#title'] = $form['image']['widget']['#title'];
+      $form['image']['widget']['target_id']['#required'] = TRUE;
+    }
+
+    if (empty($exo_asset_field_settings['allow_image_mobile'])) {
+      $form['image_mobile']['#access'] = FALSE;
+    }
+    elseif (!empty($exo_asset_field_settings['require_image_mobile'])) {
+      $form['image_mobile']['#required'] = TRUE;
+      $form['image_mobile']['widget']['#required'] = TRUE;
+      $form['image_mobile']['widget']['target_id']['#title'] = $form['image_mobile']['widget']['#title'];
+      $form['image_mobile']['widget']['target_id']['#required'] = TRUE;
+    }
+
+    if (empty($exo_asset_field_settings['allow_video'])) {
+      $form['video']['#access'] = FALSE;
+    }
+    elseif (!empty($exo_asset_field_settings['require_video'])) {
+      $form['video']['#required'] = TRUE;
+      $form['video']['widget']['#required'] = TRUE;
+      $form['video']['widget']['target_id']['#title'] = $form['video']['widget']['#title'];
+      $form['video']['widget']['target_id']['#required'] = TRUE;
+    }
+
+    if (empty($exo_asset_field_settings['allow_caption'])) {
+      $form['caption']['#access'] = FALSE;
+    }
+    elseif (!empty($exo_asset_field_settings['require_caption'])) {
+      $form['caption']['#required'] = TRUE;
+      $form['caption']['widget']['#required'] = TRUE;
+    }
+
+    if (empty($exo_asset_field_settings['allow_link'])) {
+      $form['link']['#access'] = FALSE;
+    }
+    elseif (!empty($exo_asset_field_settings['require_link'])) {
+      $form['link']['#required'] = TRUE;
+      $form['link']['widget']['#required'] = TRUE;
+    }
+
+    foreach (ExoAsset::getAttributeFields() as $field_definition) {
+      $field_name = $field_definition->getName();
+      if (!isset($exo_asset_field_settings['enabled_fields'][$field_name])) {
+        $form[$field_name]['#access'] = FALSE;
+      }
+      elseif (!empty($exo_asset_field_settings['enabled_fields'][$field_name]['enabled_options']) && isset($form[$field_name]['widget'][0]['value']['#options'])) {
+        $form[$field_name]['widget'][0]['value']['#options'] = array_intersect_key($form[$field_name]['widget'][0]['value']['#options'], ['' => ''] + ((array) $exo_asset_field_settings['enabled_fields'][$field_name]['enabled_options']));
+      }
+    }
+
+    foreach (ExoAsset::getOtherFields() as $field_definition) {
+      $field_name = $field_definition->getName();
+      if (!isset($exo_asset_field_settings['enabled_fields'][$field_name])) {
+        $form[$field_name]['#access'] = FALSE;
+      }
+    }
+
+    $form['status']['#access'] = FALSE;
+    $form['new_revision']['#access'] = FALSE;
+    $form['revision_log_message']['#access'] = FALSE;
+  }
+}
+
+/**
+ * Validate an asset inline entity form.
+ */
+function exo_asset_inline_entity_form_entity_form_validate($element, FormStateInterface $form_state) {
+  $exo_asset_field_settings = $element['#exo_asset_field_settings'];
+  $values = $form_state->getValue($element['#parents']);
+
+  if (!empty($exo_asset_field_settings['require_video_image'])) {
+    if (!empty($values['video']['target_id']) && empty($values['image']['target_id'])) {
+      $form_state->setError($element['image']['widget']['target_id'], t('An image is required when adding a video. The image will be displayed briefly while the video is being loaded.'));
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function exo_asset_form_field_config_edit_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  /** @var \Drupal\Core\Field\FieldConfigInterface $field */
+  $field = $form_state->getFormObject()->getEntity();
+  if (in_array($field->getType(), ['entity_reference', 'entity_reference_revisions']) && $field->getSetting('target_type') == 'exo_asset') {
+    $settings = $field->getThirdPartySetting('exo_asset', 'field_settings');
+    $form['exo_asset'] = [
+      '#type' => 'fieldset',
+      '#title' => t('eXo Asset'),
+      '#tree' => TRUE,
+    ];
+    $entity_field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('exo_asset', 'exo_asset');
+    $form['exo_asset']['allow_image'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Image'),
+      '#description' => t('Allow an image to be added to this asset.'),
+      '#default_value' => !empty($settings['allow_image']),
+    ];
+    $form['exo_asset']['require_image'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Require Image'),
+      '#default_value' => !empty($settings['require_image']),
+      '#states' => [
+        'visible' => [
+          ':input[name="exo_asset[allow_image]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+    $form['exo_asset']['allow_image_mobile'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Mobile Image'),
+      '#description' => t('Allow a mobile specific image to be added to this asset.'),
+      '#default_value' => !empty($settings['allow_image_mobile']),
+    ];
+    $form['exo_asset']['allow_video'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Video'),
+      '#description' => t('Allow a video to be added to this asset.'),
+      '#default_value' => !empty($settings['allow_video']),
+    ];
+    $form['exo_asset']['require_video'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Require Video'),
+      '#default_value' => !empty($settings['require_video']),
+      '#states' => [
+        'visible' => [
+          ':input[name="exo_asset[allow_video]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+    $form['exo_asset']['require_video_image'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Require Image with Video'),
+      '#description' => t('Will require an image be set whenever a video is set.'),
+      '#default_value' => !empty($settings['require_video_image']),
+      '#states' => [
+        'visible' => [
+          ':input[name="exo_asset[allow_image]"]' => ['checked' => TRUE],
+          ':input[name="exo_asset[require_image]"]' => ['checked' => FALSE],
+          ':input[name="exo_asset[allow_video]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+    $form['exo_asset']['allow_caption'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Caption'),
+      '#description' => t('Allow a caption to be added to this asset.'),
+      '#default_value' => !empty($settings['allow_caption']),
+    ];
+    $form['exo_asset']['require_caption'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Require Caption'),
+      '#default_value' => !empty($settings['require_caption']),
+      '#states' => [
+        'visible' => [
+          ':input[name="exo_asset[allow_caption]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+    $form['exo_asset']['allow_link'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Link'),
+      '#description' => t('Allow a URL to be added to this asset.'),
+      '#default_value' => !empty($settings['allow_link']),
+    ];
+    $form['exo_asset']['require_link'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Require Link'),
+      '#default_value' => !empty($settings['require_link']),
+      '#states' => [
+        'visible' => [
+          ':input[name="exo_asset[allow_link]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
+    $field_widget_manager = \Drupal::service('plugin.manager.field.widget');
+
+    foreach (ExoAsset::getAttributeFields() as $field_definition) {
+      $field_name = $field_definition->getName();
+      if (isset($entity_field_definitions[$field_name])) {
+        $form['exo_asset']['enabled_fields'][$field_name]['enabled'] = [
+          '#type' => 'checkbox',
+          '#title' => $entity_field_definitions[$field_name]->getLabel(),
+          '#default_value' => !empty($settings['enabled_fields'][$field_name]['enabled']),
+        ];
+
+        $form_display_options = $entity_field_definitions[$field_name]->getDisplayOptions('form');
+        $instance = $field_widget_manager->createInstance($form_display_options['type'], [
+          'field_definition' => $entity_field_definitions[$field_name],
+          'settings' => [],
+          'third_party_settings' => [],
+        ]);
+        $form['exo_asset']['enabled_fields'][$field_name]['enabled_options'] = [
+          '#title' => t('Enabled Options'),
+          '#description' => t('If no options are selected, then all options are enabled.'),
+          '#type' => 'exo_checkboxes',
+          '#exo_style' => 'inline',
+          '#default_value' => !empty($settings['enabled_fields'][$field_name]['enabled_options']) ? $settings['enabled_fields'][$field_name]['enabled_options'] : [],
+          '#options' => $instance->getDefaultOptions(),
+          '#states' => [
+            'visible' => [
+              ':input[name="exo_asset[enabled_fields][' . $field_name . '][enabled]"]' => ['checked' => TRUE],
+            ],
+          ],
+        ];
+      }
+    }
+
+    foreach (ExoAsset::getOtherFields() as $field_definition) {
+      $field_name = $field_definition->getName();
+      if (isset($entity_field_definitions[$field_name])) {
+        $form['exo_asset']['enabled_fields'][$field_name]['enabled'] = [
+          '#type' => 'checkbox',
+          '#title' => $entity_field_definitions[$field_name]->getLabel(),
+          '#default_value' => !empty($settings['enabled_fields'][$field_name]['enabled']),
+        ];
+      }
+    }
+
+    if (!empty($form['exo_asset']['enabled_fields'])) {
+      $form['exo_asset']['enabled_fields'] += [
+        '#type' => 'fieldset',
+        '#title' => t('Enabled Fields'),
+      ];
+    }
+    $form['#entity_builders'][] = 'exo_asset_form_field_config_edit_form_builder';
+  }
+}
+
+/**
+ * Entity form builder for the asset field form.
+ */
+function exo_asset_form_field_config_edit_form_builder($entity_type, FieldConfigInterface $entity, &$form, FormStateInterface $form_state) {
+  $settings = array_filter($form_state->getValue('exo_asset'));
+  if (isset($settings['enabled_fields'])) {
+    $settings['enabled_fields'] = array_filter($settings['enabled_fields'], function ($item) {
+      return !empty($item['enabled']);
+    });
+    $settings['enabled_fields'] = array_map(function ($item) {
+      if (!empty($item['enabled_options'])) {
+        $item['enabled_options'] = array_filter($item['enabled_options']);
+      }
+      return $item;
+    }, $settings['enabled_fields']);
+  }
+  if (empty($settings['enabled_fields'])) {
+    unset($settings['enabled_fields']);
+  }
+  if (!empty($settings)) {
+    $entity->setThirdPartySetting('exo_asset', 'field_settings', $settings);
+  }
+}
+
+/**
+ * Alter the fields used to represent an entity in the IEF table.
+ *
+ * @param array $fields
+ *   The fields, keyed by field name.
+ * @param array $context
+ *   An array with the following keys:
+ *   - parent_entity_type: The type of the parent entity.
+ *   - parent_bundle: The bundle of the parent entity.
+ *   - field_name: The name of the reference field on which IEF is operating.
+ *   - entity_type: The type of the referenced entities.
+ *   - allowed_bundles: Bundles allowed on the reference field.
+ *
+ * @see \Drupal\inline_entity_form\InlineFormInterface::getTableFields()
+ */
+function exo_asset_inline_entity_form_table_fields_alter(array &$fields, array $context) {
+  if ($context['entity_type'] == 'exo_asset') {
+    $parent_field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions($context['parent_entity_type'], $context['parent_bundle']);
+    $asset_field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('exo_asset', 'exo_asset');
+    $field_definition = $parent_field_definitions[$context['field_name']];
+    $settings = $field_definition->getThirdPartySetting('exo_asset', 'field_settings');
+    $fields = [];
+    if (!empty($settings['allow_image'])) {
+      $fields['image'] = [
+        'type' => 'field',
+        'label' => t('Image'),
+        'display_options' => [
+          'type' => 'media_thumbnail',
+          'settings' => [
+            'image_style' => 'thumbnail',
+          ],
+        ],
+      ];
+    }
+    if (!empty($settings['allow_image_mobile'])) {
+      $fields['image_mobile'] = [
+        'type' => 'field',
+        'label' => t('Mobile Image'),
+        'display_options' => [
+          'type' => 'media_thumbnail',
+          'settings' => [
+            'image_style' => 'thumbnail',
+          ],
+        ],
+      ];
+    }
+    if (!empty($settings['allow_video'])) {
+      $fields['video'] = [
+        'type' => 'field',
+        'label' => t('Video'),
+        'display_options' => [
+          'type' => 'media_thumbnail',
+          'settings' => [
+            'image_style' => 'thumbnail',
+          ],
+        ],
+      ];
+    }
+    if (!empty($settings['allow_link'])) {
+      $fields['link'] = [
+        'type' => 'field',
+        'label' => t('Link'),
+        'display_options' => [
+          'type' => 'link',
+        ],
+      ];
+    }
+    if (!empty($settings['enabled_fields'])) {
+      foreach ($settings['enabled_fields'] as $field_name => $bool) {
+        if (isset($asset_field_definitions[$field_name])) {
+          $fields[$field_name] = [
+            'type' => 'field',
+            'label' => $asset_field_definitions[$field_name]->getLabel(),
+            'display_options' => [
+              'type' => 'exo_attribute_string',
+            ],
+          ];
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Themes the table showing existing entity references in the widget.
+ *
+ * @param array $variables
+ *   Contains the form element data from $element['entities'].
+ */
+function theme_exo_asset_inline_entity_form_entity_table(array $variables) {
+  // We want to remove any columns from the table that do not have values.
+  $keep = [];
+  $attribute = [];
+  $attribute_with_value = [];
+  foreach (Element::children($variables['form']) as $key) {
+    $entity = $variables['form'][$key]['#entity'];
+    foreach ($variables['form']['#table_fields'] as $field_name => $data) {
+      if ($data['type'] == 'field') {
+        if (isset($data['display_options']['type']) && $data['display_options']['type'] == 'exo_attribute_string') {
+          $attribute[] = $field_name;
+          if (!$entity->{$field_name}->isEmpty()) {
+            $attribute_with_value[] = $field_name;
+          }
+        }
+        elseif (in_array($field_name, ['image', 'image_mobile', 'video'])) {
+          $keep[] = $field_name;
+          if ($entity->{$field_name}->isEmpty()) {
+            $variables['form']['#table_fields'][$field_name] = [
+              'type' => 'label',
+              'label' => $data['label'],
+            ];
+            $variables['form'][$key]['#label']['#markup'] = '<small>' . t('- None -') . '</small>';
+          }
+        }
+        elseif (in_array($field_name, ['link'])) {
+          if (!$entity->{$field_name}->isEmpty()) {
+            $keep[] = $field_name;
+            $variables['form'][$key]['#label']['#markup'] = '<small>' . t('Linked') . '</small>';
+          }
+        }
+        else {
+          $keep[] = $field_name;
+        }
+      }
+      else {
+        $keep[] = $field_name;
+      }
+    }
+  }
+  if (count($attribute) < 3) {
+    $keep = array_merge($keep, $attribute);
+  }
+  elseif (count($attribute_with_value) < 3) {
+    $keep = array_merge($keep, $attribute_with_value);
+  }
+  $variables['form']['#table_fields'] = array_intersect_key($variables['form']['#table_fields'], array_flip($keep));
+  return theme_inline_entity_form_entity_table($variables);
+}
+
+/**
+ * Check if we are using the remote_video media type.
+ *
+ * Old version of this module used to rely on the video_embed_field. Much of
+ * this has been moved into core.
+ */
+function exo_asset_has_remote_video() {
+  $found = &drupal_static(__FUNCTION__);
+  if (!isset($found)) {
+    $found = \Drupal::entityTypeManager()->getStorage('media_type')->load('remote_video');
+  }
+  return $found;
+}

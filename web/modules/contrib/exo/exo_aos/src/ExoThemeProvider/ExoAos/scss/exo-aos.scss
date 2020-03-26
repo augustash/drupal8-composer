@@ -1,0 +1,11 @@
+////////////////////////////////////////////////////////////////////////////////
+/// Base style and structure of theme.
+/// -------
+/// All styles that should be altered through themes should be place in the
+/// ./exo-aos.exo-aos.scss SCSS file.
+////////////////////////////////////////////////////////////////////////////////
+
+@import 'exo-common';
+@import '../../../../lib/aos/sass/core';
+@import '../../../../lib/aos/sass/easing';
+@import '../../../../lib/aos/sass/animations';

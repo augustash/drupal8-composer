@@ -1,0 +1,5 @@
+inline_entity_form:
+  version: VERSION
+  css:
+    component:
+      css/exo-asset.inline-entity-form.css: { minified: true }

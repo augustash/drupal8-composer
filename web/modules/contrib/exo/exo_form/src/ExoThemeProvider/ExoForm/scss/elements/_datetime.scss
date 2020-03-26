@@ -1,0 +1,39 @@
+
+.exo-form-date {
+
+  .exo-form-input-item {
+    cursor: text;
+  }
+}
+
+.exo-form-time {
+
+  .exo-form-element {
+    margin: 0;
+  }
+
+  .exo-form-input-item {
+    cursor: text;
+  }
+}
+
+.exo-form-datetime-inline {
+
+  .exo-form-date,
+  .exo-form-time {
+    display: inline-block;
+    padding-right: $global-padding / 2;
+  }
+}
+
+.picker {
+
+  select.picker__select--year,
+  select.picker__select--month {
+    font-size: inherit;
+    line-height: inherit;
+    appearance: menulist;
+    margin: 0 2px;
+    padding: 0;
+  }
+}

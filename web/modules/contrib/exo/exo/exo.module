@@ -1,0 +1,342 @@
+<?php
+
+/**
+ * @file
+ * Contains exo.module.
+ */
+
+use Drupal\exo\ExoColor;
+use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Block\BlockPluginInterface;
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function exo_element_info_alter(&$type) {
+  if (isset($type['page'])) {
+    $type['page']['#theme_wrappers']['exo'] = ['#weight' => -1000];
+    $type['page']['#pre_render'][] = 'exo_page_pre_render';
+    \Drupal::moduleHandler()->alter('exo', $type['page']['#theme_wrappers']['exo']);
+  }
+}
+
+/**
+ * Pre-render page element.
+ *
+ * @param array $element
+ *   The page element.
+ *
+ * @return array
+ *   The page element.
+ */
+function exo_page_pre_render(array $element) {
+  unset($element['#theme_wrappers']['off_canvas_page_wrapper']);
+  if (exo_is_admin()) {
+    $element['#attributes']['class'][] = 'is-admin';
+  }
+  return $element;
+}
+
+/**
+ * Check if we are on admin theme.
+ *
+ * @return bool
+ *   Returns TRUE if we are using admin theme.
+ */
+function exo_is_admin() {
+  $is_admin = &drupal_static(__FUNCTION__);
+  if (!isset($is_admin)) {
+    /** @var \Drupal\Core\Routing\AdminContext $admin_context */
+    $admin_context = \Drupal::service('router.admin_context');
+    $is_admin = $admin_context->isAdminRoute() && \Drupal::currentUser()->hasPermission('view the administration theme');
+  }
+  return $is_admin;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function exo_theme($existing, $type, $theme, $path) {
+  $themes = [];
+  $themes['exo'] = [
+    'variables' => [
+      'children' => NULL,
+      'attributes' => [],
+      'pre_render' => [],
+      'convas_before' => [],
+      'convas_after' => [],
+    ],
+    'file' => 'exo.theme',
+  ];
+  $themes['exo_theme_option'] = [
+    'variables' => [
+      'label' => NULL,
+      'attributes' => [],
+      'colors' => [],
+      'base_color' => NULL,
+      'offset_color' => NULL,
+      'primary_color' => NULL,
+      'secondary_color' => NULL,
+    ],
+    'file' => 'exo.theme',
+  ];
+  return $themes;
+}
+
+/**
+ * Implements hook_library_info_build().
+ */
+function exo_library_info_alter(&$libraries, $extension) {
+  $exo_theme_provider = \Drupal::service('plugin.manager.exo_theme_provider');
+  foreach ($exo_theme_provider->getDefinitions() as $plugin_id => $definition) {
+    if ($extension == $definition['provider']) {
+      try {
+        $provider_instance = $exo_theme_provider->createInstance($plugin_id);
+        $library = $provider_instance->getLibrary();
+        if (!isset($libraries[$library])) {
+          continue;
+        }
+        $config = \Drupal::config('exo.theme');
+        $theme = $config->get('theme');
+        if ($theme && $theme !== 'default') {
+          $theme_instance = \Drupal::service('plugin.manager.exo_theme')->createInstance($theme);
+          $path = $theme_instance->getProviderPathname($extension);
+          if (file_exists(DRUPAL_ROOT . $path)) {
+            $libraries[$library]['css']['component'][$path] = ['minified' => TRUE];
+          }
+        }
+        // No theme has been chosen.
+        else {
+          $path = $provider_instance->getPathname(TRUE);
+          if (file_exists(DRUPAL_ROOT . $path)) {
+            $libraries[$library]['css']['component'][$provider_instance->getPathname()] = ['minified' => TRUE];
+          }
+        }
+      }
+      catch (\Exception $e) {
+        \Drupal::messenger()->addMessage($e->getMessage(), 'error');
+      }
+    }
+  }
+}
+
+/**
+ * Animate in options provided by base CSS.
+ *
+ * @return array
+ *   An array of animation options.
+ */
+function exo_animate_in_options() {
+  return [
+    'comingIn' => t('Coming In'),
+    'bounceInDown' => t('Bounce In Down'),
+    'bounceInUp' => t('Bounce In Up'),
+    'fadeIn' => t('Fade In'),
+    'fadeInDown' => t('Fade In Down'),
+    'fadeInUp' => t('Fade In Up'),
+    'fadeInLeft' => t('Fade In Left'),
+    'fadeInRight' => t('Fade In Right'),
+    'flipInX' => t('Flip In X'),
+  ];
+}
+
+/**
+ * Animate out options provided by base CSS.
+ *
+ * @return array
+ *   An array of animation options.
+ */
+function exo_animate_out_options() {
+  return [
+    'comingOut' => t('Coming Out'),
+    'bounceOutDown' => t('Bounce Out Down'),
+    'bounceOutUp' => t('Bounce Out Up'),
+    'fadeOut' => t('Fade Out'),
+    'fadeOutDown' => t('Fade Out Down'),
+    'fadeOutUp' => t('Fade Out Up'),
+    'fadeOutLeft' => t('Fade Out Left'),
+    'fadeOutRight' => t('Fade Out Right'),
+    'flipOutX' => t('Flip Out X'),
+  ];
+}
+
+/**
+ * Available element style stypes.
+ *
+ * Styles supplied in exo.element.options.scss.
+ *
+ * @return array
+ *   An array of style options.
+ */
+function exo_element_style_types() {
+  return [
+    'inline' => t('Inline'),
+    'stacked' => t('Stacked'),
+    'grid' => t('Grid'),
+  ];
+}
+
+/**
+ * Theme colors.
+ *
+ * @return array
+ *   An array of theme colors.
+ */
+function exo_theme_colors() {
+  $cache_backend = \Drupal::cache();
+  $cache = $cache_backend->get('exo_theme_colors');
+  if ($cache) {
+    $colors = $cache->data;
+  }
+  else {
+    $colors = [];
+    $theme = \Drupal::service('plugin.manager.exo_theme')->getCurrentTheme();
+    $theme_colors = $theme->getColors(TRUE);
+    foreach ($theme_colors as $key => $hex) {
+      $label = ucwords(str_replace(['-', '_'], ' ', $key));
+      if (in_array($key, ['white', 'black'])) {
+        $color = new ExoColor($hex);
+        $close_match = FALSE;
+        foreach ($colors as $k => $existing) {
+          $existing_color = new ExoColor($existing['hex']);
+          if ($color->getDistanceRgbFrom($existing_color) < 100) {
+            $close_match = TRUE;
+          }
+        }
+        if ($close_match) {
+          continue;
+        }
+      }
+      $colors[$key] = [
+        'label' => $label,
+        'hex' => $hex,
+      ];
+    }
+    \Drupal::moduleHandler()->alter('exo_theme_colors', $colors);
+    $cache_backend->set('exo_theme_colors', $colors, CacheBackendInterface::CACHE_PERMANENT, ['exo_theme_colors']);
+  }
+  return $colors;
+}
+
+/**
+ * Theme options.
+ *
+ * The difference between this function and exo_theme_colors is that these
+ * options are not tied to colors specified in the theme and are often used
+ * as choices that then set CSS classes that then use a mix of theme colors.
+ *
+ * @return array
+ *   An array of theme options.
+ */
+function exo_theme_options($allow_custom = FALSE, $allow_status = FALSE) {
+  $themes = [
+    'default' => t('Default'),
+    'inverse' => t('Inverse'),
+    'primary' => t('Primary'),
+    'secondary' => t('Secondary'),
+    'white' => t('White'),
+    'black' => t('Black'),
+  ];
+  if ($allow_custom) {
+    $themes = [
+      '_custom' => t('Custom'),
+    ] + $themes;
+  }
+  if ($allow_status) {
+    $themes += [
+      'success' => t('Success'),
+      'alert' => t('Alert'),
+    ];
+  }
+  return $themes;
+}
+
+/**
+ * Get presets for a given module.
+ *
+ * @param string $key
+ *   The preset key. Typically a module name.
+ */
+function exo_presets($key) {
+  $presets = &drupal_static(__FUNCTION__);
+  if (!isset($presets[$key])) {
+    $hook = $key . '_setting_presets';
+    $module_handler = \Drupal::moduleHandler();
+    $presets[$key] = $module_handler->invokeAll($hook, [$key . '.settings']);
+    $module_handler->alter($hook, $presets[$key]);
+  }
+  return $presets[$key];
+}
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function exo_entity_extra_field_info() {
+  return \Drupal::service('plugin.manager.exo_extra_field_display')->fieldInfo();
+}
+
+/**
+ * Implements hook_entity_view().
+ */
+function exo_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+  /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+  \Drupal::service('plugin.manager.exo_extra_field_display')->entityView($build, $entity, $display, $view_mode);
+}
+
+/**
+ * Implements hook_block_view_alter().
+ */
+function exo_block_view_alter(array &$build, BlockPluginInterface $block) {
+  if (!exo_is_admin()) {
+    $build['#contextual_links'] = [];
+  }
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function exo_entity_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  if (!exo_is_admin()) {
+    $build['#contextual_links'] = [];
+  }
+  foreach ($display->getComponents() as $field_name => $component) {
+    if (isset($component['type']) && $component['type'] == 'exo_attribute_class') {
+      if ($entity->hasField($field_name) && !$entity->get($field_name)->isEmpty()) {
+        $field = $entity->get($field_name);
+        $as_class = isset($component['settings']['as_class']) ? !empty($component['settings']['as_class']) : TRUE;
+        $as_data = isset($component['settings']['as_data']) ? !empty($component['settings']['as_data']) : FALSE;
+        $values = array_filter(explode('|', $field->value));
+        if ($as_class) {
+          foreach ($values as $value) {
+            $class = NULL;
+            switch ($field->getFieldDefinition()->getType()) {
+              case 'boolean':
+                if (!empty($value)) {
+                  $class = Html::getClass(str_replace('field_', '', $field_name));
+                }
+                break;
+
+              default:
+                $class = Html::getClass(str_replace('field_', '', $field_name) . '--' . $value);
+                break;
+            }
+            if ($class) {
+              $build['#attributes']['class'][] = $class;
+            }
+          }
+        }
+        if ($as_data) {
+          if ($field->getFieldDefinition()->getFieldStorageDefinition()->getCardinality() === 1) {
+            $build['#attributes']['data-' . Html::getClass(str_replace('field_', '', $field_name))] = $values[0];
+          }
+          else {
+            $build['#attributes']['data-' . Html::getClass(str_replace('field_', '', $field_name))] = json_encode($values);
+          }
+        }
+      }
+    }
+  }
+}

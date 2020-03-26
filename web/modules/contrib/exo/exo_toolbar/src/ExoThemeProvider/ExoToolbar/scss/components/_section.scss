@@ -1,0 +1,16 @@
+.exo-toolbar-section {
+  @include flex;
+  @include flex-align(left, middle);
+
+  &[data-exo-section='right'] {
+    margin-left: auto;
+  }
+
+  &[data-exo-section='bottom'] {
+    margin-top: auto;
+  }
+
+  [data-exo-align='vertical'] & {
+    @include flex-align(left, middle);
+  }
+}

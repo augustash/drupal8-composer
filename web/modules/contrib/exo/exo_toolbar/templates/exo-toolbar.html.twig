@@ -1,0 +1,26 @@
+{#
+/**
+ * @file
+ * Default theme implementation for the eXo toolbar.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the wrapper.
+ * - heading: The heading or label for the toolbar.
+ *
+ * @see template_preprocess_exo_toolbar()
+ *
+ * @ingroup themeable
+ */
+#}
+{%
+  set classes = [
+    'exo-toolbar',
+    'exo-ready-show',
+    'exo-reset',
+    'exo-font',
+  ]
+%}
+<div{{ attributes.addClass(classes) }}>
+  <h2 class="visually-hidden">{{ heading }}</h2>
+  {{ regions }}
+</div>

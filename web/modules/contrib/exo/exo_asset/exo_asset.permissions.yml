@@ -1,0 +1,30 @@
+add asset entities:
+  title: 'Create new Asset entities'
+
+administer asset entities:
+  title: 'Administer Asset entities'
+  description: 'Allow to access the administration form to configure Asset entities.'
+  restrict access: true
+
+delete asset entities:
+  title: 'Delete Asset entities'
+
+edit asset entities:
+  title: 'Edit Asset entities'
+
+view published asset entities:
+  title: 'View published Asset entities'
+
+view unpublished asset entities:
+  title: 'View unpublished Asset entities'
+
+view all asset revisions:
+  title: 'View all Asset revisions'
+
+revert all asset revisions:
+  title: 'Revert all Asset revisions'
+  description: 'Role requires permission <em>view Asset revisions</em> and <em>edit rights</em> for asset entities in question or <em>administer asset entities</em>.'
+
+delete all asset revisions:
+  title: 'Delete all revisions'
+  description: 'Role requires permission to <em>view Asset revisions</em> and <em>delete rights</em> for asset entities in question or <em>administer asset entities</em>.'

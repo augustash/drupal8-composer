@@ -1,0 +1,41 @@
+uuid: eec3765d-593e-4f5a-8f61-238080706af7
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.exo_component_limited_html
+  module:
+    - ckeditor
+format: exo_component_limited_html
+editor: ckeditor
+settings:
+  toolbar:
+    rows:
+      -
+        -
+          name: Formatting
+          items:
+            - Bold
+            - Italic
+        -
+          name: Links
+          items:
+            - DrupalLink
+            - DrupalUnlink
+        -
+          name: Tools
+          items:
+            - Source
+  plugins:
+    stylescombo:
+      styles: ''
+    language:
+      language_list: un
+image_upload:
+  status: false
+  scheme: public
+  directory: inline-images
+  max_size: ''
+  max_dimensions:
+    width: null
+    height: null

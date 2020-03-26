@@ -1,0 +1,57 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_layout_builder.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_help().
+ */
+function exo_layout_builder_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the exo_layout_builder module.
+    case 'help.page.exo_layout_builder':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides layout builder enhancements.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function exo_layout_builder_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (substr($form_id, -20) === '_layout_builder_form') {
+    $form['#attached']['library'][] = 'exo_layout_builder/base';
+    $form['#attributes']['class'][] = 'exo-layout-builder';
+
+    if (isset($form['actions']['submit'])) {
+      $form['actions']['submit']['#attributes']['class'][] = 'exo-layout-builder-submit';
+    }
+    if (isset($form['actions']['discard_changes'])) {
+      $form['actions']['discard_changes']['#attributes']['class'][] = 'exo-layout-builder-discard';
+    }
+    if (isset($form['actions']['revert'])) {
+      $form['actions']['revert']['#attributes']['class'][] = 'exo-layout-builder-revert';
+    }
+
+    $form['top'] = [
+      '#type' => 'container',
+      '#prefix' => '<div class="exo-layout-builder-top exo-reset"><div class="exo-layout-builder-top-inner">',
+      '#suffix' => '</div></div>',
+    ];
+    $form['actions']['#type'] = 'container';
+    $form['actions']['#attributes']['class'][] = 'form-actions';
+    $form['actions']['#group'] = 'top';
+    $form['actions']['#weight'] = 1;
+    $form['layout_builder_message']['#group'] = 'top';
+    $form['layout_builder_message']['#weight'] = 0;
+  }
+}

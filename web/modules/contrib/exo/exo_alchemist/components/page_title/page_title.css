@@ -1,0 +1,13 @@
+.exo-component-page-title .name--title {
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+}
+.exo-component-page-title .name--tagline {
+  font-size: 12px;
+  text-transform: uppercase;
+}
+.exo-component-page-title .name--subtitle {
+  font-size: 12px;
+  font-style: italic;
+}

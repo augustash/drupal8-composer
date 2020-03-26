@@ -1,0 +1,7 @@
+$pixels: 0, 5, 10, 20, 30;
+
+@each $size in $pixels {
+  .exo-modifier--box-shadow-#{$size} {
+    box-shadow: 0 #{$size/2}px #{$size}px alpha(theme-black, 0.5);
+  }
+}

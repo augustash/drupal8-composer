@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_toolbar.exo_toolbar.default
+_core:
+  default_config_hash: TH0o2yirIic2vvlGWSJOz0Fjr6AcEqOhX8Ay7cnOST0
+id: toggle
+toolbar: default
+region: top
+section: left
+weight: 0
+plugin: toggle
+settings:
+  id: toggle
+  title: Toggle
+  provider: exo_toolbar
+  region: left
+  event: click
+  icon: regular-bars
+  mark_only_horizontal: 0
+  badge_type: ''
+  badge_settings: {  }
+  toolbar_item_id: null
+visibility: {  }

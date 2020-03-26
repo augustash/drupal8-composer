@@ -1,0 +1,40 @@
+.exo-toolbar-element-grid {
+  @include flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  width: rem-calc(320);
+
+  > li {
+    width: 33.33%;
+    text-align: center;
+    transition: background $global-speed, transform $global-speed;
+
+    > a {
+      padding: rem-calc(20);
+      position: relative;
+      margin: 0 auto;
+    }
+
+    .exo-icon,
+    .exo-icon-label {
+      transition: color 300ms, transform $global-speed / 3;
+    }
+
+    .exo-icon {
+      display: block;
+      font-size: rem-calc(30);
+      padding-bottom: rem-calc(10);
+    }
+
+    &:hover {
+
+      > a {
+
+        .exo-icon {
+          transform: scale(0.95);
+        }
+      }
+    }
+  }
+}

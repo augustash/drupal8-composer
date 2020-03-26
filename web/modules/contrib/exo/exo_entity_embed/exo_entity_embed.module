@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_entity_embed.module.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_embed_alter().
+ */
+function exo_entity_embed_entity_embed_alter(&$build, EntityInterface $entity, $context) {
+  // Remove theme wrapper.
+  if (!empty($build['entity']['#remove_theme_wrappers'])) {
+    unset($build['#theme_wrappers']);
+  }
+}

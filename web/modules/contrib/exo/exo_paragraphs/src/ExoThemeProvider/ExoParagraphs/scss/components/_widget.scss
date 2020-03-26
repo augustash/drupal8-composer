@@ -1,0 +1,42 @@
+.exo-modal.exo-paragraphs-widget {
+
+  .exo-modal-content {
+    @include flex;
+    @include flex-align(center, stretch);
+    @include exo-flex-direction(column, row);
+    flex-wrap: wrap;
+  }
+
+  .exo-button {
+    // display: block;
+    @include flex;
+    @include exo-flex-direction(column);
+    @include flex-align(center, middle);
+    width: 10%;
+    padding: rem-calc(30);
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: rem-calc(11);
+    line-height: 1.2;
+    transition: background-color $global-speed;
+
+    .exo-icon {
+      display: block;
+      font-size: rem-calc(30);
+      padding-bottom: rem-calc(15);
+      transition: color $global-speed, scale $global-speed / 3;
+    }
+
+    .exo-icon-label {
+      text-transform: uppercase;
+    }
+
+    &:hover {
+
+      .exo-icon {
+        transform: scale(0.95);
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "jacerider/real_favicon",
+  "description": "A favicon generator for all platforms utilizing http://realfavicongenerator.net",
+  "type": "drupal-module",
+  "license": "GPL-2.0+",
+  "homepage": "https://github.com/jacerider/real_favicon",
+  "authors": [
+    {
+      "name": "Cyle Carlson (JaceRider)",
+      "email": "jacerider@gmail.com",
+      "role": "Maintainer"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/jacerider/real_favicon/issues",
+    "source": "https://github.com/jacerider/real_favicon"
+  },
+  "minimum-stability": "dev"
+}

@@ -1,0 +1,18 @@
+{#
+/**
+ * @file
+ * Default theme implementation of a container used to wrap child elements.
+ *
+ * @see template_preprocess_exo_form_element_container()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes }}>
+  {# <-- container --> #}
+  <div{{ inner_attributes.addClass('exo-form-element-inner') }}>
+    {{ wrapper_prefix }}
+    {{ children }}
+    {{ wrapper_suffix }}
+  </div>
+</div>

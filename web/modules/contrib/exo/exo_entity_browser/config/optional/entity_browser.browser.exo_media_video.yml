@@ -1,0 +1,50 @@
+uuid: 51768d06-e70a-4d18-9554-0539d007a02f
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.exo_media_browser_video
+  module:
+    - entity_browser_entity_form
+    - exo_entity_browser
+    - views
+name: exo_media_video
+label: 'eXo Media | Video'
+display: exo_modal
+display_configuration:
+  modal_description: 'Select from library or upload new.'
+  width: ''
+  height: ''
+  link_text: 'Video Library'
+  auto_open: false
+selection_display: multi_step_display
+selection_display_configuration:
+  entity_type: media
+  display: rendered_entity
+  display_settings:
+    view_mode: media_library
+  select_text: 'Use selected'
+  selection_hidden: false
+widget_selector: tabs
+widget_selector_configuration: {  }
+widgets:
+  ba4a6ce0-b7dc-4932-b192-5b85f829b724:
+    settings:
+      view: exo_media_browser_video
+      view_display: entity_browser_1
+      submit_text: Select
+      auto_select: true
+    uuid: ba4a6ce0-b7dc-4932-b192-5b85f829b724
+    weight: 1
+    label: Library
+    id: view
+  3442426a-cff7-4dd3-9326-7c2a2b5857b3:
+    settings:
+      entity_type: media
+      bundle: video
+      form_mode: default
+      submit_text: 'Save and Select'
+    uuid: 3442426a-cff7-4dd3-9326-7c2a2b5857b3
+    weight: 2
+    label: Add
+    id: entity_form

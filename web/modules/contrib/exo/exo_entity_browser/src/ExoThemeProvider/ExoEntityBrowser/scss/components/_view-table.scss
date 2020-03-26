@@ -1,0 +1,68 @@
+.exo-entity-browser-table {
+
+  .views-table {
+    // table-layout: fixed;
+    width: 100%;
+    white-space: nowrap;
+
+    td {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .views-field-name {
+    font-weight: bold;
+    width: 100%;
+  }
+
+  .views-field-entity-browser-select {
+    display: table-cell !important;
+
+    .form-item {
+      display: none;
+    }
+
+    .exo-entity-browser-checkmark {
+      width: rem-calc(20);
+      height: rem-calc(20);
+    }
+  }
+
+  tbody {
+
+    tr {
+      cursor: pointer;
+      transition: background-color 300ms;
+
+      &:hover {
+        background: grey(3);
+      }
+    }
+
+    .views-field-entity-browser-select {
+      background-color: grey(5);
+      position: relative;
+
+      .exo-entity-browser-checkmark {
+        position: relative;
+        z-index: 1;
+      }
+
+      &:after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: rem-calc(18);
+        height: rem-calc(18);
+        margin: rem-calc(-9 0 0 -9);
+        background: grey(15);
+        border-radius: 50%;
+        z-index: 0;
+      }
+    }
+  }
+}

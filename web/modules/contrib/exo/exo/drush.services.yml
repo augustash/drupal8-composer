@@ -1,0 +1,6 @@
+services:
+  sync.commands:
+    class: Drupal\exo\Command\ExoDrushCommands
+    arguments: ['@plugin.manager.exo_theme', '@file_system']
+    tags:
+      - { name: drush.command }

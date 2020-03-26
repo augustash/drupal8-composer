@@ -1,0 +1,386 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_modal.module.
+ */
+
+use Drupal\exo_modal\Ajax\ExoModalOpenCommand;
+use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Render\Markup;
+use Drupal\exo_modal\Ajax\ExoModalCloseCommand;
+use Drupal\Core\Ajax\SettingsCommand;
+use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Drupal\Core\Url;
+use Drupal\Core\Asset\AttachedAssetsInterface;
+
+/**
+ * Implements hook_theme().
+ */
+function exo_modal_theme($existing, $type, $theme, $path) {
+  return [
+    'exo_modal_trigger' => [
+      'render element' => 'element',
+      'file' => 'exo_modal.theme',
+    ],
+    'exo_modal' => [
+      'render element' => 'element',
+      'file' => 'exo_modal.theme',
+    ],
+    'exo_modal_container' => [
+      'render element' => 'element',
+      'file' => 'exo_modal.theme',
+    ],
+  ];
+}
+
+/**
+ * Implements template_preprocess_exo().
+ */
+function exo_modal_preprocess_exo(&$variables) {
+  $variables['canvas_after']['exo_modal'] = [
+    '#type' => 'html_tag',
+    '#tag' => 'div',
+    '#attributes' => [
+      'id' => 'exo-modals',
+      'class' => [
+        'exo-modals',
+      ],
+      'aria-hidden' => 'true',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_exo_modal_setting_presets().
+ */
+function exo_modal_exo_modal_setting_presets($config_id) {
+  $presets = [];
+  $presets['aside_top'] = [
+    'label' => 'Aside Top',
+    'modal' => [
+      'top' => 0,
+      'width' => '100%',
+      'radius' => 0,
+      'transitionIn' => 'fadeInDown',
+      'transitionOut' => 'fadeOutUp',
+    ],
+  ];
+  $presets['aside_left'] = [
+    'label' => 'Aside Left',
+    'modal' => [
+      'left' => 0,
+      'width' => 600,
+      'transitionIn' => 'fadeInLeft',
+      'transitionOut' => 'fadeOutLeft',
+      'navigateArrows' => 'closeScreenEdge',
+      'openTall' => TRUE,
+    ],
+  ];
+  $presets['aside_right'] = [
+    'label' => 'Aside Right',
+    'modal' => [
+      'right' => 0,
+      'width' => 600,
+      'transitionIn' => 'fadeInRight',
+      'transitionOut' => 'fadeOutRight',
+      'navigateArrows' => 'closeScreenEdge',
+      'openTall' => TRUE,
+    ],
+  ];
+  $presets['aside_bottom'] = [
+    'label' => 'Aside Bottom',
+    'modal' => [
+      'bottom' => 0,
+      'width' => '100%',
+      'radius' => 0,
+      'transitionIn' => 'fadeInUp',
+      'transitionOut' => 'fadeOutDown',
+    ],
+  ];
+  return $presets;
+}
+
+/**
+ * Implements hook_library_info_alter().
+ */
+function exo_modal_library_info_alter(&$libraries, $extension) {
+  if ($extension == 'core') {
+    $path = '/' . drupal_get_path('module', 'exo_modal') . '/js';
+    // Exo Modal overrides all dialog functionality.
+    $libraries['drupal.dialog']['js'] = [];
+    $libraries['drupal.dialog']['dependencies'][] = 'exo_modal/theme';
+    $libraries['drupal.dialog']['dependencies'][] = 'exo_modal/ajax';
+
+    // Exo Modal overrides all dialog functionality.
+    $libraries['drupal.dialog.ajax']['js'] = [];
+    $libraries['drupal.dialog.ajax']['js'][$path . '/exo.modal.dialog.ajax.js'] = [
+      'minified' => TRUE,
+    ];
+  }
+  if ($extension == 'ckeditor') {
+    $path = '/' . drupal_get_path('module', 'exo_modal') . '/js';
+    $libraries['drupal.ckeditor']['js'][$path . '/exo.modal.ckeditor.js'] = [
+      'minified' => TRUE,
+    ];
+  }
+}
+
+/**
+ * Implements hook_ajax_render_alter().
+ */
+function exo_modal_ajax_render_alter(array &$data) {
+  $modal_settings = [];
+  foreach ($data as $key => $item) {
+    if ($item['command'] === 'openDialog') {
+      $id = Html::getUniqueId($data[$key]['selector']);
+      $dialog_options = isset($data[$key]['dialogOptions']) ? $data[$key]['dialogOptions'] : NULL;
+      $options = [];
+      $command = new ExoModalOpenCommand($id, Markup::create($data[$key]['data']), $options);
+
+      // Build modal and set global settings.
+      $modal = $command->getModal();
+      $modal->setSetting(['modal', 'padding'], '20px');
+      if (!empty($dialog_options)) {
+        foreach ($dialog_options as $setting => $value) {
+          switch ($setting) {
+            case 'title':
+              $modal->setSetting(['modal', $setting], $value);
+              break;
+
+            case 'dialogClass':
+              $modal->addModalClass($value);
+              break;
+
+            case 'modal':
+              // Modals always need to be nested.
+              $modal->setSetting(['modal', 'nest'], $value);
+              break;
+          }
+        }
+      }
+
+      $route_name = \Drupal::routeMatch()->getRouteName();
+      $use_full = FALSE;
+      // Layout builder.
+      if (substr($route_name, 0, 15) == 'layout_builder.') {
+        $modal->addModalClass('is-admin');
+        $modal->setSetting('theme', 'black');
+        $modal->setSetting('theme_content', 'black');
+        $modal->setSetting(['modal', 'overlay'], TRUE);
+        $modal->setSetting(['modal', 'bodyOverflow'], TRUE);
+        unset($dialog_options['modal']);
+      }
+      // switch ($route_name) {
+      //   case 'layout_builder.choose_block':
+      //   case 'layout_builder.add_block':
+      //   case 'layout_builder.configure_section':
+      //   case 'layout_builder.field.update':
+      //     $modal->addModalClass('is-admin');
+      //     // $modal->setSetting('theme', 'black');
+      //     $modal->setSetting('theme_content', 'black');
+      //     break;
+      // }
+      // Block builder.
+      if (substr($route_name, 0, 6) == 'block.') {
+        $use_full = TRUE;
+      }
+      // Webform builder.
+      if (substr($route_name, 0, 14) == 'entity.webform') {
+        $use_full = TRUE;
+        $modal->removeModalClass('webform-ui-dialog');
+      }
+      // Special handling for views modals.
+      if (substr($route_name, 0, 9) == 'views_ui.') {
+        $view = \Drupal::routeMatch()->getParameter('view');
+        if ($view) {
+          $modal->setSetting(['modal', 'subtitle'], t('for %label view', ['%label' => $view->label()]));
+        }
+        $modal->setSetting(['modal', 'padding'], '0');
+        $modal->setSetting(['modal', 'nest'], FALSE);
+        $use_full = TRUE;
+      }
+
+      if ($use_full) {
+        $modal->setSetting(['modal', 'top'], '20px');
+        $modal->setSetting(['modal', 'bottom'], '20px');
+        $modal->setSetting(['modal', 'right'], '20px');
+        $modal->setSetting(['modal', 'left'], '20px');
+        $modal->setSetting(['modal', 'width'], '100%');
+        $modal->setSetting(['modal', 'transitionIn'], 'fadeInDown');
+        $modal->setSetting(['modal', 'transitionOut'], 'fadeOutUp');
+        $modal->addModalClass('is-admin');
+        $icon = \Drupal::service('plugin.manager.exo_icon')->getDefinitionMatch('views', ['local_task', 'admin']);
+        if ($icon) {
+          $modal->setSetting(['modal', 'icon'], $icon);
+        }
+      }
+      else {
+        if (!empty($dialog_options)) {
+          foreach ($dialog_options as $setting => $value) {
+            switch ($setting) {
+              case 'width':
+                $modal->setSetting(['modal', $setting], $value);
+                break;
+
+              case 'position':
+                if (isset($value['at'])) {
+                  // @see token browser.
+                  foreach (explode(' ', $value['at']) as $position) {
+                    $parts = explode('-', $position);
+                    $modal->setSetting(['modal', $parts[0]], $parts[1]);
+                  }
+                  $modal->setSetting(['modal', 'fullscreen'], TRUE);
+                }
+                break;
+
+              case 'resizable':
+                $modal->setSetting(['modal', 'fullscreen'], !empty($value));
+                break;
+
+              case 'drupalOffCanvasPosition':
+                if ($value == 'side') {
+                  $modal->setSetting('exo_preset', 'aside_right');
+                }
+                break;
+
+              case 'modal':
+                $modal->setSetting(['modal', 'overlay'], $value);
+                $modal->setSetting(['modal', 'bodyOverflow'], $value);
+                break;
+            }
+          }
+          if ($item['selector'] == '#drupal-off-canvas') {
+            // Special treatment for drupal-off-canvas.
+            $modal->setSetting(['modal', 'width'], 400);
+            $modal->setSetting(['modal', 'overlay'], TRUE);
+            $modal->setSetting(['modal', 'nest'], FALSE);
+          }
+          if (!empty($dialog_options['exo_modal'])) {
+            // eXo Modal settings override all others.
+            foreach ($dialog_options['exo_modal'] as $key => $val) {
+              $modal->setSetting(['modal', $key], $val);
+            }
+          }
+        }
+      }
+      $modal_settings = exo_modal_js_settings_append_presets($modal->getDrupalSettings());
+      $data[$key] = $command->render();
+      break;
+    }
+    if ($item['command'] === 'webformCloseDialog') {
+      $command = new ExoModalCloseCommand();
+      $data[] = $command->render();
+      break;
+    }
+  }
+  if ($modal_settings) {
+    $found = FALSE;
+    foreach ($data as $key => $item) {
+      if ($item['command'] === 'settings') {
+        if (isset($data[$key]['settings']['exoModal']['modals'])) {
+          $data[$key]['settings']['exoModal'] = NestedArray::mergeDeep($data[$key]['settings']['exoModal'], $modal_settings['exoModal']);
+        }
+        else {
+          $data[$key]['settings'] += $modal_settings;
+        }
+        if (isset($data[$key]['settings']['dialog'])) {
+          $data[$key]['settings']['dialog'] = [];
+        }
+        $found = TRUE;
+        break;
+      }
+    }
+    if (!$found) {
+      $command = new SettingsCommand($modal_settings, TRUE);
+      array_unshift($data, $command->render());
+    }
+  }
+}
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function exo_modal_views_data_alter(array &$data) {
+  $entity_types = \Drupal::entityTypeManager()->getDefinitions();
+  foreach ($entity_types as $entity_type) {
+    if ($entity_type->hasViewBuilderClass()) {
+      $rendered_entity = [
+        'field' => [
+          'title' => t('Rendered entity in modal'),
+          'help' => t('Renders an entity in a view mode modal.'),
+          'id' => 'exo_modal_rendered_entity',
+        ],
+      ];
+      $base_table = $entity_type->getBaseTable();
+      $data[$base_table]['exo_modal_rendered_entity'] = $rendered_entity;
+
+      if ($entity_type->isRevisionable()) {
+        $revision_table = $entity_type->getRevisionTable() ?: $entity_type->id() . '_revision';
+        $data[$revision_table]['exo_modal_rendered_entity'] = $rendered_entity;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function exo_modal_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (substr($form_id, 0, 6) == 'views_' && \Drupal::routeMatch()->getRouteName() == 'exo_modal.api.views.view') {
+    if ($form_id == 'views_exposed_form') {
+      $view = $form_state->get('view');
+      if (!$view->ajaxEnabled()) {
+        $form['#access'] = FALSE;
+      }
+    }
+    else {
+      // All other forms are assumed to be views forms. All forms wrapped within
+      // a modal will try to post to the actual view URL. We want them to post
+      // to the modal URL but redirect to the referrer which is the page the
+      // modal was displayed on.
+      $referer = \Drupal::request()->server->get('HTTP_REFERER');
+      $base_url = Request::createFromGlobals()->getSchemeAndHttpHost();
+      $alias = substr($referer, strlen($base_url));
+      $url = Url::fromUri("internal:" . $alias);
+      $form_state->set('modal_redirect', $url);
+      $form['#submit'][] = 'exo_modal_form_redirect_submit';
+      $form['#action'] = \Drupal::request()->getRequestUri();
+    }
+  }
+}
+
+/**
+ * A submit handler that will redirect if modal_redirect is sert on form state.
+ */
+function exo_modal_form_redirect_submit($form, FormStateInterface $form_state) {
+  if ($url = $form_state->get('modal_redirect')) {
+    $form_state->setRedirectUrl($url);
+  }
+}
+
+/**
+ * Implements hook_js_settings_alter().
+ */
+function exo_modal_js_settings_alter(array &$settings, AttachedAssetsInterface $assets) {
+  $settings = exo_modal_js_settings_append_presets($settings);
+}
+
+/**
+ * Implements hook_js_settings_alter().
+ */
+function exo_modal_js_settings_append_presets(array $settings) {
+  if (isset($settings['exoModal']['modals'])) {
+    foreach ($settings['exoModal']['modals'] as &$modal) {
+      if (isset($modal['preset'])) {
+        $presets = exo_presets('exo_modal');
+        if (isset($presets[$modal['preset']]['modal'])) {
+          $settings['exoModal']['presets'][$modal['preset']] = $presets[$modal['preset']]['modal'];
+        }
+      }
+    }
+  }
+  return $settings;
+}

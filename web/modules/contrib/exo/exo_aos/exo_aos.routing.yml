@@ -1,0 +1,17 @@
+exo_aos.settings:
+  path: '/admin/config/exo/aos'
+  defaults:
+    _form: '\Drupal\exo_aos\Form\ExoAosSettingsForm'
+    _title: 'Animate on Scroll Settings'
+  requirements:
+    _permission: 'administer exo aos'
+  options:
+    _admin_route: TRUE
+
+exo_aos.demo:
+  path: '/admin/config/exo/aos/demo'
+  defaults:
+    _controller: '\Drupal\exo_aos\Controller\ExoAosDemoController::demo'
+    _title: 'Animate on Scroll Demo'
+  requirements:
+    _permission: 'view exo aos demo'

@@ -1,0 +1,22 @@
+{#
+/**
+ * @file
+ * Default theme implementation of an item list used to wrap child items.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the containing element.
+ * - children: The rendered child elements of the list.
+ *
+ * @see template_preprocess_exo_toolbar_list()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes }}>
+  {{ first }}
+  {% if children %}
+    <div class="exo-toolbar-list-secondary exo-toolbar-item-aside exo-toolbar-item-tip">
+      {{ children }}
+    </div>
+  {% endif %}
+</div>

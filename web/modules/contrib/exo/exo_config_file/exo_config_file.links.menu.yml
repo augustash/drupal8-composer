@@ -1,0 +1,8 @@
+
+# eXo Config File menu items definition
+entity.exo_config_file.collection:
+  title: 'Config Files'
+  route_name: entity.exo_config_file.collection
+  description: 'List of config files.'
+  parent: system.admin_config_exo
+  weight: 0

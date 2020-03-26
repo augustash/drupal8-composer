@@ -1,0 +1,15 @@
+exo_image.image:
+  path: '/images/{width}/{height}/{fid}/{filename}'
+  defaults:
+    _controller: '\Drupal\exo_image\Controller\ExoImageController::image'
+  requirements:
+    _permission: 'access content'
+exo_image.settings:
+  path: '/admin/config/exo/image'
+  defaults:
+    _form: '\Drupal\exo_image\Form\ExoImageSettingsForm'
+    _title: 'Image Settings'
+  requirements:
+    _permission: 'administer exo image'
+  options:
+    _admin_route: TRUE

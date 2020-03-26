@@ -1,0 +1,151 @@
+@import 'exo-common';
+
+.exo-icon-browser-modal {
+
+  .exo-modal-content {
+    @include flex;
+  }
+}
+
+.exo-icon-browser {
+  @include flex;
+  @include exo-flex-direction(column);
+  flex-grow: 1;
+  padding: rem-calc(10);
+
+  * {
+    box-sizing: border-box !important;
+  }
+
+  > * {
+    width: 100%;
+  }
+
+  .exo-icon-browser-loading {
+    text-align: center;
+    color: grey(50);
+    font-style: italic;
+    width: 100%;
+  }
+
+  .exo-icon-browser-icons {
+    flex: 1 1 100%;
+    display: grid;
+    grid-template-columns: repeat(10, 10%);
+    grid-template-rows: repeat(8, 12.5%);
+    margin-left: 1px;
+    margin-top: 1px;
+
+    .exo-icon-browser-icon {
+      margin-top: -1px;
+      margin-left: -1px;
+      cursor: pointer;
+
+      .exo-icon {
+        @include flex;
+        @include flex-align(center, middle);
+        width: 100%;
+        height: 100%;
+        border: 1px solid grey(20);
+        padding: rem-calc(10);
+        font-size: rem-calc(24);
+        color: grey(90);
+        transition: background-color 300ms;
+
+        &:before {
+          display: block;
+        }
+      }
+
+      &.empty {
+
+        .exo-icon {
+          color: grey(40);
+        }
+      }
+
+      &:hover {
+
+        .exo-icon {
+          background: grey(5);
+        }
+      }
+
+      &.selected {
+
+        .exo-icon {
+          background: grey(15);
+        }
+      }
+    }
+  }
+
+  .exo-icon-browser-search {
+    padding-bottom: rem-calc(5);
+
+    .exo-icon-browser-search-input {
+      width: 100%;
+      border: 1px solid grey(20);
+      height: rem-calc(40);
+      line-height: rem-calc(40);
+      font-size: rem-calc(14);
+      padding: rem-calc(5 10);
+      border-radius: 0;
+      background: grey(0);
+    }
+  }
+
+  .exo-icon-browser-category {
+    padding-bottom: rem-calc(5);
+    margin: 0;
+
+    .exo-icon-browser-category-select {
+      width: 100%;
+      border: 1px solid grey(20);
+      height: rem-calc(40);
+      line-height: rem-calc(40);
+      font-size: rem-calc(14);
+      padding: rem-calc(5);
+      outline: none;
+      box-shadow: none;
+    }
+  }
+
+  .exo-icon-browser-bottom {
+    @include flex;
+    padding-top: rem-calc(5);
+  }
+
+  .exo-icon-browser-info {
+    color: grey(30);
+
+    .exo-icon-browser-info-total {
+      font-style: italic;
+    }
+  }
+
+  .exo-icon-browser-pager {
+    margin-left: auto;
+
+    .exo-icon-browser-pager-link {
+      display: inline-block;
+      cursor: pointer;
+      color: grey(50);
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-left: rem-calc(10);
+      transition: color 300ms;
+      text-decoration: none;
+      user-select: none;
+
+      &.disabled {
+        opacity: 0.3;
+        cursor: default;
+      }
+
+      &:hover {
+        color: grey(90);
+      }
+    }
+  }
+}

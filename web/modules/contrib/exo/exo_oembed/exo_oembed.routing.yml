@@ -1,0 +1,6 @@
+exo.oembed_iframe:
+  path: '/exo/oembed'
+  defaults:
+    _controller: '\Drupal\exo_oembed\Controller\ExoOEmbedIframeController::render'
+  requirements:
+    _permission: 'view media'

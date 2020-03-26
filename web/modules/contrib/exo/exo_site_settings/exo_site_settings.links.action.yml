@@ -1,0 +1,11 @@
+# entity.exo_site_settings.add_form:
+#   route_name: entity.exo_site_settings.add_page
+#   title: 'Add config page'
+#   appears_on:
+#     - entity.exo_site_settings.collection
+
+entity.exo_site_settings_type.add_form:
+  route_name: entity.exo_site_settings_type.add_form
+  title: 'Add Type'
+  appears_on:
+    - entity.exo_site_settings_type.collection

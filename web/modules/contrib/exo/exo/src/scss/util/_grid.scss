@@ -1,0 +1,568 @@
+/////////////////////
+// Exo Grid
+// ---------
+
+/////////////////////
+// Exo Grid Settings
+// ---------
+
+/// Enables the Exo-exo grid.
+/// @type Boolean
+$exo-grid: true !default;
+
+/// The maximum width of a grid container.
+/// @type Number
+$grid-container: $global-width !default;
+
+/// The number of columns used in the grid.
+/// @type Number
+$grid-columns: 12 !default;
+
+/// The amount of margin between cells at different screen sizes when using the margin grid. To use just one size, set the variable to a number instead of a map.
+/// @type Map | Length
+$grid-margin-gutters: (
+  small: 20px,
+  medium: 30px
+) !default;
+
+/// The amount of padding in cells at different screen sizes when using the padding grid. To use just one size, set the variable to a number instead of a map.
+/// @type Map | Length
+$grid-padding-gutters: $grid-margin-gutters !default;
+
+/// The amount of padding to use when padding the grid-container.
+/// @type Map | Length
+$grid-container-padding: $grid-padding-gutters !default;
+
+/// The maximum width to apply to a grid container
+/// @type Number
+$grid-container-max: $global-width !default;
+
+/// The maximum number of cells in an Exo block grid.
+/// @type Number
+$exo-block-grid-max: 8 !default;
+
+/////////////////////
+// Exo Grid - Gutters
+// ---------
+
+/// Calculate gutter size.
+///
+/// @param {List} $gutter-position [right left] - The position to apply gutters to. Accepts `top`, `bottom`, `left`, `right` in any combination.
+/// @param {Boolean} $gutter-output [true] - Whether or not to output gutters
+/// @param {Number|Map} $gutters [$grid-margin-gutters] - Map or single value for gutters.
+/// @param {Keyword} $gutter-type [margin] - Map or single value for gutters.
+/// @param {String} $breakpoint [null] - The name of the breakpoint size in your gutters map to get the size from. If using with the `breakpoint()` mixin this will be set automatically unless manually entered.
+@function exo-gutters-value(
+  $gutter-position: right left,
+  $gutter-type: margin,
+  $gutters: $grid-margin-gutters,
+  $breakpoint: null
+) {
+  $bp-is-fallback: false;
+
+  @if ($breakpoint == null) {
+    // If `$bp-size` is available then use this, otherwise revert to the smallest bp.
+    @if(variable-exists(-exo-size) and type-of($-exo-size) != 'number') and $-exo-size != null {
+      $breakpoint: $-exo-size;
+    }
+    @else {
+      $breakpoint: $-exo-zero-breakpoint;
+      $bp-is-fallback: true;
+    }
+  }
+
+  // Get the gutter for the given breakpoint/value.
+  $gutter: -exo-get-bp-val($gutters, $breakpoint);
+  // If the breakpoint is a fallback, use a fallback gutter as well
+  @if ($bp-is-fallback == true and $gutter == null) {
+    $gutter: 0;
+  }
+
+  @return $gutter;
+}
+
+/// Create gutters for a cell/container.
+///
+/// @param {Number|Map} $gutters [$grid-margin-gutters] - Map or single value for gutters.
+/// @param {Keyword} $gutter-type [margin] - Type of gutter to output. Accepts either margin or padding.
+/// @param {List} $gutter-position [right left] - The position to apply gutters to. Accepts `top`, `bottom`, `left`, `right` in any combination.
+/// @param {Boolean} $negative [false] - Whether to apply the gutter as a negative value. Commonly used for nested grids.
+@mixin exo-gutters-set(
+  $gutters: $grid-margin-gutters,
+  $gutter-type: margin,
+  $gutter-position: right left,
+  $negative: false
+) {
+  $operator: if($negative, '-', '');
+
+  // If we have declared negative gutters, force type to `margin.
+  $gutter-type: if($negative, 'margin', $gutter-type);
+
+  // Output our margin gutters.
+  @if (type-of($gutters) == 'map') {
+    @include -exo-breakpoint-value(auto, $gutters) {
+      $gutter: rem-calc($-exo-bp-value) / 2;
+
+      // Loop through each gutter position
+      @each $value in $gutter-position {
+        #{$gutter-type}-#{$value}: unquote('#{$operator}#{$gutter}');
+      }
+    }
+  }
+  @else if (type-of($gutters) == 'number') {
+    $gutter: rem-calc($gutters) / 2;
+
+    // Loop through each gutter position
+    @each $value in $gutter-position {
+      #{$gutter-type}-#{$value}: unquote("#{$operator}#{$gutter}");
+    }
+  }
+}
+
+/////////////////////
+// Exo Grid - Grid
+// ---------
+
+/// Creates a max width container, designed to house your grid content.
+///
+/// @param {Number} $width [$grid-container] - a width to limit the container to.
+/// @param {Number} $padding [$grid-container-padding] - paddings of the container.
+@mixin exo-grid-container(
+  $width: $grid-container,
+  $padding: $grid-container-padding
+) {
+  @include exo-gutters-set($gutters: $padding, $gutter-type: padding);
+
+  max-width: $width;
+  margin: 0 auto;
+}
+
+/////////////////////
+// Exo Grid - Nested Grid
+// ---------
+/// Creates a nested grid container, designed to house your grid content.
+///
+/// @param {Number} $width [$grid-container] - a width to limit the container to.
+/// @param {Number} $padding [$grid-container-padding] - paddings of the container.
+@mixin exo-grid-container-nested(
+  $width: $grid-container,
+  $padding: $grid-container-padding
+) {
+  @include exo-gutters-set($gutters: $padding, $gutter-type: margin, $gutter-position: left right, $negative: true);
+
+  max-width: $width;
+}
+
+/// Creates a container for your flex cells.
+///
+/// @param {Keyword} $direction [horizontal] - Either horizontal or vertical direction of cells within.
+/// @param {Boolean} $wrap [true] - If the cells within should wrap or not.
+@mixin exo-grid(
+  $direction: horizontal,
+  $wrap: true
+) {
+  $direction: if($direction == 'horizontal', row, column);
+  $wrap: if($wrap, wrap, nowrap);
+
+  display: flex;
+  flex-flow: $direction $wrap;
+}
+
+/////////////////////
+// Exo Grid - Cell
+// ---------
+
+/// Calculate the percentage size of a cell.
+///
+/// @param {Number|List} $size [$grid-columns] - Size to make the cell. You can pass a value in multiple formats, such as `6`, `50%`, `1 of 2` or `1/3`.
+@function exo-cell-size(
+  $size: $grid-columns
+) {
+  // Parsing percents, decimals, n of n and number counts
+  @if type-of($size) == 'number' {
+    @if unit($size) == '%' {
+      $size: $size;
+    }
+    @else if $size < 1 {
+      $size: percentage($size);
+    }
+    @else {
+      $size: percentage($size / $grid-columns);
+    }
+  }
+
+  // Parsing "n of n" or "n/n" expressions
+  @else if type-of($size) == 'list' {
+    @if length($size) != 3 {
+      @error 'Wrong syntax for exo-cell-size(). Use the format "n of n" or "n/n".';
+    }
+    @else {
+      $size: percentage(nth($size, 1) / nth($size, 3));
+    }
+  }
+  // Anything else is incorrect
+  @else {
+    @error 'Wrong syntax for exo-cell-size(). Use a number, decimal, percentage, or "n of n" / "n/n".';
+  }
+
+  @return $size;
+}
+
+/// Sets base flex properties for cells.
+///
+/// @param {Keyword} $size [full] - The size of your cell. Accepts `full`, `auto`, `shrink` or `grow`.
+@mixin exo-cell-base($size: full) {
+  @if($size == 'full') {
+    // This is the base style, all others inherit from it
+    flex: 0 0 auto;
+    min-height: 0px; // sass-lint:disable-line zero-unit
+    min-width: 0px; // sass-lint:disable-line zero-unit
+  }
+  @else if ($size == 'auto') {
+    flex: 1 1 0px; // sass-lint:disable-line zero-unit
+  }
+  @else if ($size == 'shrink') {
+    flex: 0 0 auto;
+  }
+  @else if ($size == 'grow') {
+    flex: 1 0 auto;
+  }
+}
+
+/// Resets a cells width (or height if vertical is true) as well as strips its gutters.
+///
+/// @param {Boolean} $vertical [false] - Set to true to output vertical (height) styles rather than widths.
+@mixin exo-cell-reset($vertical: true) {
+  $direction: if($vertical == true, width, height);
+  #{$direction}: auto;
+  max-#{$direction}: none;
+}
+
+// Sets our cell widths or heights depending on gutter type.
+@mixin -exo-cell-properties($size, $margin-gutter, $vertical) {
+  $direction: if($vertical == true, height, width);
+  @if($size == 'full') {
+    $val: if($margin-gutter == 0, 100%, calc(100% - #{rem-calc($margin-gutter)}));
+    #{$direction}: $val;
+  }
+  @else if ($size == 'auto') {
+    #{$direction}: auto;
+    $val: if($margin-gutter == 0, 100%, calc(100% - #{rem-calc($margin-gutter)}));
+  }
+  @else if ($size == 'shrink') {
+    #{$direction}: auto;
+  }
+  @else {
+    $val: if($margin-gutter == 0, #{exo-cell-size($size)}, calc(#{exo-cell-size($size)} - #{rem-calc($margin-gutter)}));
+    #{$direction}: $val;
+  }
+}
+
+/// Creates a cell for your grid.
+///
+/// @param {Keyword|Number} $size [full] - The size of your cell. Can be `full` (default) for 100% width, `auto` to use up available space and `shrink` to use up only required space.
+/// @param {List} $gutter-position [right left] - The position to apply gutters to. Accepts `top`, `bottom`, `left`, `right` in any combination.
+/// @param {Boolean} $gutter-output [true] - Whether or not to output gutters
+/// @param {Number|Map} $gutters [$grid-margin-gutters] - Map or single value for gutters.
+/// @param {Keyword} $gutter-type [margin] - Map or single value for gutters.
+/// @param {String} $breakpoint [null] - The name of the breakpoint size in your gutters map to get the size from. If using with the `breakpoint()` mixin this will be set automatically unless manually entered.
+/// @param {Boolean} $vertical [false] - Set to true to output vertical (height) styles rather than widths.
+@mixin exo-cell(
+  $size: full,
+  $gutter-position: right left,
+  $gutter-type: margin,
+  $gutter-output: true,
+  $gutters: $grid-margin-gutters,
+  $breakpoint: null,
+  $vertical: false
+) {
+  $gutter: exo-gutters-value($gutter-position, $gutter-type, $gutters, $breakpoint);
+  @if($gutter != null) {
+    // Base flex properties
+    @include exo-cell-base($size);
+
+    @if($gutter-type == 'margin') {
+      @include -exo-cell-properties($size, $gutter, $vertical);
+    }
+    @else {
+      @include -exo-cell-properties($size, 0, $vertical);
+    }
+
+    @if $gutter-output {
+      @include exo-gutters-set($gutter, $gutter-type, $gutter-position);
+    }
+  }
+  @else {
+    @warn 'exo-cell: no gutters were found in `$gutters` for "$breakpoint: {$breakpoint}", cell was not generated`';
+  }
+}
+
+@mixin exo-gutters(
+  $gutter-position: right left,
+  $gutter-type: margin,
+  $gutters: $grid-margin-gutters,
+  $breakpoint: null,
+  $negative: false
+) {
+  $gutter: exo-gutters-value($gutter-position, $gutter-type, $gutters, $breakpoint);
+  @include exo-gutters-set($gutter, $gutter-type, $gutter-position, $negative);
+}
+
+/// Creates a single breakpoint sized grid. Used to generate our grid classes.
+///
+/// @param {Keyword|Number} $size [full] - The size of your cell. Can be `full` (default) for 100% width, `auto` to use up available space and `shrink` to use up only required space.
+/// @param {Boolean} $gutter-output [true] - Whether or not to output gutters
+/// @param {Number|Map} $gutters [$grid-margin-gutters] - Map or single value for gutters.
+/// @param {Keyword} $gutter-type [margin] - Map or single value for gutters.
+/// @param {String} $breakpoint [null] - The name of the breakpoint size in your gutters map to get the size from. If using with the `breakpoint()` mixin this will be set automatically unless manually entered.
+/// @param {Boolean} $vertical [false] - Set to true to output vertical (height) styles rather than widths.
+@mixin exo-cell-static(
+  $size: full,
+  $gutter-output: true,
+  $gutters: $grid-margin-gutters,
+  $gutter-type: margin,
+  $breakpoint: $-exo-zero-breakpoint,
+  $vertical: false
+) {
+
+  $gutter: -exo-get-bp-val($gutters, $breakpoint);
+  $gutter-position: if($vertical == true, top bottom, left right);
+
+  @if($gutter-type == 'margin') {
+    @include -exo-cell-properties($size, $gutter, $vertical);
+  }
+  @else {
+    @include -exo-cell-properties($size, 0, $vertical);
+  }
+
+  // If we want to output the gutters
+  @if($gutter-output) {
+    // TODO: Figure out if we need to pass breakpoint in here too.
+    @include exo-gutters-set($gutter, $gutter-type, $gutter-position);
+  }
+}
+
+/////////////////////
+// Exo Grid - Frame
+// ---------
+
+/// Modifies a grid to give it "frame" behavior (no overflow, no wrap, stretch behavior)
+///
+/// @param {Boolean} $vertical [false] - Is grid vertical or horizontal. Should match grid.
+/// @param {Boolean} $nested [false] - Is grid nested or not. If nested is true this sets the frame to 100% height, otherwise will be 100vh.
+/// @param {Number|Map} $gutters [null] - Map or single value for gutters.
+/// @param {String} $breakpoint [null] - The name of the breakpoint size in your gutters map to get the size from.
+/// @param {Boolean} $include-base [true] - Include the base styles that don't vary per breakpoint.
+@mixin exo-grid-frame(
+  $vertical: false,
+  $nested: false,
+  $gutters: null,
+  $breakpoint: null,
+  $include-base: true
+) {
+
+  @if $include-base {
+    overflow: hidden;
+    position: relative;
+    flex-wrap: nowrap;
+    align-items: stretch;
+  }
+
+  @if $breakpoint == null and type-of($gutters) == 'map' {
+    @include -exo-each-breakpoint() {
+      @include exo-grid-frame($vertical, $nested, $gutters, $-exo-size, false);
+    }
+  } @else {
+    // Get our gutters if applicable
+    $gutter: -exo-get-bp-val($gutters, $breakpoint);
+
+    // If we have a gutter, add it to the width/height
+    @if $gutter {
+      @if $vertical == true {
+        $unit: if($nested == true, 100%, 100vh);
+        $gutter: rem-calc($gutter);
+        height: calc(#{$unit} + #{$gutter});
+      } @else {
+        $unit: if($nested == true, 100%, 100vw);
+        $gutter: rem-calc($gutter);
+        width: calc(#{$unit} + #{$gutter});
+      }
+    }
+    @else {
+      @if $vertical == true {
+        height: if($nested == true, 100%, 100vh);
+      } @else {
+        width: if($nested == true, 100%, 100vw);
+      }
+    }
+  }
+}
+
+/// Modifies a cell to give it "block" behavior (overflow auto, inertial scrolling)
+///
+/// @param {Boolean} $vertical [false] - Is grid vertical or horizontal. Should match grid.
+@mixin exo-cell-block(
+  $vertical: false
+) {
+  $property: if($vertical == true, 'overflow-y', 'overflow-x');
+
+  @if $vertical == true {
+    overflow-y: auto;
+    max-height: 100%;
+    min-height: 100%;
+  } @else {
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+/// Container for inside a grid frame containing multiple blocks. Typically used
+/// as a modifier for a `.cell` to allow the cell to pass along flex sizing
+/// constraints / from parents to children.
+@mixin exo-cell-block-container() {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+
+  > .grid-x {
+    max-height: 100%;
+    flex-wrap: nowrap;
+  }
+}
+
+/////////////////////
+// Exo Grid - Position
+// ---------
+/// Offsets a column to the right/bottom by `$n` columns.
+///
+/// @param {Number|List} $n - Size to offset by. You can pass in any value accepted by the `exo-cell()` mixin, such as `6`, `50%`, or `1 of 2`.
+/// @param {Number|Map} $gutters [$grid-margin-gutters] Map of gutters or single value to use for responsive gutters.
+/// @param {Keyword} $gutter-type [margin] The type of gutter to use. Can be `margin` or `padding`
+/// @param {Number|Array|Keyword} $breakpoint [$-exo-zero-breakpoint] - Single value, breakpoint name, or list of breakpoint names to use for `$gutters`. See `-exo-breakpoint-value()`.
+/// @param {Boolean} $vertical [false] Sets the direction of the offset. If set to true will apply margin-top instead.
+@mixin exo-cell-offset(
+  $n,
+  $gutters: $grid-margin-gutters,
+  $gutter-type: margin,
+  $breakpoint: $-exo-zero-breakpoint,
+  $vertical: false
+) {
+  $direction: if($vertical, 'top', $global-left);
+
+  @include -exo-breakpoint-value($breakpoint, $gutters) {
+    $gutter: rem-calc($-exo-bp-value) / 2;
+    $gutter-margin: if($gutter-type == 'margin', $gutter, 0);
+    $size: if($gutter-margin == 0, #{exo-cell-size($n)}, calc(#{exo-cell-size($n)} + #{$gutter-margin}));
+
+    margin-#{$direction}: #{$size};
+  }
+}
+
+/////////////////////
+// Exo Grid - Layout
+// ---------
+/// Sizes child elements so that `$n` number of items appear on each row.
+///
+/// @param {Number} $n - Number of elements to display per row.
+/// @param {String} $selector ['.cell'] - Selector(s) to use for child elements.
+/// @param {Boolean} $gutter-output [true] - Whether or not to output gutters
+/// @param {Number|Map} $gutters [$grid-margin-gutters] - Map or single value for gutters.
+/// @param {Keyword} $gutter-type [margin] - Type of gutter to output. Accepts `margin` or `padding`.
+/// @param {List} $gutter-position [right left] - The position to apply gutters to. Accepts `top`, `bottom`, `left`, `right` in any combination.
+/// @param {String} $breakpoint [null] - The breakpoint to use for the cell generation.
+/// @param {Boolean} $vertical [false] - Set to true to output vertical (height) styles rather than widths.
+@mixin exo-grid-layout(
+  $n,
+  $selector: '.cell',
+  $gutter-output: true,
+  $gutters: $grid-margin-gutters,
+  $gutter-type: margin,
+  $gutter-position: right left,
+  $breakpoint: null,
+  $vertical: false
+) {
+  $size: percentage(1/$n);
+
+  & > #{$selector} {
+    @include exo-cell($size, $gutter-output, $gutters, $gutter-type, $gutter-position, $breakpoint, $vertical);
+  }
+}
+
+/////////////////////
+// Exo Grid - Collapse
+// ---------
+/// Collapses the grid a cells within it.
+///
+/// @param {String} $selector [.cell] - The child element to remove the gutter from.
+/// @param {Keyword} $gutter-type [margin] - The type of gutter to remove.
+/// @param {List} $gutter-position [right left] - The positions to remove gutters from. Accepts `top`, `bottom`, `left`, `right` in any combination.
+/// @param {Keyword} $min-breakpoint [$-exo-zero-breakpoint] - Minimum breakpoint in `$breakpoint-classes` for which to collapse the gutter.
+@mixin exo-grid-collapse(
+  $selector: '.cell',
+  $gutter-type: margin,
+  $gutter-position: right left,
+  $min-breakpoint: $-exo-zero-breakpoint
+) {
+  // First, lets negate any margins on the top level
+  @if ($gutter-type == 'margin') {
+
+    @include breakpoint($min-breakpoint) {
+      @each $value in $gutter-position {
+        margin-#{$value}: 0;
+      }
+
+      > #{$selector} {
+        @each $value in $gutter-position {
+          margin-#{$value}: 0;
+        }
+      }
+    }
+
+    $excluded-bps: -exo-breakpoints-less-than($min-breakpoint);
+
+    // Output new widths to not include gutters
+    @each $bp in $breakpoint-classes {
+      @if(sl-contain($excluded-bps, $bp)) {
+        @include breakpoint($min-breakpoint) {
+          @for $i from 1 through $grid-columns {
+            // Sizing (percentage)
+            > .#{$bp}-#{$i} {
+              @include exo-cell-static($i, $gutter-output: false, $gutter-type: padding);
+            }
+          }
+        }
+      } @else {
+        @include breakpoint($bp) {
+          @for $i from 1 through $grid-columns {
+            // Sizing (percentage)
+            > .#{$bp}-#{$i} {
+              @include exo-cell-static($i, $gutter-output: false, $gutter-type: padding);
+            }
+          }
+        }
+      }
+    }
+  }
+  @else {
+
+    @include breakpoint($min-breakpoint) {
+      @each $value in $gutter-position {
+        margin-#{$value}: 0;
+      }
+
+      > #{$selector} {
+        @each $value in $gutter-position {
+          padding-#{$value}: 0;
+        }
+      }
+    }
+  }
+}
+
+/////////////////////
+// Exo Grid - Classes
+// ---------
+// Not sure that these are needed or not yet for our use case.

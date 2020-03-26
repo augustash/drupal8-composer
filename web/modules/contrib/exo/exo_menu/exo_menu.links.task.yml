@@ -1,0 +1,9 @@
+exo_menu.settings:
+  route_name: exo_menu.settings
+  base_route: exo_menu.settings
+  title: 'Settings'
+
+exo_menu.items:
+  route_name: exo_menu.demo
+  base_route: exo_menu.settings
+  title: 'Demo'

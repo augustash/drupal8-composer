@@ -1,0 +1,15 @@
+uuid: da1a720e-9166-4397-8235-6f7cf2f6db6d
+langcode: en
+status: true
+dependencies: {  }
+name: exo_media_preview
+label: 'eXo Media | Preview'
+effects:
+  6068986f-3dfd-4f2c-a0c5-6a6c2a319491:
+    uuid: 6068986f-3dfd-4f2c-a0c5-6a6c2a319491
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 260
+      height: 200
+      anchor: center-center

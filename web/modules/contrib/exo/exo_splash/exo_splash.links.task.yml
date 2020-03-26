@@ -1,0 +1,4 @@
+exo_splash.settings:
+  route_name: exo_splash.settings
+  base_route: exo_splash.settings
+  title: 'Settings'

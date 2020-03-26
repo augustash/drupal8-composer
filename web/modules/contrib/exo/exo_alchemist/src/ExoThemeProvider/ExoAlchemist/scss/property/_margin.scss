@@ -1,0 +1,46 @@
+$sizes: 10, 20, 30, 60, 90, 120;
+
+@each $size in $sizes {
+
+  .exo-modifier--margin-#{$size} {
+    margin: $global-margin;
+
+    @include breakpoint(medium) {
+      margin: max($global-margin, rem-calc($size));
+    }
+
+    @include breakpoint(large) {
+      margin: rem-calc($size);
+    }
+  }
+
+  .exo-modifier--margin-v-#{$size} {
+    margin-top: $global-margin;
+    margin-bottom: $global-margin;
+
+    @include breakpoint(medium) {
+      margin-top: max($global-margin, rem-calc($size));
+      margin-bottom: max($global-margin, rem-calc($size));
+    }
+
+    @include breakpoint(large) {
+      margin-top: rem-calc($size);
+      margin-bottom: rem-calc($size);
+    }
+  }
+
+  .exo-modifier--margin-h-#{$size} {
+    margin-left: $global-margin;
+    margin-right: $global-margin;
+
+    @include breakpoint(medium) {
+      margin-left: max($global-margin, rem-calc($size));
+      margin-right: max($global-margin, rem-calc($size));
+    }
+
+    @include breakpoint(large) {
+      margin-left: rem-calc($size);
+      margin-right: rem-calc($size);
+    }
+  }
+}

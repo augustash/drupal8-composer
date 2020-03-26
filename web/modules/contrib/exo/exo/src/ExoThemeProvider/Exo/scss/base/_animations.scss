@@ -1,0 +1,394 @@
+.exo-animate-fadeOut {
+  animation: exo-animate-fadeOut 0.5s;
+  animation-fill-mode: forwards;
+}
+
+.exo-animate-fadeIn {
+  animation: exo-animate-fadeIn 0.5s;
+}
+
+.exo-animate-comingIn {
+  animation: exo-animate-comingIn 0.5s ease;
+}
+
+.exo-animate-comingOut {
+  animation: exo-animate-comingOut 0.5s cubic-bezier(0.16, 0.81, 0.32, 1);
+  animation-fill-mode: forwards;
+}
+
+.exo-animate-bounceInDown {
+  animation: exo-animate-bounceInDown 0.7s ease;
+}
+
+.exo-animate-bounceOutDown {
+  animation: exo-animate-bounceOutDown 0.7s ease;
+}
+
+.exo-animate-bounceInUp {
+  animation: exo-animate-bounceInUp 0.7s ease;
+}
+
+.exo-animate-bounceOutUp {
+  animation: exo-animate-bounceOutUp 0.7s ease;
+}
+
+.exo-animate-fadeInDown {
+  animation: exo-animate-fadeInDown 0.7s cubic-bezier(0.16, 0.81, 0.32, 1);
+}
+
+.exo-animate-fadeOutDown {
+  animation: exo-animate-fadeOutDown 0.5s ease;
+}
+
+.exo-animate-fadeInUp {
+  animation: exo-animate-fadeInUp 0.7s cubic-bezier(0.16, 0.81, 0.32, 1);
+}
+
+.exo-animate-fadeOutUp {
+  animation: exo-animate-fadeOutUp 0.5s ease;
+}
+
+.exo-animate-fadeInLeft {
+  animation: exo-animate-fadeInLeft 0.7s cubic-bezier(0.16, 0.81, 0.32, 1);
+}
+
+.exo-animate-fadeOutLeft {
+  animation: exo-animate-fadeOutLeft 0.5s ease;
+}
+
+.exo-animate-fadeInRight {
+  animation: exo-animate-fadeInRight 0.7s cubic-bezier(0.16, 0.81, 0.32, 1);
+}
+
+.exo-animate-fadeOutRight {
+  animation: exo-animate-fadeOutRight 0.5s ease;
+}
+
+.exo-animate-flipInX {
+  animation: exo-animate-flipInX 0.7s ease;
+}
+
+.exo-animate-flipOutX {
+  animation: exo-animate-flipOutX 0.7s ease;
+}
+
+.exo-animate-expandInY {
+  animation: exo-animate-expandInY 0.5s ease;
+}
+
+.exo-animate-expandOutY {
+  animation: exo-animate-expandOutY 0.3s ease;
+}
+
+@keyframes exo-animate-comingIn {
+  0% {
+    opacity: 0;
+    /*transform: translateY(-20px) perspective( 600px ) rotateX( 10deg );*/
+    transform: scale(0.9) translateY(-20px) perspective(600px) rotateX(10deg);
+  }
+
+  100% {
+    opacity: 1;
+    /*transform: scale(1) translateY(0) perspective( 600px ) rotateX( 0 ); */
+    transform: scale(1) translateY(0) perspective(600px) rotateX(0);
+  }
+}
+
+@keyframes exo-animate-comingOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+@keyframes exo-animate-fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes exo-animate-fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes exo-animate-slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes exo-animate-slideDown {
+  0% {
+    opacity: 0;
+    transform: scale(1, 0) translateY(-40px);
+    transform-origin: center top;
+  }
+}
+
+@keyframes exo-animate-revealIn {
+  0% {
+    opacity: 0;
+    transform: scale3d(0.3, 0.3, 1);
+  }
+}
+
+@keyframes exo-animate-bounceInDown {
+  from, 60%, 75%, 90%, to {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -1000px, 0);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translate3d(0, 25px, 0);
+  }
+
+  75% {
+    transform: translate3d(0, -10px, 0);
+  }
+
+  90% {
+    transform: translate3d(0, 5px, 0);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+@keyframes exo-animate-bounceOutDown {
+  20% {
+    transform: translate3d(0, 10px, 0);
+  }
+
+  40%, 45% {
+    opacity: 1;
+    transform: translate3d(0, -20px, 0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(0, 1000px, 0);
+  }
+}
+
+@keyframes exo-animate-bounceInUp {
+  from, 60%, 75%, 90%, to {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1000px, 0);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translate3d(0, -20px, 0);
+  }
+
+  75% {
+    transform: translate3d(0, 10px, 0);
+  }
+
+  90% {
+    transform: translate3d(0, -5px, 0);
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes exo-animate-bounceOutUp {
+  20% {
+    transform: translate3d(0, -10px, 0);
+  }
+
+  40%, 45% {
+    opacity: 1;
+    transform: translate3d(0, 20px, 0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(0, -1000px, 0);
+  }
+}
+
+@keyframes exo-animate-fadeInDown {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -100px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes exo-animate-fadeOutDown {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(0, 100px, 0);
+  }
+}
+
+@keyframes exo-animate-fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 100px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes exo-animate-fadeOutUp {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(0, -100px, 0);
+  }
+}
+
+@keyframes exo-animate-fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translate3d(-100px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes exo-animate-fadeOutLeft {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(-100px, 0, 0);
+  }
+}
+
+@keyframes exo-animate-fadeInRight {
+  from {
+    opacity: 0;
+    transform: translate3d(100px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes exo-animate-fadeOutRight {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(100px, 0, 0);
+  }
+}
+
+@keyframes exo-animate-flipInX {
+  0% {
+    transform: perspective(400px) rotateX(60deg);
+    opacity: 0;
+  }
+
+  40% {
+    transform: perspective(400px) rotateX(-10deg);
+  }
+
+  70% {
+    transform: perspective(400px) rotateX(10deg);
+  }
+
+  100% {
+    transform: perspective(400px) rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes exo-animate-flipOutX {
+  from {
+    transform: perspective(400px);
+  }
+
+  30% {
+    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+    opacity: 1;
+  }
+
+  to {
+    transform: perspective(400px) rotate3d(1, 0, 0, 40deg);
+    opacity: 0;
+  }
+}
+
+@keyframes exo-animate-expandInY {
+  from {
+    transform: scaleY(0);
+    transform-origin: center top;
+  }
+
+  to {
+    transform: scaleY(1);
+    transform-origin: center top;
+  }
+}
+
+@keyframes exo-animate-expandOutY {
+  from {
+    transform: scaleY(1);
+    transform-origin: center top;
+  }
+
+  to {
+    transform: scaleY(0);
+    transform-origin: center top;
+  }
+}

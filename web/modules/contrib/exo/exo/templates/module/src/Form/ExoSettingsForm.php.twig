@@ -1,0 +1,30 @@
+{% extends "base/class.php.twig" %}
+
+{% block file_path %}
+\Drupal\{{module}}\Form\{{ class }}.
+{% endblock %}
+
+{% block namespace_class %}
+namespace Drupal\{{module}}\Form;{% endblock %}
+
+{% block use_class_services %}
+
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\exo\ExoSettingsFormBase;
+{% endblock %}
+
+{% block class_declaration %}
+/**
+ * Class {{ class }}.
+ */
+class {{ class }}Form extends ExoSettingsFormBase {% endblock %}
+{% block class_construct %}
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('{{id}}')
+    );
+  }
+{% endblock %}

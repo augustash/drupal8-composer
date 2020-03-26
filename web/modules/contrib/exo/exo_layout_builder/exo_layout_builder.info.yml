@@ -1,0 +1,9 @@
+name: 'eXo Layout Builder'
+type: module
+description: 'Component creation and management.'
+core: 8.x
+package: 'eXo'
+dependencies:
+  - exo:exo
+  - exo:exo_config_file
+  - drupal:layout_builder

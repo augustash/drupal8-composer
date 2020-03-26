@@ -1,0 +1,23 @@
+uuid: 5980480a-bb0e-40e0-95e7-affe84e3f0b2
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_site_settings.exo_site_settings_type.social
+    - field.storage.exo_site_settings.field_pinterest
+  module:
+    - link
+id: exo_site_settings.social.field_pinterest
+field_name: field_pinterest
+entity_type: exo_site_settings
+bundle: social
+label: Pinterest
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 16
+  title: 0
+field_type: link

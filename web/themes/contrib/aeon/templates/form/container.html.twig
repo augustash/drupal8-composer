@@ -1,0 +1,23 @@
+{#
+/**
+ * @file
+ * Theme override of a container used to wrap child elements.
+ *
+ * @see template_preprocess_container()
+ */
+#}
+{%
+  set classes = [
+    has_parent ? 'js-form-wrapper',
+    has_parent ? 'form-wrapper',
+  ]
+%}
+{% if show_wrapper %}
+  <{{ tag }}{{ attributes.addClass(classes) }}>
+{% endif %}
+
+  {{ children }}
+
+{% if show_wrapper %}
+  </{{ tag }}>
+{% endif %}

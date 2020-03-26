@@ -1,0 +1,15 @@
+base:
+  version: VERSION
+  css:
+    component:
+      css/exo.fixed.css: {}
+  js:
+    js/exo.fixed.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/underscore
+    - core/drupal
+    - core/drupalSettings
+    - core/drupal.displace
+    - exo/exo

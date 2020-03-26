@@ -1,0 +1,195 @@
+system.admin_config_exo_alchemist:
+  path: '/admin/config/exo/alchemist'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Alchemist'
+  requirements:
+    _permission: 'administer exo alchemist'
+
+exo_alchemist.component.collection:
+  path: '/admin/config/exo/alchemist/library'
+  defaults:
+    _controller: '\Drupal\exo_alchemist\Controller\ExoComponentLibraryController::listComponents'
+    _title: 'Component Library'
+  requirements:
+    _permission: 'administer exo alchemist'
+
+exo_alchemist.component.refresh:
+  path: '/admin/config/exo/alchemist/library/refresh'
+  defaults:
+    _controller: '\Drupal\exo_alchemist\Controller\ExoComponentLibraryController::refreshComponents'
+    _title: 'Refresh Components'
+  requirements:
+    _permission: 'administer exo alchemist'
+
+exo_alchemist.component.preview:
+  path: '/admin/config/exo/alchemist/library/{definition}/preview'
+  defaults:
+    # _controller: '\Drupal\exo_alchemist\Controller\ExoComponentLibraryController::previewComponent'
+    _form: '\Drupal\exo_alchemist\Form\ExoComponentPreviewForm'
+    _title: 'Preview'
+  options:
+    _admin_route: FALSE
+    parameters:
+      definition:
+        exo_component_plugin: 'view'
+  requirements:
+    _permission: 'administer exo alchemist'
+    _exo_component: 'definition.view'
+
+exo_alchemist.component.install:
+  path: '/admin/config/exo/alchemist/library/{definition}/install'
+  defaults:
+    _form: '\Drupal\exo_alchemist\Form\ExoComponentInstallForm'
+    _title: 'Confirm installation of component'
+  options:
+    _admin_route: TRUE
+    parameters:
+      definition:
+        exo_component_plugin: 'create'
+  requirements:
+    _permission: 'administer exo alchemist'
+    _exo_component: 'definition.create'
+
+exo_alchemist.component.update:
+  path: '/admin/config/exo/alchemist/library/{definition}/update'
+  defaults:
+    _form: '\Drupal\exo_alchemist\Form\ExoComponentUpdateForm'
+    _title: 'Confirm update of component'
+  options:
+    _admin_route: TRUE
+    parameters:
+      definition:
+        exo_component_plugin: 'update'
+  requirements:
+    _permission: 'administer exo alchemist'
+    _exo_component: 'definition.update'
+
+exo_alchemist.component.uninstall:
+  path: '/admin/config/exo/alchemist/library/{definition}/uninstall'
+  defaults:
+    _form: '\Drupal\exo_alchemist\Form\ExoComponentUninstallForm'
+    _title: 'Confirm removal of component'
+  options:
+    _admin_route: TRUE
+    parameters:
+      definition:
+        exo_component_plugin: 'delete'
+  requirements:
+    _permission: 'administer exo alchemist'
+    _exo_component: 'definition.delete'
+
+layout_builder.choose_component:
+  path: '/layout_builder/choose/component/{section_storage_type}/{section_storage}/{delta}'
+  defaults:
+   _controller: '\Drupal\exo_alchemist\Controller\ExoComponentChooseController::build'
+   _title: 'Choose a component for this section'
+  requirements:
+    _layout_builder_access: 'view'
+  options:
+    _admin_route: TRUE
+    parameters:
+      section_storage:
+        layout_builder_tempstore: TRUE
+
+layout_builder.add_component:
+  path: '/layout_builder/add/component/{section_storage_type}/{section_storage}/{delta}/{plugin_id}'
+  defaults:
+    _controller: '\Drupal\exo_alchemist\Controller\ExoComponentAddController::build'
+  requirements:
+    _layout_builder_access: 'view'
+  options:
+    _admin_route: TRUE
+    parameters:
+      section_storage:
+        layout_builder_tempstore: TRUE
+
+layout_builder.field.update:
+  path: '/layout_builder/field/update/{section_storage_type}/{section_storage}/{delta}/{region}/{uuid}/{path}'
+  defaults:
+    _form: '\Drupal\exo_alchemist\Form\ExoFieldUpdateForm'
+    _title: 'Update'
+  requirements:
+    _layout_builder_access: 'view'
+  options:
+    _admin_route: TRUE
+    parameters:
+      section_storage:
+        layout_builder_tempstore: TRUE
+
+layout_builder.field.clone:
+  path: '/layout_builder/field/clone/{section_storage_type}/{section_storage}/{delta}/{region}/{uuid}/{path}'
+  defaults:
+    _controller: '\Drupal\exo_alchemist\Controller\ExoFieldCloneController::build'
+    _title: 'Clone component field'
+  requirements:
+    _layout_builder_access: 'view'
+  options:
+    _admin_route: TRUE
+    parameters:
+      section_storage:
+        layout_builder_tempstore: TRUE
+
+layout_builder.field.prev:
+  path: '/layout_builder/field/prev/{section_storage_type}/{section_storage}/{delta}/{region}/{uuid}/{path}'
+  defaults:
+    _controller: '\Drupal\exo_alchemist\Controller\ExoFieldPrevController::build'
+    _title: 'Move a component field backward'
+  requirements:
+    _layout_builder_access: 'view'
+  options:
+    _admin_route: TRUE
+    parameters:
+      section_storage:
+        layout_builder_tempstore: TRUE
+
+layout_builder.field.next:
+  path: '/layout_builder/field/next/{section_storage_type}/{section_storage}/{delta}/{region}/{uuid}/{path}'
+  defaults:
+    _controller: '\Drupal\exo_alchemist\Controller\ExoFieldNextController::build'
+    _title: 'Move a component field forward'
+  requirements:
+    _layout_builder_access: 'view'
+  options:
+    _admin_route: TRUE
+    parameters:
+      section_storage:
+        layout_builder_tempstore: TRUE
+
+layout_builder.field.delete:
+  path: '/layout_builder/field/delete/{section_storage_type}/{section_storage}/{delta}/{region}/{uuid}/{path}'
+  defaults:
+    _controller: '\Drupal\exo_alchemist\Controller\ExoFieldDeleteController::build'
+    _title: 'Delete component field'
+  requirements:
+    _layout_builder_access: 'view'
+  options:
+    _admin_route: TRUE
+    parameters:
+      section_storage:
+        layout_builder_tempstore: TRUE
+
+layout_builder.component.appearance:
+  path: '/layout_builder/appearance/block/{section_storage_type}/{section_storage}/{delta}/{region}/{uuid}'
+  defaults:
+    _form: '\Drupal\exo_alchemist\Form\ExoComponentAppearanceForm'
+    _title: 'Appearance'
+  requirements:
+    _layout_builder_access: 'view'
+  options:
+    _admin_route: TRUE
+    parameters:
+      section_storage:
+        layout_builder_tempstore: TRUE
+
+layout_builder.component.restore:
+  path: '/layout_builder/restore/block/{section_storage_type}/{section_storage}/{delta}/{region}/{uuid}'
+  defaults:
+    _form: '\Drupal\exo_alchemist\Form\ExoComponentRestoreForm'
+  requirements:
+    _layout_builder_access: 'view'
+  options:
+    _admin_route: TRUE
+    parameters:
+      section_storage:
+        layout_builder_tempstore: TRUE

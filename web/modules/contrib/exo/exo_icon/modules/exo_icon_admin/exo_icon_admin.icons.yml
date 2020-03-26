@@ -1,0 +1,296 @@
+admin.exo:
+  text: exo
+  icon: regular-robot
+  prefix: admin
+admin.administration:
+  text: administration
+  icon: regular-tachometer-alt
+  prefix: admin
+admin.content:
+  text: content
+  icon: regular-folders
+  prefix: admin
+admin.structure:
+  text: structure
+  icon: regular-folder-tree
+  prefix: admin
+admin.appearance:
+  text: appearance
+  icon: regular-palette
+  prefix: admin
+admin.extend:
+  text: extend
+  icon: regular-layer-group
+  prefix: admin
+admin.configuration:
+  smart: configuration
+  icon: regular-sliders-v-square
+  prefix: admin
+admin.settings:
+  smart: settings
+  icon: regular-cog
+  prefix: admin
+admin.basic_site_settings:
+  text: basic site settings
+  icon: regular-cog
+  prefix: admin
+admin.cron:
+  text: cron
+  icon: regular-clock
+  prefix: admin
+admin.people:
+  smart: people
+  icon: regular-users
+  prefix: admin
+admin.account:
+  smart: account
+  icon: regular-users-cog
+  prefix: admin
+admin.editors:
+  smart: editors
+  icon: regular-users
+  prefix: admin
+admin.profile:
+  smart: profile
+  icon: regular-id-badge
+  prefix: admin
+admin.profiles:
+  smart: profiles
+  icon: regular-id-badge
+  prefix: admin
+admin.reports:
+  smart: reports
+  icon: regular-analytics
+  prefix: admin
+admin.block_layout:
+  text: block layout
+  icon: regular-cube
+  prefix: admin
+admin.content_types:
+  text: content types
+  icon: regular-box
+  prefix: admin
+admin.display_modes:
+  text: display modes
+  icon: regular-glasses
+  prefix: admin
+admin.menus:
+  smart: menus
+  icon: regular-list
+  prefix: admin
+admin.taxonomy:
+  smart: taxonomy
+  icon: regular-tags
+  prefix: admin
+admin.views:
+  smart: views
+  icon: regular-list-alt
+  prefix: admin
+admin.real_favicons:
+  smart: real favicons
+  icon: regular-heart-square
+  prefix: admin
+admin.development:
+  smart: development
+  icon: regular-code
+  prefix: admin
+admin.media:
+  smart: media
+  icon: regular-photo-video
+  prefix: admin
+admin.help:
+  smart: help
+  icon: regular-question-circle
+  prefix: admin
+admin.performance:
+  text: performance
+  icon: regular-tachometer-fast
+  prefix: admin
+admin.logging_and_errors:
+  text: logging and errors
+  icon: regular-debug
+  prefix: admin
+admin.maintenance_mode:
+  text: maintenance mode
+  icon: regular-user-hard-hat
+  prefix: admin
+admin.devel_settings:
+  smart: devel
+  icon: regular-code
+  prefix: admin
+admin.aliases:
+  smart: aliases
+  icon: regular-theater-masks
+  prefix: admin
+admin.text_formats_and_editors:
+  text: text formats and editors
+  icon: regular-text-size
+  prefix: admin
+admin.icon:
+  smart: icon
+  icon: regular-icons
+  prefix: admin
+admin.rss:
+  smart: rss
+  icon: regular-rss-square
+  prefix: admin
+admin.date:
+  smart: date
+  icon: regular-alarm-clock
+  prefix: admin
+admin.time:
+  smart: time
+  icon: regular-alarm-clock
+  prefix: admin
+admin.regional_settings:
+  smart: regional settings
+  icon: regular-globe-americas
+  prefix: admin
+admin.file_system:
+  smart: file system
+  icon: regular-cabinet-filing
+  prefix: admin
+admin.image_styles:
+  smart: image styles
+  icon: regular-images
+  prefix: admin
+admin.image_toolkit:
+  smart: image toolkit
+  icon: regular-magic
+  prefix: admin
+admin.image_effects:
+  smart: image effects
+  icon: regular-magic
+  prefix: admin
+admin.theme:
+  smart: theme
+  icon: regular-fill-drip
+  prefix: admin
+admin.modal:
+  smart: modal
+  icon: regular-window-restore
+  prefix: admin
+admin.config_files:
+  text: config files
+  icon: regular-file-code
+  prefix: admin
+admin.toolbars:
+  smart: toolbars
+  icon: regular-tools
+  prefix: admin
+admin.form:
+  smart: form
+  icon: regular-ballot-check
+  prefix: admin
+admin.cache_clear:
+  text: cache clear
+  icon: regular-poo-storm
+  prefix: admin
+admin.fixed:
+  smart: fixed
+  icon: regular-ghost
+  prefix: admin
+admin.site_setting:
+  smart: site setting
+  icon: regular-cogs
+  prefix: admin
+admin.menu:
+  smart: menu
+  icon: regular-compass
+  prefix: admin
+admin.search:
+  smart: search
+  icon: regular-search
+  prefix: admin
+admin.facets:
+  smart: facets
+  icon: regular-filter
+  prefix: admin
+admin.sync:
+  smart: sync
+  icon: regular-sync-alt
+  prefix: admin
+admin.commerce:
+  smart: commerce
+  icon: regular-sack-dollar
+  prefix: admin
+admin.orders:
+  smart: orders
+  icon: regular-shopping-bag
+  prefix: admin
+admin.order_types:
+  smart: order types
+  icon: regular-bags-shopping
+  prefix: admin
+admin.order_item_types:
+  smart: order item types
+  icon: regular-shopping-basket
+  prefix: admin
+admin.checkout_flows:
+  smart: checkout flows
+  icon: regular-map-signs
+  prefix: admin
+admin.products:
+  smart: products
+  icon: regular-box-open
+  prefix: admin
+admin.carts:
+  smart: carts
+  icon: regular-shopping-cart
+  prefix: admin
+admin.product_attributes:
+  smart: product attributes
+  icon: regular-box-full
+  prefix: admin
+admin.product_types:
+  smart: product types
+  icon: regular-boxes
+  prefix: admin
+admin.product_variation_types:
+  smart: product variation types
+  icon: regular-boxes-alt
+  prefix: admin
+admin.currencies:
+  smart: currencies
+  icon: regular-money-bill
+  prefix: admin
+admin.store:
+  smart: store
+  icon: regular-store
+  prefix: admin
+admin.stores:
+  smart: stores
+  icon: regular-store
+  prefix: admin
+admin.store_types:
+  smart: store types
+  icon: regular-warehouse
+  prefix: admin
+admin.payment:
+  smart: payment
+  icon: regular-coin
+  prefix: admin
+admin.payments:
+  smart: payments
+  icon: regular-coin
+  prefix: admin
+admin.payment_gateways:
+  smart: payment gateways
+  icon: regular-cash-register
+  prefix: admin
+admin.social:
+  smart: social
+  icon: regular-share-alt
+  prefix: admin
+admin.list:
+  smart: list
+  icon: regular-list
+  prefix: admin
+admin.clone:
+  smart: clone
+  icon: regular-clone
+  prefix: admin
+admin.migrate:
+  smart: migrate
+  icon: regular-exchange
+  prefix: admin

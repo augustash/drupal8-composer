@@ -1,0 +1,7 @@
+name: 'eXo Form'
+type: module
+description: 'Beautiful forms.'
+core: 8.x
+package: 'eXo'
+dependencies:
+  - exo:exo

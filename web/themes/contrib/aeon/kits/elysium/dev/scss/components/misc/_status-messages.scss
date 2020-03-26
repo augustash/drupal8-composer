@@ -1,0 +1,40 @@
+.messages {
+  padding: $global-padding;
+  color: $white;
+  background: linear-gradient(smart-scale(map-get($foundation-palette, success), 20%), map-get($foundation-palette, success));
+  text-shadow: 0 0 4px smart-scale(map-get($foundation-palette, success), 30%);
+
+  .message {
+    max-width: $global-width;
+    margin: 0 auto;
+  }
+
+  a {
+    font-weight: bold;
+    color: $white;
+    text-decoration: underline;
+  }
+
+  &.warning {
+    color: foreground(map-get($foundation-palette, warning));
+    background: linear-gradient(smart-scale(map-get($foundation-palette, warning), 20%), map-get($foundation-palette, warning));
+    text-shadow: 0 0 4px smart-scale(map-get($foundation-palette, warning), 30%);
+  }
+
+  &.error {
+    color: foreground(map-get($foundation-palette, alert));
+    background: linear-gradient(smart-scale(map-get($foundation-palette, alert), 20%), map-get($foundation-palette, alert));
+    text-shadow: 0 0 4px smart-scale(map-get($foundation-palette, alert), 30%);
+  }
+
+  &.info {
+    color: foreground(map-get($foundation-palette, primary));
+    background: linear-gradient(smart-scale(map-get($foundation-palette, primary), 20%), map-get($foundation-palette, primary));
+    text-shadow: 0 0 4px smart-scale(map-get($foundation-palette, primary), 30%);
+  }
+
+  &.small {
+    padding: $global-padding / 2;
+    font-size: rem-calc(14);
+  }
+}

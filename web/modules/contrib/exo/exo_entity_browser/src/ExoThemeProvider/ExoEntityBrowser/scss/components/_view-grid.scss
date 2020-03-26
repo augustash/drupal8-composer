@@ -1,0 +1,103 @@
+.exo-entity-browser-grid {
+  $curve: cubic-bezier(0.65, 0, 0.45, 1);
+
+  .view-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto auto auto auto;
+    overflow: hidden;
+    grid-gap: 10px 10px;
+
+    @include breakpoint(medium) {
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      grid-template-rows: auto auto auto auto;
+    }
+
+    @include breakpoint(large) {
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      grid-template-rows: auto auto auto;
+    }
+
+    .views-field-thumbnail__target-id {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      right: 5px;
+      bottom: 5px;
+      z-index: 0;
+    }
+
+    img {
+      object-fit: cover;
+      object-position: center center;
+      height: 100%;
+      width: 100%;
+      max-width: inherit;
+    }
+  }
+
+  .views-row {
+    position: relative;
+    background: grey(10);
+    padding: 4px;
+    margin: 1px;
+    transition: background $global-speed;
+    overflow: hidden;
+    cursor: pointer;
+
+    &:hover {
+      background: grey(40);
+    }
+
+    .views-field-entity-browser-select {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 2;
+
+      .form-item {
+        display: none;
+      }
+    }
+
+    .exo-entity-browser-info {
+      @include flex;
+      @include flex-align(center, middle);
+      position: absolute;
+      left: 5px;
+      right: 5px;
+      bottom: 5px;
+      background: shadow(50);
+      color: color(theme-white);
+      padding: 5px 10px;
+      z-index: 1;
+
+      .views-field {
+        font-size: rem-calc(12);
+        padding: 0 rem-calc(4);
+      }
+    }
+
+    .views-field-name {
+      font-weight: bold;
+    }
+
+    .exo-entity-browser-check {
+      @include flex;
+      align-items: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    &.checked {
+      background: color(theme-success);
+    }
+  }
+}

@@ -1,0 +1,10 @@
+
+exo_media.settings:
+  path: '/admin/config/exo/media'
+  defaults:
+    _form: '\Drupal\exo_media\Form\ExoMediaSettingsForm'
+    _title: 'ExoMediaSettingsForm'
+  requirements:
+    _permission: 'administer exo'
+  options:
+    _admin_route: TRUE

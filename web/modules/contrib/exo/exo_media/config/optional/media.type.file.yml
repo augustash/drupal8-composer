@@ -1,0 +1,21 @@
+uuid: 4ec4b08b-f503-466f-9406-5483a54d8b63
+langcode: en
+status: true
+dependencies:
+  module:
+    - exo_icon
+third_party_settings:
+  exo_icon:
+    'entity:media_type:file': regular-file
+_core:
+  default_config_hash: LsqMeW7kiFsiIKZm8DEG0zvMLaBUQFCnh1vAjibtndc
+id: file
+label: File
+description: 'Use local files for reusable media.'
+source: file
+queue_thumbnail_downloads: false
+new_revision: true
+source_configuration:
+  source_field: field_media_file
+field_map:
+  name: name

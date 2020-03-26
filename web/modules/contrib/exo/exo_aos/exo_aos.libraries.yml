@@ -1,0 +1,33 @@
+base:
+  version: VERSION
+  js:
+    js/exo.aos.js: { minified: true }
+  dependencies:
+    - exo_aos/lib
+
+lib:
+  version: VERSION
+  js:
+    lib/aos/js/aos.min.js: { minified: true }
+  dependencies:
+    - exo_aos/theme
+
+demo:
+  version: VERSION
+  css:
+    component:
+      css/exo-aos.demo.css: { minified: true }
+  dependencies:
+    - exo_aos/base
+
+################################################################################
+## eXo Theme Provider
+################################################################################
+
+theme:
+  version: VERSION
+  css:
+    component:
+      css/exo-aos.css: { minified: true }
+  dependencies:
+    - exo/exo

@@ -1,0 +1,51 @@
+
+base:
+  version: VERSION
+  js:
+    js/exo.menu.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - core/drupalSettings
+    - exo/exo
+
+dropdown.horizontal:
+  version: VERSION
+  js:
+    js/exo.menu.dropdown.horizontal.js: { minified: true }
+  dependencies:
+    - exo_menu/theme
+
+dropdown.vertical:
+  version: VERSION
+  js:
+    js/exo.menu.dropdown.vertical.js: { minified: true }
+  dependencies:
+    - exo_menu/theme
+
+slide.vertical:
+  version: VERSION
+  js:
+    js/exo.menu.slide.vertical.js: { minified: true }
+  dependencies:
+    - exo_menu/theme
+
+mega.vertical:
+  version: VERSION
+  js:
+    js/exo.menu.mega.vertical.js: { minified: true }
+  dependencies:
+    - exo_menu/theme
+
+################################################################################
+## eXo Theme Provider
+################################################################################
+
+theme:
+  version: VERSION
+  css:
+    component:
+      css/exo-menu.css: { minified: true }
+  dependencies:
+    - exo_menu/base

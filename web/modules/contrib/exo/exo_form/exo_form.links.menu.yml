@@ -1,0 +1,6 @@
+exo_form.settings:
+  title: 'Form'
+  route_name: exo_form.settings
+  description: 'Form settings and configuration.'
+  parent: system.admin_config_exo
+  weight: 0

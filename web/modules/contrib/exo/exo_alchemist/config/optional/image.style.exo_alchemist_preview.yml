@@ -1,0 +1,14 @@
+langcode: en
+status: true
+dependencies: {  }
+name: exo_alchemist_preview
+label: 'eXo Alchemist | Preview'
+effects:
+  1855f67c-8cd0-4f20-979c-48a4eed1f6b9:
+    uuid: 1855f67c-8cd0-4f20-979c-48a4eed1f6b9
+    id: image_scale
+    weight: 1
+    data:
+      width: 318
+      height: null
+      upscale: true

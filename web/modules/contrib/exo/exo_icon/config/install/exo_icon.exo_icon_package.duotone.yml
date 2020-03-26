@@ -1,0 +1,12 @@
+uuid: 3179bbb3-156b-485c-9fec-774605a02035
+langcode: en
+status: false
+dependencies: {  }
+_core:
+  default_config_hash: 0D99iLiptcGCEF2fZ5Hnej7wZVfl6-I8fE3bjrN41Cw
+id: duotone
+label: Duotone
+global: false
+path: 'public://exo-icon-package/duotone'
+type: font
+weight: 0

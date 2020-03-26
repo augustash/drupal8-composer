@@ -1,0 +1,197 @@
+.exo-form-element-type-checkboxes,
+.exo-form-element-type-exo-checkboxes {
+
+  .exo-form-checkboxes {
+
+    .fieldset-wrapper > * {
+      margin-top: $global-margin / 4;
+    }
+  }
+
+  .no-legend {
+
+    .form-radios {
+      margin-top: $global-margin;
+    }
+  }
+}
+
+.exo-form-checkbox {
+  position: relative;
+
+  // Hide input.
+  .form-checkbox {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    z-index: 5;
+    cursor: pointer;
+  }
+
+  .exo-ripple {
+    position: absolute;
+    top: (($checkbox-element-size / 2) * -1) + ($checkbox-size - $checkbox-element-size) / 2;
+    left: ($checkbox-element-size / 2) * -1;
+    width: $checkbox-element-size * 2;
+    height: $checkbox-element-size * 2;
+
+    .exo-element-options & {
+      top: 50%;
+      left: 50%;
+      margin-top: ($checkbox-element-size) * -1;
+      margin-left: ($checkbox-element-size) * -1;
+    }
+  }
+
+  label {
+
+    &.option {
+      display: inline-block;
+      position: relative;
+      height: $checkbox-size;
+      line-height: $checkbox-size;
+      padding: 0 0 0 $checkbox-element-size + rem-calc(5);
+      margin: 0;
+      cursor: pointer;
+      font-size: $checkbox-font-size;
+      user-select: none;
+      font-weight: normal;
+
+      &:before,
+      &:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: ($checkbox-size - $checkbox-element-size) / 2;
+        width: $checkbox-element-size;
+        height: $checkbox-element-size;
+        z-index: 2;
+        border: 2px solid transparent;
+        box-sizing: border-box;
+
+        .exo-element-options & {
+          display: none;
+        }
+      }
+
+      &:before {
+        border-radius: 2px;
+      }
+
+      &:after {
+        top: $checkbox-element-size / 7;
+        left: 0;
+        width: $checkbox-element-size / 2.5;
+        height: $checkbox-element-size / 1.2;
+        border-top: 2px solid transparent;
+        border-left: 2px solid transparent;
+        border-right: 2px solid transparent;
+        border-bottom: 2px solid transparent;
+        transform: rotate(40deg) scale(0);
+        backface-visibility: hidden;
+        transform-origin: 100% 100%;
+        opacity: 0;
+      }
+    }
+
+    &:active {
+
+      .exo-ripple {
+        @include exo-ripple-active();
+      }
+    }
+  }
+
+  // Message area.
+  &:after {
+    display: block;
+    content: '';
+    font-size: $message-font-size;
+    line-height: $label-font-size;
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0;
+    text-rendering: optimizeLegibility;
+  }
+
+  // When ready.
+  &.ready {
+
+    label {
+
+      &.option {
+
+        &:before,
+        &:after {
+          // transition: all $global-speed ease;
+          transition: border-color $global-speed ease,  background-color $global-speed ease, transform $global-speed ease;
+        }
+      }
+    }
+  }
+
+  // When focused.
+  &.focused {
+
+    label {
+
+      &:before {
+        outline-width: 1px;
+        outline-style: dotted;
+        outline-offset: 1px;
+      }
+    }
+  }
+
+  // When active.
+  &.active {
+
+    label {
+
+      &.option {
+
+        &:after {
+          opacity: 1;
+          transform: rotate(40deg) scale(1);
+        }
+      }
+    }
+  }
+
+  // When invalid.
+  &.invalid,
+  &.invalid.focus {
+
+    &:after {
+      content: attr(data-error);
+      opacity: 1;
+      padding: rem-calc(2 10);
+    }
+  }
+
+  // When disabled.
+  &.form-disabled {
+
+    label {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .exo-ripple {
+      display: none;
+    }
+  }
+}
+
+.exo-form-checkboxes-inline {
+
+  .exo-form-checkbox {
+    display: inline-block;
+    padding-right: $global-padding / 2;
+  }
+}

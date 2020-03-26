@@ -1,0 +1,82 @@
+exo_default: 1
+exo_preset: ''
+theme: 'primary' # Theme of the modal wrapper.
+theme_content: 'white' # Theme of the modal content.
+trigger:
+  text: 'Trigger' # Title in modal's trigger
+  icon: '' # Icon id that will be displayed in modal trigger.
+  icon_only: false # Force the trigger to only be an icon.
+modal:
+  preset: '' # A system defined preset.
+  title: '' # Title in modal's header.
+  subtitle: '' # Caption below modal's title.
+  icon: '' # Icon class (font-icon of your choice) that will be displayed in modal header.
+  iconText: '' # Icon text (font-icon using html) that will be displayed in modal header.
+  inherit: false # Will use the currently active modal's configuration. Useful when you want to overlay modals and keep their appearance consistant.
+  width: 600 # Fixed width of the modal. You can use %, px, em or cm. If not using a measure unit, PX will be assumed as measurement unit.
+  height: null # Fixed height of the modal. You can use %, px, em or cm. If not using a measure unit, PX will be assumed as measurement unit.
+  top: '' # Bottom static margin.
+  bottom: '' # Bottom static margin.
+  left: '' # Left static margin.
+  right: '' # Right static margin.
+  borderBottom: true # Enable/disable border bottom.
+  padding: 0 # Aside inner margin.
+  radius: 3 # Border-radius that will be applied in modal.
+  ajax: null # Address that will be called when the trigger is clicked.
+  contentAjax: null # Address that will be called when the trigger is clicked and will dynamically load the content.
+  contentSelector: null # A selector specifying an existing page element to use within the modal. Example: .my-content.
+  iframe: false # If true, an Iframe will be used inside the modal.
+  iframeHeight: 400 #Fixed height of the iframe.
+  iframeWidth: 800 #Fixed width of the iframe.
+  iframeResponsive: false #Set the iframe to be responsive
+  iframeURL: null # Address that will open in the iframe inside the modal, if not set, the user can alternatively use the href link responsible for opening it.
+  focusInput: true # If set true, whenever you open a modal, the first visible field is active.
+  group: '' # Create a group with same 'group' name, so can navigate between them.
+  nest: false # When true will preserve a currently open modal if it exists and slide in the requested modal, returning to the previous modal when closed. Similar to grouping but without having to know the group of the current modal.
+  loop: false # It allows loop with modals of the same group.
+  navigateCaption: true # Displays arrows to navigate.
+  navigateArrows: true # Change arrows position to navigate between the modals. It can be: 'closeToModal' or 'closeScreenEdge'.
+  history: false # Enable browsing history with hash.
+  restoreDefaultContent: false # Reset the modal to default to be opened again.
+  destroyOnClose: false # Destroy modal on close.
+  autoOpen: false # If true, the modal opens automatically with any user action. Or you can set a delay time (in milliseconds) to open.
+  bodyOverflow: true # Forcing overflow hidden in the document when opening the modal, closing the modal, overflow will be restored.
+  fullscreen: false # Show a button in modal header to expand.
+  openFullscreen: false # Force to open modal in fullscreen.
+  openTall: false # Force to open modal with 100% height
+  closeOnEscape: true # If set true, you can close the modal only pressing the escape key.
+  closeButton: true # Display close button in the header unless closeInBody is true.
+  closeInBody: false # Display close button in the body. Can be isOuterLeft, isInnerLeft, isOuterRight, isInnerRight.
+  smartActions: true # Will pull out any valid form actions within the modal content and place them in the footer.
+  appendTo: '#exo-modals' # The selector to append the modal to or false.
+  appendToOverlay: '#exo-modals' # The selector to append the overlay to or false.
+  appendToNavigate: '#exo-modals' # The selector to append the navigation to or false.
+  class: '' # CSS class or classes that will wrap the modal. Should be a string.
+  appendToClosest: false # The append to selectors will append to the closest match.
+  overlay: true # Enable or disable background overlay.
+  overlayClose: true # If set true, the modal will be closed clicking outside of it.
+  overlayColor: '#000000'
+  timeout: 0 # Amount in milliseconds to close the modal or false to disable.
+  timeoutProgressbar: false # Enable timeout progress bar.
+  pauseOnHover: false # Pause the progress bar when mouse cursor hover the modal.
+  transitionIn: 'comingIn' # Aside opening default transition. Can be: comingIn, bounceInDown, bounceInUp, fadeInDown, fadeInUp, fadeInLeft, fadeInRight, flipInX.
+  transitionOut: 'comingOut' # Aside closing default transition. Can be: comingOut, bounceOutDown, bounceOutUp, fadeOutDown, fadeOutUp, , fadeOutLeft, fadeOutRight, flipOutX.
+  transitionInOverlay: 'fadeIn' # Default transition of overlay opening.
+  transitionOutOverlay: 'fadeOut' # Default transition of overlay closure.
+  transitionInPanel: 'fadeInLeft' # Default transition of overlay opening.
+  transitionOutPanel: 'fadeOutLeft' # Default transition of overlay closure.
+  onFullscreen: null # A javascript function that will be called on event.
+  onResize: null # A javascript function that will be called on event.
+  onOpening: null # A javascript function that will be called on event.
+  onOpened: null # A javascript function that will be called on event.
+  onClosing: null # A javascript function that will be called on event.
+  onClosed: null # A javascript function that will be called on event.
+  afterRender: null # A javascript function that will be called on event.
+panel:
+  text: 'Trigger' # Title in modal's trigger
+  icon: '' # Icon id that will be displayed in modal trigger.
+  icon_only: false # Force the trigger to only be an icon.
+  return_text: 'Return' # Title in modal's trigger
+  return_icon: '' # Icon id that will be displayed in modal trigger.
+  return_icon_only: false # Force the trigger to only be an icon.
+  width: null # Fixed width of the modal. You can use %, px, em or cm. If not using a measure unit, PX will be assumed as measurement unit.

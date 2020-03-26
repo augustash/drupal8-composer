@@ -1,0 +1,46 @@
+uuid: d23c7cde-2a01-4965-b2ba-c2600d541c61
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.media.media_library
+    - field.field.media.file.field_media_file
+    - field.field.media.file.field_tags
+    - media.type.file
+  module:
+    - exo_icon
+_core:
+  default_config_hash: vhAK2lCOWK2paUpJawj7yiSLFO9wwsx6WE8_oDmvbwU
+id: media.file.media_library
+targetEntityType: media
+bundle: file
+mode: media_library
+content:
+  field_media_file:
+    type: file_icon
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      title: ''
+      text_only: '1'
+      position: before
+      target: 0
+      icon: regular-file
+      icon_default: regular-file
+      icon_image: regular-file-image
+      icon_document: regular-file-word
+      icon_spreadsheet: regular-file-excel
+      icon_presentation: regular-file-powerpoint
+      icon_archive: regular-file-archive
+      icon_script: regular-file-code
+      icon_html: regular-file-code
+      icon_executable: regular-file-exclamation
+      icon_pdf: regular-file-pdf
+    third_party_settings: {  }
+hidden:
+  created: true
+  field_tags: true
+  name: true
+  thumbnail: true
+  uid: true

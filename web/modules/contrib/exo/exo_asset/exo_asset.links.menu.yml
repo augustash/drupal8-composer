@@ -1,0 +1,7 @@
+
+# Asset menu items definition
+entity.exo_asset.collection:
+  title: 'Assets'
+  route_name: entity.exo_asset.collection
+  description: 'Asset management and configuration.'
+  parent: system.admin_config_exo

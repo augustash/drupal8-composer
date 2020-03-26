@@ -1,0 +1,43 @@
+uuid: e8963330-3f1a-4525-939f-8277be45d3fd
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.exo_media_browser_video
+  module:
+    - entity_browser_entity_form
+    - exo_entity_browser
+    - views
+name: exo_media_video_embed
+label: 'eXo Media | Video | Embed'
+display: exo_iframe
+display_configuration:
+  width: 100%
+  height: '500'
+  link_text: 'Video Library'
+  auto_open: 1
+selection_display: no_display
+selection_display_configuration: {  }
+widget_selector: tabs
+widget_selector_configuration: {  }
+widgets:
+  328957c8-e602-463c-aae3-e110bf8c829f:
+    settings:
+      view: exo_media_browser_video
+      view_display: entity_browser_1
+      submit_text: Select
+      auto_select: false
+    uuid: 328957c8-e602-463c-aae3-e110bf8c829f
+    weight: 1
+    label: Library
+    id: view
+  50b48b49-8c94-4d4f-bde7-9617424b119e:
+    settings:
+      entity_type: media
+      bundle: video
+      form_mode: default
+      submit_text: 'Save and Select'
+    uuid: 50b48b49-8c94-4d4f-bde7-9617424b119e
+    weight: 2
+    label: Add
+    id: entity_form

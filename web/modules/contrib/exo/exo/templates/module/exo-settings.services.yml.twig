@@ -1,0 +1,6 @@
+{% if not services_file_exists %}
+services:
+{% endif %}
+  {{ id | lower }}:
+    class: {{ class_path }}
+    arguments: ['@config.factory']

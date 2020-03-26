@@ -1,0 +1,20 @@
+# Schema for Geocoder Field module.
+
+field.field.*.*.*.third_party.exo_asset:
+  type: mapping
+  label: 'eXo Asset field settings'
+  mapping:
+    allow_image:
+      type: boolean
+      label: 'Allow image'
+    allow_image_mobile:
+      type: boolean
+      label: 'Allow mobile image'
+    allow_video:
+      type: boolean
+      label: 'Allow video'
+    enabled_fields:
+      type: sequence
+      label: 'Enabled attribute fields'
+      sequence:
+        type: string

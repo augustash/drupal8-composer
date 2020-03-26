@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_toolbar.exo_toolbar.default
+_core:
+  default_config_hash: NIKcMJ8aiyKTk7UiWdJS4akiM2MkQbjHbowGIARSKcU
+id: image
+toolbar: default
+region: top
+section: left
+weight: 0
+plugin: image
+settings:
+  id: image
+  title: Home
+  provider: exo_toolbar
+  label: Image
+  image: 'public://exo-toolbar-item/image-image.png'
+  image_style: exo_toolbar_regular
+  image_position: before
+  url: 'internal:/'
+  target: 0
+  mark_only_horizontal: 1
+  icon: ''
+  badge_type: ''
+  badge_settings: {  }
+  toolbar_item_id: null
+visibility: {  }

@@ -1,0 +1,43 @@
+.exo-modifier--containment-full {
+  max-width: 100%;
+}
+
+.exo-modifier--containment-wide {
+  max-width: rem-calc(1200);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.exo-modifier--containment-normal {
+  max-width: rem-calc(900);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.exo-modifier--containment-narrow {
+  max-width: rem-calc(600);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.exo-modifier--containment-content-full .exo-component-content {
+  max-width: 100%;
+}
+
+.exo-modifier--containment-content-wide .exo-component-content {
+  max-width: rem-calc(1200);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.exo-modifier--containment-content-normal .exo-component-content {
+  max-width: rem-calc(900);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.exo-modifier--containment-content-narrow .exo-component-content {
+  max-width: rem-calc(600);
+  margin-left: auto;
+  margin-right: auto;
+}

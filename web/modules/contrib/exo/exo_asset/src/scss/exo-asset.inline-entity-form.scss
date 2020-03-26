@@ -1,0 +1,33 @@
+@import 'exo-common';
+
+.exo-asset-inline-entity-form {
+
+  thead tr th { // sass-lint:disable-line force-element-nesting
+    font-size: rem-calc(11);
+    padding: rem-calc(5);
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+
+  tbody tr th { // sass-lint:disable-line force-element-nesting
+    padding: rem-calc(5);
+  }
+
+  .ief-entity-operations {
+    text-align: right;
+
+    .form-submit {
+      margin: 0;
+    }
+  }
+
+  .inline-entity-form-exo_asset-image {
+    width: rem-calc(100);
+  }
+
+  .inline-entity-form-exo_asset-video {
+    width: rem-calc(100);
+  }
+}

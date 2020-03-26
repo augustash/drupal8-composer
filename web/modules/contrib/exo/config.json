@@ -1,0 +1,51 @@
+{
+  "browserSync": {
+    "enabled" : true,
+    "proxy" : "http://localhost",
+    "port" : 3000,
+    "openAutomatically" : false,
+    "notify" : false
+  },
+  "watch": {
+    "src": [
+      "exo*/css/**/*.css",
+      "exo*/js/**/*.js"
+    ]
+  },
+  "clean": {
+    "src": [
+      "exo*/css",
+      "exo*/js"
+    ]
+  },
+  "scss": {
+    "dest": "css",
+    "src": [
+      "exo*/src/scss/**/*.scss",
+      "exo*/src/ExoTheme/**/scss/**/*.scss",
+      "exo*/src/ExoThemeProvider/**/scss/**/*.scss"
+    ],
+    "includePaths": [],
+    "outputStyle": "compressed"
+  },
+  "js": {
+    "dest": "js",
+    "src": [
+      "exo*/src/js/**/*.js"
+    ]
+  },
+  "ts": {
+    "dest": "js",
+    "tmp": "tmp",
+    "clean": "exo*/tmp",
+    "watch": [
+      "exo*/src/ts/**/*.ts"
+    ],
+    "src": [
+      "exo*/src/ts/*.ts"
+    ],
+    "tmpsrc": [
+      "exo*/tmp/*.ts"
+    ]
+  }
+}

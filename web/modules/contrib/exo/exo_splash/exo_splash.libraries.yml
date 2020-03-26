@@ -1,0 +1,20 @@
+base:
+  version: VERSION
+  js:
+    js/exo.splash.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - exo/exo
+
+################################################################################
+## eXo Theme Provider
+################################################################################
+
+theme:
+  version: VERSION
+  css:
+    component:
+      css/exo-splash.css: { minified: true }
+  dependencies:
+    - exo_splash/base

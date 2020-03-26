@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_config_file.module.
+ */
+
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_theme().
+ */
+function exo_config_file_theme() {
+  return [
+    'file_exo_config_file' => [
+      'render element' => 'element',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function exo_config_file_entity_delete(EntityInterface $entity) {
+  if ($entity->getEntityTypeId() !== 'exo_config_file' && $entity instanceof ConfigEntityInterface) {
+    $entities = \Drupal::entityTypeManager()->getStorage('exo_config_file')->loadByProperties([
+      'parent_type' => $entity->getEntityTypeId(),
+      'parent_id' => $entity->id(),
+    ]);
+    foreach ($entities as $entity) {
+      $entity->delete();
+    }
+  }
+}

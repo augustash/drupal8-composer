@@ -1,0 +1,23 @@
+exo_default: 1
+debug: 0
+enabled:
+  - top
+  - top_alt
+  - left
+regions:
+  top:
+    id: top
+    size: standard
+    mark_only: 0
+    theme: default
+  top_alt:
+    id: top_alt
+    size: small
+    mark_only: 0
+    theme: inverse
+  left:
+    id: left
+    size: standard
+    mark_only: 0
+    theme: default
+    expanded: 0

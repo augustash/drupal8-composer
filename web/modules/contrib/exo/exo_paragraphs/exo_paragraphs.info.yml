@@ -1,0 +1,8 @@
+name: 'eXo Paragraphs'
+type: module
+description: 'Provides paragraphs enhancements.'
+core: 8.x
+package: 'eXo'
+dependencies:
+  - exo
+  - paragraphs

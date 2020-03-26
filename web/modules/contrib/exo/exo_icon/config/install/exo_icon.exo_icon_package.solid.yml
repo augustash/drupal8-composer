@@ -1,0 +1,12 @@
+uuid: 708b403d-e6ad-4e00-b30a-e7b8565d871e
+langcode: en
+status: false
+dependencies: {  }
+_core:
+  default_config_hash: eLu2hwHs7yYOGsiwZU7fiF36JCPgsNWdAxfw_qMmv6w
+id: solid
+label: Solid
+global: false
+path: 'public://exo-icon-package/solid'
+type: font
+weight: 1

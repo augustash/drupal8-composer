@@ -1,0 +1,10 @@
+exo_icon:
+  deriver: 'Drupal\exo_icon\Plugin\Derivative\DynamicIcons'
+  weight: 100
+unpublished:
+  regex: ^unpublish
+  icon: regular-circle
+published:
+  regex: ^publish
+  icon: regular-dot-circle
+  weight: -1

@@ -1,0 +1,67 @@
+exo_toolbar.exo_toolbar_item.*:
+  type: config_entity
+  label: 'Toolbar Item'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    toolbar:
+      type: string
+      label: 'Toolbar'
+    region:
+      type: string
+      label: 'Region'
+    section:
+      type: string
+      label: 'Section'
+    weight:
+      type: integer
+      label: 'Weight'
+    provider:
+      type: string
+      label: 'Provider'
+    plugin:
+      type: string
+      label: 'Plugin'
+    settings:
+      type: exo_toolbar_item.settings.[%parent.plugin]
+    visibility:
+      type: sequence
+      label: 'Visibility Conditions'
+      sequence:
+        type: condition.plugin.[id]
+        label: 'Visibility Condition'
+
+exo_toolbar_item.settings.*:
+  type: exo_toolbar_item_settings
+
+exo_toolbar_item_settings:
+  type: mapping
+  label: 'eXo Toolbar Item settings'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Description'
+    label_display:
+      type: string
+      label: 'Display title'
+    status:
+      type: boolean
+      label: 'Status'
+    info:
+      type: label
+      label: 'Admin info'
+    view_mode:
+      type: string
+      label: 'View mode'
+    provider:
+      type: string
+      label: 'Provider'
+    context_mapping:
+      type: sequence
+      label: 'Context assignments'
+      sequence:
+        type: string

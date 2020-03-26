@@ -1,0 +1,6 @@
+entity.exo_toolbar.collection:
+  title: 'Toolbars'
+  route_name: entity.exo_toolbar.collection
+  description: 'Toolbar settings and configuration.'
+  parent: system.admin_config_exo
+  weight: 0

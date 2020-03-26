@@ -1,0 +1,100 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_site_settings.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function exo_site_settings_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the exo_site_settings module.
+    case 'help.page.exo_site_settings':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Allows the creation of custom configuration entities.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function exo_site_settings_theme() {
+  $theme = [];
+  $theme['exo_site_settings'] = [
+    'render element' => 'elements',
+    'file' => 'exo_site_settings.page.inc',
+  ];
+  $theme['exo_site_settings_content_add_list'] = [
+    'render element' => 'content',
+    'variables' => ['content' => NULL],
+    'file' => 'exo_site_settings.page.inc',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function exo_site_settings_theme_suggestions_exo_site_settings(array $variables) {
+  $suggestions = [];
+  $entity = $variables['elements']['#exo_site_settings'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'exo_site_settings__' . $sanitized_view_mode;
+  $suggestions[] = 'exo_site_settings__' . $entity->bundle();
+  $suggestions[] = 'exo_site_settings__' . $entity->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'exo_site_settings__' . $entity->id();
+  $suggestions[] = 'exo_site_settings__' . $entity->id() . '__' . $sanitized_view_mode;
+  return $suggestions;
+}
+
+/**
+ * Implements templater_preprocess_field().
+ */
+function exo_site_settings_preprocess_field__field_copyright(&$variables) {
+  if (isset($variables['entity_type']) && $variables['entity_type'] == 'exo_site_settings') {
+    $variables['items'][0]['content']['#template'] = '&copy; ' . date('Y') . ' ' . $variables['items'][0]['content']['#template'];
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for field_config_edit_form().
+ */
+function exo_site_settings_form_field_config_edit_form_alter(&$form, FormStateInterface $form_state) {
+  $field = $form_state->getFormObject()->getEntity();
+  if (!isset($field) || $field->getTargetEntityTypeId() !== 'exo_site_settings') {
+    return;
+  }
+
+  $form['third_party_settings']['exo_site_settings'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Settings Clone'),
+    '#description' => t('When saving this field, the value can be cloned into another config.'),
+    '#weight' => $form['label']['#weight'] + 1,
+  ];
+
+  $form['third_party_settings']['exo_site_settings']['config_name'] = [
+    '#type' => 'textfield',
+    '#title' => t('Config Name'),
+    '#description' => t('The config name. For example, "system.site" would save to the site config.'),
+    '#default_value' => !empty($field->getThirdPartySetting('exo_site_settings', 'config_name')) ? $field->getThirdPartySetting('exo_site_settings', 'config_name') : '',
+    '#maxlength' => 256,
+  ];
+
+  $form['third_party_settings']['exo_site_settings']['config_key'] = [
+    '#type' => 'textfield',
+    '#title' => t('Config Key'),
+    '#description' => t('The config key. For example, "name" would save to the config entered above and place the value in the "name" property. A period-separated key allows for saving to nested values. For example, "page.front".'),
+    '#default_value' => !empty($field->getThirdPartySetting('exo_site_settings', 'config_key')) ? $field->getThirdPartySetting('exo_site_settings', 'config_key') : '',
+    '#maxlength' => 256,
+  ];
+}

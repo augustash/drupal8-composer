@@ -1,0 +1,61 @@
+uuid: fcb6c5bd-1d29-4fd5-a3a9-6ce205379950
+langcode: en
+status: true
+dependencies:
+  config:
+    - media.type.audio
+    - views.view.exo_media_browser_audio
+  module:
+    - dropzonejs_eb_widget
+    - exo_entity_browser
+    - media
+    - views
+name: exo_media_audio
+label: 'eXo Media | Audio'
+display: exo_modal
+display_configuration:
+  modal_description: 'Select from library or upload new.'
+  width: ''
+  height: ''
+  link_text: 'Audio Library'
+  auto_open: false
+selection_display: multi_step_display
+selection_display_configuration:
+  entity_type: media
+  display: rendered_entity
+  display_settings:
+    view_mode: media_library
+  select_text: 'Use selected'
+  selection_hidden: false
+widget_selector: tabs
+widget_selector_configuration: {  }
+widgets:
+  6b5da1c8-ae59-49e6-a0b6-993020c8f217:
+    settings:
+      view: exo_media_browser_audio
+      view_display: entity_browser_1
+      submit_text: Select
+      auto_select: true
+    uuid: 6b5da1c8-ae59-49e6-a0b6-993020c8f217
+    weight: 1
+    label: Library
+    id: view
+  e1c7c9e6-09d5-44b9-a4bf-0ed4ad74e940:
+    settings:
+      form_mode: default
+      media_type: audio
+      upload_location: 'public://audio'
+      dropzone_description: 'Drop files here to upload them'
+      max_filesize: 500M
+      extensions: 'mp3 wav aac'
+      clientside_resize: false
+      resize_width: null
+      resize_height: null
+      resize_quality: !!float 1
+      resize_method: contain
+      thumbnail_method: contain
+      submit_text: 'Select '
+    uuid: e1c7c9e6-09d5-44b9-a4bf-0ed4ad74e940
+    weight: 2
+    label: Upload
+    id: dropzonejs_media_entity_inline_entity_form

@@ -1,0 +1,14 @@
+uuid: 7c471d1a-8c6f-4039-9685-49f6f398a5a0
+langcode: en
+status: true
+dependencies: {  }
+name: exo_toolbar_regular
+label: 'eXo Toolbar | Regular'
+effects:
+  4cfdeac7-39d5-4532-9009-92484ffc2f4b:
+    uuid: 4cfdeac7-39d5-4532-9009-92484ffc2f4b
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 100
+      height: 100

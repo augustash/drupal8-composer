@@ -1,0 +1,46 @@
+$sizes: 10, 20, 30, 60, 90, 120;
+
+@each $size in $sizes {
+
+  .exo-modifier--padding-#{$size} {
+    padding: $global-padding;
+
+    @include breakpoint(medium) {
+      padding: max($global-padding, rem-calc($size));
+    }
+
+    @include breakpoint(large) {
+      padding: rem-calc($size);
+    }
+  }
+
+  .exo-modifier--padding-v-#{$size} {
+    padding-top: $global-padding;
+    padding-bottom: $global-padding;
+
+    @include breakpoint(medium) {
+      padding-top: max($global-padding, rem-calc($size));
+      padding-bottom: max($global-padding, rem-calc($size));
+    }
+
+    @include breakpoint(large) {
+      padding-top: rem-calc($size);
+      padding-bottom: rem-calc($size);
+    }
+  }
+
+  .exo-modifier--padding-h-#{$size} {
+    padding-left: $global-padding;
+    padding-right: $global-padding;
+
+    @include breakpoint(medium) {
+      padding-left: max($global-padding, rem-calc($size));
+      padding-right: max($global-padding, rem-calc($size));
+    }
+
+    @include breakpoint(large) {
+      padding-left: rem-calc($size);
+      padding-right: rem-calc($size);
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{#
+/**
+ * @file
+ * Theme override for fixed region wrapper.
+ *
+ * Available variables:
+ * - children: Contains the child elements of the region.
+ */
+#}
+{% if children %}
+  <div{{ exo_wrapper_attributes }}>
+    {{ children }}
+  </div>
+{% endif %}

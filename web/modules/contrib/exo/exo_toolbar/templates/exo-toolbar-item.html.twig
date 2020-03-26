@@ -1,0 +1,23 @@
+{#
+/**
+ * @file
+ * Default theme implementation of an item used to wrap child elements.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the containing element.
+ * - children: The rendered child elements of the item.
+ *
+ * @see template_preprocess_exo_toolbar_item()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes }}>
+  {% block item %}
+    {{ item }}
+  {% endblock %}
+  {% if content %}
+    {{ content }}
+  {% endif %}
+  {{ aside }}
+</div>

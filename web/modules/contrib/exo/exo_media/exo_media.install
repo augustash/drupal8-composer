@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the exo_media module.
+ */
+
+use Drupal\Core\Config\FileStorage;
+
+/**
+ * Implements hook_install().
+ */
+function exo_media_install() {
+  // The base profile has media types that it defines. Since it loads its
+  // config in before this module can, our media type config never gets loaded.
+  // We manually override this below.
+  $config_path = drupal_get_path('module', 'exo_media') . '/config/optional';
+  $source = new FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $files = $source->listAll('');
+  foreach ($files as $name) {
+    $config_storage->write($name, $source->read($name));
+  }
+}

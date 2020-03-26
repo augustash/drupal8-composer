@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_site_settings.exo_site_settings_type.general
+    - field.storage.exo_site_settings.field_name
+  module:
+    - exo_site_settings
+third_party_settings:
+  exo_site_settings:
+    config_name: system.site
+    config_key: name
+_core:
+  default_config_hash: yLV9VIlL12nFNTjGgEwjVDliDHv9tRMXXxdFOqn1en0
+id: exo_site_settings.general.field_name
+field_name: field_name
+entity_type: exo_site_settings
+bundle: general
+label: Name
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

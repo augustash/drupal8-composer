@@ -1,0 +1,9 @@
+exo_icon_local_task.settings_form:
+  path: '/admin/config/exo/icons/local-task'
+  defaults:
+    _form: '\Drupal\exo_icon_local_task\Form\ExoIconLocalTaskSettingsForm'
+    _title: 'Local Tasks'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE

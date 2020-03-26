@@ -1,0 +1,9 @@
+# exo_link_menu.exo_link_menu_config_form:
+#   path: '/admin/structure/micon/link'
+#   defaults:
+#     _form: '\Drupal\exo_link_menu\Form\ExoLinkMenuConfigForm'
+#     _title: 'ExoLinkMenuConfigForm'
+#   requirements:
+#     _permission: 'administer micon'
+#   options:
+#     _admin_route: TRUE

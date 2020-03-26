@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_oembed.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function exo_oembed_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the exo_oembed module.
+    case 'help.page.exo_oembed':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides enhancments to oEmbed.') . '</p>';
+      return $output;
+
+    default:
+  }
+}

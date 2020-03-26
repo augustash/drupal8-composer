@@ -1,0 +1,12 @@
+
+.exo-form {
+
+  ul.action-links {
+    margin: 0;
+
+    .button {
+      margin-bottom: $global-margin;
+      padding: ($global-padding / 2) $global-padding;
+    }
+  }
+}

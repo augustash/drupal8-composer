@@ -1,0 +1,11 @@
+description: 'Generate eXo theme provider plugin.'
+help: 'The <info>generate:exo:theme:provider</info> command helps you generate a new eXo theme provider.'
+welcome: 'Welcome to the eXo theme provider generator'
+options:
+  module: 'The module name'
+  class: 'Provider class name'
+  plugin-id: 'Plugin id'
+questions:
+  module: 'Enter the module name'
+  class: 'Enter the provider class name'
+  plugin-id: 'Enter the provider id'

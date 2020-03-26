@@ -1,0 +1,35 @@
+exo_icon.exo_icon_package.*:
+  type: config_entity
+  label: 'eXo Icon Package config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    uuid:
+      type: string
+    label:
+      type: label
+      label: 'Label'
+    status:
+      type: boolean
+      label: 'Status'
+    global:
+      type: boolean
+      label: 'Global'
+    path:
+      type: string
+      label: 'Path to icon directory'
+    type:
+      type: string
+      label: 'The type of icon. Either font or image.'
+    weight:
+      type: integer
+      label: 'Weight'
+
+entity.type.*.third_party.exo_icon:
+  type: mapping
+  label: 'eXo Icon entity icon'
+  mapping:
+    icon:
+      type: string
+      label: 'Icon ID'

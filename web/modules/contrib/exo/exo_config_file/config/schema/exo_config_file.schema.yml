@@ -1,0 +1,33 @@
+exo_config_file.exo_config_file.*:
+  type: config_entity
+  label: 'eXo Config File config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    uuid:
+      type: string
+    parent_type:
+      type: string
+      label: 'Parent entity type'
+    parent_id:
+      type: string
+      label: 'Parent entity id'
+    parent_field:
+      type: string
+      label: 'Parent field'
+    name:
+      type: string
+      label: 'File name'
+    directory:
+      type: string
+      label: 'File directory'
+    extension:
+      type: string
+      label: 'File extension'
+    file:
+      type: sequence
+      label: 'File'
+    dependency:
+      type: string
+      label: 'The parent config name'

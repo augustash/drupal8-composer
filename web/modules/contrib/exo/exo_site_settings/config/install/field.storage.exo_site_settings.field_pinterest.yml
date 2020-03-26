@@ -1,0 +1,19 @@
+uuid: 116a63aa-5aa6-42fd-a638-73ce8ed7324c
+langcode: en
+status: true
+dependencies:
+  module:
+    - exo_site_settings
+    - link
+id: exo_site_settings.field_pinterest
+field_name: field_pinterest
+entity_type: exo_site_settings
+type: link
+settings: {  }
+module: link
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

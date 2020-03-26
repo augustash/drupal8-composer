@@ -1,0 +1,188 @@
+local_task.account_new:
+  text: create new account
+  icon: regular-user-plus
+  prefix: local_task
+local_task.account_reset:
+  text: reset your password
+  icon: regular-user-shield
+  prefix: local_task
+local_task.account_login:
+  text: log in
+  icon: regular-sign-in
+  prefix: local_task
+local_task.account_logout:
+  text: log out
+  icon: regular-sign-out
+  prefix: local_task
+local_task.view:
+  text: view
+  icon: regular-eye
+  prefix: local_task
+local_task.preview:
+  text: preview
+  icon: regular-eye
+  prefix: local_task
+local_task.edit:
+  smart: edit
+  icon: regular-edit
+  prefix: local_task
+local_task.add:
+  smart: add
+  icon: regular-plus
+  prefix: local_task
+local_task.refresh:
+  smart: refresh
+  icon: regular-retweet
+  prefix: local_task
+local_task.revisions:
+  text: revisions
+  icon: regular-code-branch
+  prefix: local_task
+local_task.delete:
+  text: delete
+  icon: regular-trash
+  prefix: local_task
+local_task.devel:
+  text: devel
+  icon: regular-code
+  prefix: local_task
+local_task.settings:
+  smart: settings
+  icon: regular-cog
+  prefix: local_task
+local_task.update:
+  text: update
+  icon: regular-cloud-download
+  prefix: local_task
+local_task.install:
+  text: install
+  icon: regular-plus-hexagon
+  prefix: local_task
+local_task.uninstall:
+  text: uninstall
+  icon: regular-minus-hexagon
+  prefix: local_task
+local_task.list:
+  text: list
+  icon: regular-list-alt
+  prefix: local_task
+local_task.packages:
+  text: packages
+  icon: regular-box
+  prefix: local_task
+local_task.index:
+  text: index
+  icon: regular-th-list
+  prefix: local_task
+local_task.files:
+  text: files
+  icon: regular-copy
+  prefix: local_task
+local_task.permissions:
+  text: permissions
+  icon: regular-fingerprint
+  prefix: local_task
+local_task.profile:
+  smart: profile
+  icon: regular-id-badge
+  prefix: local_task
+local_task.roles:
+  text: roles
+  icon: regular-users-class
+  prefix: local_task
+local_task.layout:
+  text: layout
+  icon: regular-pencil-ruler
+  prefix: local_task
+local_task.manage_fields:
+  text: manage fields
+  icon: regular-shield
+  prefix: local_task
+local_task.manage_form_display:
+  text: manage form display
+  icon: regular-shield-alt
+  prefix: local_task
+local_task.manage_display:
+  text: manage display
+  icon: regular-shield-check
+  prefix: local_task
+local_task.manage:
+  smart: manage
+  icon: regular-tools
+  prefix: local_task
+local_task.tools:
+  text: tools
+  icon: regular-tools
+  prefix: local_task
+local_task.import:
+  text: import
+  icon: regular-file-import
+  prefix: local_task
+local_task.export:
+  text: export
+  icon: regular-file-export
+  prefix: local_task
+local_task.synchronize:
+  text: synchronize
+  icon: regular-sync
+  prefix: local_task
+local_task.variations:
+  text: variations
+  icon: regular-sitemap
+  prefix: local_task
+local_task.duplicate:
+  text: duplicate
+  icon: regular-clone
+  prefix: local_task
+local_task.dashboard:
+  text: dashboard
+  icon: regular-tachometer
+  prefix: local_task
+local_task.demo:
+  smart: demo
+  icon: regular-laptop-code
+  prefix: local_task
+local_task.domain:
+  smart: domain
+  icon: regular-globe
+  prefix: local_task
+local_task.affiliated:
+  smart: affiliated
+  icon: regular-atlas
+  prefix: local_task
+local_task.entity:
+  smart: entity
+  icon: regular-route-highway
+  prefix: local_task
+local_task.tasks:
+  smart: tasks
+  icon: regular-poll-h
+  prefix: local_task
+local_task.address_book:
+  smart: address book
+  icon: regular-address-book
+  prefix: local_task
+local_task.email:
+  smart: email
+  icon: regular-envelope
+  prefix: local_task
+local_task.valet:
+  text: valet
+  icon: regular-taxi
+  prefix: local_task
+local_task.outline:
+  text: outline
+  icon: regular-border-none
+  prefix: local_task
+local_task.submissions:
+  smart: submissions
+  icon: regular-poll-people
+  prefix: local_task
+local_task.sort:
+  smart: sort
+  icon: regular-sort-circle
+  prefix: local_task
+local_task.types:
+  smart: types
+  icon: regular-puzzle-piece
+  prefix: local_task

@@ -1,0 +1,10 @@
+.exo-form-pseudo {
+  @include flex-align(left, middle);
+  display: flex !important;
+  box-sizing: border-box;
+
+  > div {
+    flex: 1 1 100%;
+    display: block;
+  }
+}

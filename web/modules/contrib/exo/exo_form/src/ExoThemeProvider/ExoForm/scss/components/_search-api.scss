@@ -1,0 +1,91 @@
+.exo-form.search-api-index-add-fields {
+
+  ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  .item-list {
+    padding-bottom: $global-margin / 2;
+    margin-bottom: $global-margin / 2;
+    border-bottom: 1px solid lighten(color(theme-gray), 45%);
+
+    .item-list {
+      width: 100%;
+      flex-basis: 100%;
+      margin-left: rem-calc(5);
+      // padding-left: $global-margin;
+      margin-bottom: 0;
+      border-bottom: 0;
+      border-left: 1px solid lighten(color(theme-gray), 45%);
+
+      .exo-form-inline {
+        padding-left: $global-margin / 2;
+      }
+    }
+  }
+
+  .exo-form-inline {
+    @include flex;
+    @include flex-align(left, middle);
+    flex-wrap: wrap;
+    padding-top: $global-margin / 2;
+    margin-top: $global-margin / 2;
+    border-top: 1px solid lighten(color(theme-gray), 45%);
+    white-space: nowrap;
+
+    a {
+      margin-right: rem-calc(5);
+    }
+
+    small {
+      margin: 0 $global-margin;
+    }
+  }
+
+  .exo-form-element {
+    width: auto;
+    flex-basis: auto;
+    margin: 0 !important;
+  }
+
+  .exo-form-button {
+    padding: rem-calc(5);
+    line-height: 1;
+    height: rem-calc(20);
+  }
+}
+
+.search-api-index-processors-form {
+
+  .search-api-stage-wrapper.form-item {
+    float: none;
+    width: auto;
+  }
+
+  #edit-weights {
+
+    > div > fieldset > div {
+
+      @include breakpoint(large) {
+        @include exo-grid;
+        @include exo-gutters($negative: true, $gutters: $global-margin);
+
+        > * {
+          @include exo-cell(4, $gutters: $global-margin);
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  table {
+    width: 100%;
+  }
+}

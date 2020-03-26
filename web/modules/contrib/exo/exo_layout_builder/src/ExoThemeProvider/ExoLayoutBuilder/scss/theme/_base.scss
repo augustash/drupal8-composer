@@ -1,0 +1,132 @@
+////////////////////////////////////////////////////////////////////////////////
+/// Theme Structure
+/// -------
+/// Place all base structures here.
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+/// Theme Structure
+/// -------
+/// Place all base structures here.
+////////////////////////////////////////////////////////////////////////////////
+
+.exo-layout-builder {
+
+  .exo-layout-builder-top {
+
+    .exo-layout-builder-top-inner {
+      background: alpha(theme-white, 0.8);
+      border-bottom: 1px solid color(theme-white);
+
+      .form-actions {
+
+        .button {
+          color: color(theme-white);
+
+          &.exo-layout-builder-submit {
+            background: color(theme-primary);
+            text-shadow: 0 0 3px color-scale-direct(theme-primary, 10%);
+
+            &:hover {
+              background: color-scale-direct(theme-primary, 10%);
+            }
+          }
+
+          &.exo-layout-builder-discard {
+            background: color(theme-warning);
+            text-shadow: 0 0 3px color-scale-direct(theme-warning, 10%);
+
+            &:hover {
+              background: color-scale-direct(theme-warning, 10%);
+            }
+          }
+
+          &.exo-layout-builder-revert {
+            background: color(theme-gray);
+            text-shadow: 0 0 3px color-scale-direct(theme-gray, 10%);
+
+            &:hover {
+              background: color-scale-direct(theme-gray, 10%);
+            }
+          }
+        }
+      }
+    }
+
+    .layout-builder__message {
+      border-bottom: 1px solid alpha(theme-white, 0.4);
+
+      .messages {
+        background: color(theme-success);
+        text-shadow: 0 0 3px color-scale-direct(theme-success, 10%);
+        padding: rem-calc(5 10);
+      }
+    }
+  }
+
+  .layout-builder {
+    border: 0;
+    padding: 0;
+    background-color: transparent;
+  }
+
+  .layout-builder__add-section {
+    border: 1px solid alpha(theme-gray, 0.3);
+    outline: none;
+    // outline: 1px dashed color(theme-gray);
+    background-color: alpha(theme-gray, 0.1);
+  }
+
+  .layout-builder__section {
+
+    .layout-builder__link--remove {
+      background-color: color(theme-alert);
+
+      &:before {
+        color: color(theme-white);
+      }
+
+      &:hover {
+        background-color: color-scale-direct(theme-alert, 10%);
+      }
+    }
+
+    .layout-builder__link--configure {
+      background-color: color(theme-primary);
+
+      &:before {
+        color: color(theme-white);
+      }
+
+      &:hover {
+        background-color: color-scale-direct(theme-primary, 10%);
+      }
+    }
+
+    .layout-builder__region {
+      // outline: 1px dashed color(theme-primary);
+      outline: none;
+    }
+
+    .layout-builder__link--add {
+      background-color: alpha(theme-primary, 0.1);
+    }
+  }
+}
+
+.layout-selection {
+
+  a {
+    background-color: alpha(theme-gray, 0.1);
+    border: 1px solid color(theme-gray);
+    transition: background-color $global-speed;
+
+    img {
+      display: block;
+      border: 1px solid color(theme-gray);
+    }
+
+    &:hover {
+      background-color: alpha(theme-gray, 0.2);
+    }
+  }
+}

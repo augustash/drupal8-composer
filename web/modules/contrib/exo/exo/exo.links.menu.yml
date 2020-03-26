@@ -1,0 +1,14 @@
+
+system.admin_config_exo:
+  route_name: system.admin_config_exo
+  title: 'eXo'
+  parent: system.admin_config
+  description: 'Configure eXo.'
+  weight: -5
+
+exo.theme.settings:
+  title: 'Theme'
+  route_name: exo.theme.settings
+  description: 'Theme settings and configuration.'
+  parent: system.admin_config_exo
+  weight: 0

@@ -1,0 +1,11 @@
+entity.exo_toolbar.add_form:
+  route_name: entity.exo_toolbar.add_form
+  title: 'Add eXo Toolbar'
+  appears_on:
+    - entity.exo_toolbar.collection
+
+# entity.exo_toolbar_item.add_form:
+#   route_name: entity.exo_toolbar_item.add_form
+#   title: 'Add eXo Toolbar Item'
+#   appears_on:
+#     - entity.exo_toolbar_item.collection

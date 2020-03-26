@@ -1,0 +1,57 @@
+
+.exo-form-element-type-text-format {
+
+  .exo-form-element {
+    margin: 0;
+  }
+
+  .exo-filter-wrapper {
+    @include flex;
+    @include flex-align(left, middle);
+    border: 0;
+    margin: 0;
+    padding: $global-padding 0 0;
+    overflow: visible;
+    background: transparent !important;
+
+    label {
+      font-size: rem-calc(10);
+      text-transform: uppercase;
+    }
+  }
+
+  .exo-form-container-filter-help {
+    position: relative;
+    float: right;
+    font-size: rem-calc(10);
+    text-transform: uppercase;
+    vertical-align: middle;
+    z-index: 10;
+  }
+
+  .filter-help {
+    @include description;
+    float: none;
+    margin-top: rem-calc(3);
+    margin-bottom: rem-calc(6);
+    margin-left: $global-margin;
+    order: 2;
+
+    a {
+      padding-top: rem-calc(2);
+    }
+  }
+
+  .text-full {
+    @include description;
+  }
+
+  .filter-guidelines {
+    @include description;
+    margin-top: $global-margin;
+
+    > * {
+      margin-left: $global-margin;
+    }
+  }
+}

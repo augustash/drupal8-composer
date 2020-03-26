@@ -1,0 +1,46 @@
+uuid: 592f9c17-bee2-44a6-9417-85e3e1faa1f9
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.media.media_library
+    - field.field.media.audio.field_media_audio_file
+    - field.field.media.audio.field_tags
+    - media.type.audio
+  module:
+    - exo_icon
+_core:
+  default_config_hash: bluLijrv0ELGIq1uFR777kImy6ZH6VLl8mBCOwvuLg4
+id: media.audio.media_library
+targetEntityType: media
+bundle: audio
+mode: media_library
+content:
+  field_media_audio_file:
+    type: file_icon
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      title: ''
+      text_only: '1'
+      position: before
+      target: 0
+      icon: regular-file
+      icon_default: regular-file
+      icon_image: regular-file-image
+      icon_document: regular-file-word
+      icon_spreadsheet: regular-file-excel
+      icon_presentation: regular-file-powerpoint
+      icon_archive: regular-file-archive
+      icon_script: regular-file-code
+      icon_html: regular-file-code
+      icon_executable: regular-file-exclamation
+      icon_pdf: regular-file-pdf
+    third_party_settings: {  }
+hidden:
+  created: true
+  field_tags: true
+  name: true
+  thumbnail: true
+  uid: true

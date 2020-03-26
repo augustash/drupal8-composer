@@ -1,0 +1,118 @@
+base:
+  version: VERSION
+  js:
+    js/exo.form.js: { minified: true }
+  dependencies:
+    - exo/exo
+    - exo_form/theme
+
+input:
+  version: VERSION
+  js:
+    js/exo.form.input.js: { minified: true }
+  dependencies:
+    - exo_form/base
+
+radio:
+  version: VERSION
+  js:
+    js/exo.form.radio.js: { minified: true }
+  dependencies:
+    - exo_form/base
+
+file:
+  version: VERSION
+  js:
+    js/exo.form.file.js: { minified: true }
+  dependencies:
+    - exo_form/base
+
+managedfile:
+  version: VERSION
+  js:
+    js/exo.form.managedfile.js: { minified: true }
+  dependencies:
+    - exo_form/base
+
+checkbox:
+  version: VERSION
+  js:
+    js/exo.form.checkbox.js: { minified: true }
+  dependencies:
+    - exo_form/base
+
+select:
+  version: VERSION
+  js:
+    js/exo.form.select.js: { minified: true }
+  dependencies:
+    - core/drupal.displace
+    - exo/jquery.touchevents
+    - exo_form/base
+    - exo_form/input
+    - exo_form/checkbox
+
+date:
+  version: VERSION
+  css:
+    component:
+      lib/pickadate/themes/default.date.css: { minified: true }
+  js:
+    lib/pickadate/picker.date.js: { minified: true }
+    js/exo.form.date.js: { minified: true }
+  dependencies:
+    - exo_form/jquery.pickadate
+    - core/drupalSettings
+    - exo_form/base
+
+time:
+  version: VERSION
+  css:
+    component:
+      lib/pickadate/themes/default.time.css: { minified: true }
+  js:
+    lib/pickadate/picker.time.js: { minified: true }
+    js/exo.form.time.js: { minified: true }
+  dependencies:
+    - exo_form/jquery.pickadate
+    - core/drupalSettings
+    - exo_form/base
+
+number:
+  version: VERSION
+  js:
+    js/exo.form.number.js: { minified: true }
+  dependencies:
+    - exo_form/base
+
+autogrow:
+  version: VERSION
+  js:
+    js/exo.form.autogrow.js: { minified: true }
+  dependencies:
+    - exo/autosize
+    - core/drupal.displace
+
+################################################################################
+## eXo Theme Provider
+################################################################################
+
+theme:
+  version: VERSION
+  css:
+    component:
+      css/exo-form.css: { minified: true }
+
+################################################################################
+## Libraries
+################################################################################
+
+jquery.pickadate:
+  version: VERSION
+  css:
+    component:
+      lib/pickadate/themes/default.css: { minified: true }
+  js:
+    lib/pickadate/picker.js: { minified: true }
+  dependencies:
+    - core/jquery

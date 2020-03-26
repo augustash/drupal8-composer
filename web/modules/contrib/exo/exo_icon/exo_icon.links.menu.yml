@@ -1,0 +1,7 @@
+
+entity.exo_icon.collection:
+  title: 'Icon Packages'
+  route_name: entity.exo_icon_package.collection
+  description: 'Icon package management and configuration.'
+  parent: system.admin_config_exo
+  weight: 0

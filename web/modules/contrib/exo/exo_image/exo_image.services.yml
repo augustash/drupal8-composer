@@ -1,0 +1,11 @@
+services:
+  exo_image.route_subscriber:
+    class: Drupal\exo_image\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
+  exo_image.settings:
+    class: Drupal\exo_image\ExoImageSettings
+    arguments: ['@config.factory']
+  exo_image.style.manager:
+    class: Drupal\exo_image\ExoImageStyleManager
+    arguments: ['@module_handler', '@entity_type.manager', '@image.factory', '@plugin.manager.image.effect', '@exo_image.settings']

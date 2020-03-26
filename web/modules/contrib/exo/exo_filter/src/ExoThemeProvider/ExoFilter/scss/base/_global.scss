@@ -1,0 +1,37 @@
+
+.exo-filter-summary-item {
+
+  label {
+    display: block;
+    font-size: $label-font-size;
+    line-height: $label-height;
+    font-weight: normal;
+    text-transform: none;
+    padding: 0 0 3px;
+    margin: 0 0 ($label-height / 2);
+  }
+
+  > .field-input {
+
+    ul {
+      list-style: none;
+      margin-left: 0;
+      margin-bottom: 0;
+
+      li {
+        display: inline-block;
+        margin-right: $label-height;
+        margin-bottom: $label-height;
+
+        a {
+          transition: color $global-speed, background-color $global-speed;
+
+          i {
+            margin-left: $label-height;
+            font-size: $label-font-size;
+          }
+        }
+      }
+    }
+  }
+}

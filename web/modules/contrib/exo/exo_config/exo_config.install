@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the exo_config module.
+ */
+
+use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Site\Settings;
+use Drupal\Component\Render\FormattableMarkup;
+
+/**
+ * Implements hook_install().
+ */
+function exo_config_install() {
+  // The base profile has config types that it defines. Since it loads its
+  // config in before this module can, our config type config never gets loaded.
+  // We manually override this below.
+  $config_path = drupal_get_path('module', 'exo_config') . '/config/optional';
+  $source = new FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $files = $source->listAll('');
+  foreach ($files as $name) {
+    $config_storage->write($name, $source->read($name));
+  }
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function exo_config_requirements($phase) {
+  $requirements = [];
+
+  if ($phase == 'runtime') {
+    $ready = Settings::get('config_readonly');
+    $requirements['exo_config'] = [
+      'title' => t('eXo Config'),
+      'value' => $ready ? t('Enabled') : t('Not Configured'),
+    ];
+    $description = '';
+    if (!$ready) {
+      $requirements['exo_config']['severity'] = REQUIREMENT_ERROR;
+      $description .= t('
+  Please add the following to your settings.php file: <br><pre>
+
+if (PHP_SAPI !== \'cli\') {
+  $settings[\'config_readonly\'] = TRUE;
+}</pre>
+      ');
+    }
+    $description .= t('
+  <br>When developing, please add the following to your settings.local.php:<br><pre>
+
+$config[\'config_split.config_split.dev\'][\'status\'] = TRUE;</pre>
+    ');
+    $requirements['exo_config']['description'] = new FormattableMarkup($description, []);
+  }
+
+  return $requirements;
+}

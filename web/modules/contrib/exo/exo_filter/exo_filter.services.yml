@@ -1,0 +1,4 @@
+services:
+  plugin.manager.exo_filter:
+    class: Drupal\exo_filter\Plugin\ExoFilterManager
+    parent: default_plugin_manager

@@ -1,0 +1,41 @@
+services:
+  exo.theme:
+    class: Drupal\exo\Command\ExoThemeCommand
+    arguments: ['@console.extension_manager', '@exo.theme_generator', '@console.string_converter', '@console.validator', '@console.chain_queue']
+    tags:
+      - { name: drupal.command }
+  exo.theme_provider:
+    class: Drupal\exo\Command\ExoThemeProviderCommand
+    arguments: ['@console.extension_manager', '@exo.theme_provider_generator', '@console.string_converter', '@console.validator', '@console.chain_queue']
+    tags:
+      - { name: drupal.command }
+  exo.theme_update:
+    class: Drupal\exo\Command\ExoThemeUpdateCommand
+    arguments: ['@exo.theme_update_generator', '@plugin.manager.exo_theme', '@console.chain_queue']
+    tags:
+      - { name: drupal.command }
+  exo.theme_generator:
+    class: Drupal\exo\Generator\ExoThemeGenerator
+    arguments: ['@console.extension_manager', '@plugin.manager.exo_theme_provider', '@console.translator_manager', '@console.string_converter']
+    tags:
+      - { name: drupal.generator }
+  exo.theme_provider_generator:
+    class: Drupal\exo\Generator\ExoThemeProviderGenerator
+    arguments: ['@console.extension_manager', '@console.string_converter']
+    tags:
+      - { name: drupal.generator }
+  exo.theme_update_generator:
+    class: Drupal\exo\Generator\ExoThemeUpdateGenerator
+    arguments: ['@console.extension_manager', '@plugin.manager.exo_theme_provider', '@plugin.manager.exo_theme', '@console.translator_manager', '@console.string_converter']
+    tags:
+      - { name: drupal.generator }
+  exo.settings:
+    class: Drupal\exo\Command\ExoSettingsCommand
+    arguments: ['@console.extension_manager', '@exo.settings_generator', '@console.string_converter', '@console.validator', '@console.chain_queue', '@router.route_provider']
+    tags:
+      - { name: drupal.command }
+  exo.settings_generator:
+    class: Drupal\exo\Generator\ExoSettingsGenerator
+    arguments: ['@console.extension_manager', '@console.translator_manager', '@console.string_converter']
+    tags:
+      - { name: drupal.generator }

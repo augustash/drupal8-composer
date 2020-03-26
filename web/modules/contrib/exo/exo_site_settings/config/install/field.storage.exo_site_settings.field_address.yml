@@ -1,0 +1,19 @@
+uuid: f8be0d35-ff7f-46af-bb07-1958d21a43c9
+langcode: en
+status: true
+dependencies:
+  module:
+    - exo_site_settings
+id: exo_site_settings.field_address
+field_name: field_address
+entity_type: exo_site_settings
+type: string_long
+settings:
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

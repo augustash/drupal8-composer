@@ -1,0 +1,55 @@
+uuid: b5e16afb-36a5-4cdc-af93-391be2d5618a
+langcode: en
+status: true
+dependencies:
+  config:
+    - media.type.file
+    - views.view.exo_media_browser_file
+  module:
+    - dropzonejs_eb_widget
+    - exo_entity_browser
+    - media
+    - views
+name: exo_media_file_embed
+label: 'eXo Media | File | Embed'
+display: exo_iframe
+display_configuration:
+  width: 100%
+  height: '500'
+  link_text: 'File Library'
+  auto_open: 1
+  modal_description: 'Select from library or upload new.'
+selection_display: no_display
+selection_display_configuration: {  }
+widget_selector: tabs
+widget_selector_configuration: {  }
+widgets:
+  f9bb6a39-a341-4cc3-925e-a49fae87358c:
+    settings:
+      view: exo_media_browser_file
+      view_display: entity_browser_1
+      submit_text: Select
+      auto_select: false
+    uuid: f9bb6a39-a341-4cc3-925e-a49fae87358c
+    weight: 1
+    label: Library
+    id: view
+  56da6422-7266-497f-8367-595afe2675f5:
+    settings:
+      form_mode: default
+      media_type: file
+      upload_location: 'public://files'
+      dropzone_description: 'Drop files here to upload them'
+      max_filesize: 500M
+      extensions: 'txt rtf doc docx ppt pptx xls xlsx pdf odf odg odp ods odt fodt fods fodp fodg key numbers pages zip'
+      clientside_resize: false
+      resize_width: null
+      resize_height: null
+      resize_quality: !!float 1
+      resize_method: contain
+      thumbnail_method: contain
+      submit_text: Select
+    uuid: 56da6422-7266-497f-8367-595afe2675f5
+    weight: 2
+    label: Upload
+    id: dropzonejs_media_entity_inline_entity_form

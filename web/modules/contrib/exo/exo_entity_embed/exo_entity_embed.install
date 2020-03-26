@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * @file
+ * Install hooks for exo_entity_embed.
+ */
+
+/**
+ * Migrade exo_image formatters to renamed exo_image_media.
+ */
+function exo_entity_embed_update_8001() {
+  $old_plugin_id = 'entity_reference:exo_image_embed';
+  $new_plugin_id = \Drupal::service('module_handler')->moduleExists('drimage') ? 'entity_reference:exo_image_media_drimage_embed' : 'entity_reference:exo_image_media_embed';
+
+  // Change embed buttons to replace plugin id change.
+  foreach (\Drupal::entityTypeManager()->getStorage('embed_button')->loadMultiple() as $entity) {
+    $settings = $entity->getTypeSettings();
+    if (!empty($entity->type_settings['display_plugins'])) {
+      foreach ($entity->type_settings['display_plugins'] as &$value) {
+        if ($value == $old_plugin_id) {
+          $value = $new_plugin_id;
+        }
+      }
+      $entity->save();
+    }
+  }
+
+  // Update existing content to reflect plugin id change.
+  $database = \Drupal::database();
+  $data = \Drupal::service('entity_field.manager')->getFieldMapByFieldType('text_long');
+  foreach ($data as $entity_type => $fields) {
+    foreach ($fields as $field_name => $info) {
+      $tables = [
+        $entity_type . '__' . $field_name,
+        $entity_type . '_revision__' . $field_name,
+      ];
+      foreach ($tables as $table) {
+        if ($database->schema()->tableExists($table)) {
+          $database->query("UPDATE {$table} SET {$field_name}_value = REPLACE({$field_name}_value, '{$old_plugin_id}', '{$new_plugin_id}')");
+        }
+      }
+    }
+  }
+}

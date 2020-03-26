@@ -1,0 +1,36 @@
+{% extends "base/class.php.twig" %}
+
+{% block file_path %}
+\Drupal\{{module}}\{{ class }}.
+{% endblock %}
+
+{% block namespace_class %}
+namespace Drupal\{{module}};{% endblock %}
+
+{% block use_class_services %}
+
+use Drupal\exo\ExoSettingsBase;
+use Drupal\Core\Form\FormStateInterface;
+{% endblock %}
+
+{% block class_declaration %}
+/**
+ * Class {{ class }}.
+ */
+class {{ class }} extends ExoSettingsBase {% endblock %}
+{% block class_construct %}
+  /**
+   * {@inheritdoc}
+   */
+  public function getModuleId() {
+    return '{{module}}';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    $form = parent::buildForm($form, $form_state);
+    return $form;
+  }
+{% endblock %}

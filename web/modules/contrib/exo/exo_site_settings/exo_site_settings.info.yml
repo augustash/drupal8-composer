@@ -1,0 +1,9 @@
+name: 'eXo Site Settings'
+type: module
+description: 'Allows the creation of custom configuration entities.'
+core: 8.x
+package: 'eXo'
+dependencies:
+  - exo:exo
+  - exo_link:exo_link
+  - telephone

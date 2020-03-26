@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_site_settings_domain.module.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function exo_site_settings_domain_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the exo_site_settings_domain module.
+    case 'help.page.exo_site_settings_domain':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides domain access support to site settings.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function exo_site_settings_domain_domain_delete(EntityInterface $entity) {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $exo_site_settings_storage = $entity_type_manager->getStorage('exo_site_settings');
+  foreach ($entity_type_manager->getStorage('exo_site_settings_type')->loadMultiple() as $exo_site_settings_type) {
+    $exo_site_settings = $exo_site_settings_storage->load($exo_site_settings_type->id() . '_' . $entity->id());
+    if ($exo_site_settings) {
+      $exo_site_settings->delete();
+    }
+  }
+}

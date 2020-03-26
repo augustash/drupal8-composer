@@ -1,0 +1,16 @@
+.exo-modals {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  overflow: hidden;
+  pointer-events: none;
+
+  &.exo-modals-active {
+    display: flex;
+    // transition: top $global-speed, right $global-speed, bottom $global-speed, left $global-speed;
+  }
+}

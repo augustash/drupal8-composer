@@ -1,0 +1,10 @@
+services:
+  plugin.manager.exo_theme:
+    class: Drupal\exo\ExoThemePluginManager
+    parent: default_plugin_manager
+  plugin.manager.exo_theme_provider:
+    class: Drupal\exo\ExoThemeProviderPluginManager
+    parent: default_plugin_manager
+  plugin.manager.exo_extra_field_display:
+    class: Drupal\exo\Plugin\ExoExtraFieldDisplayManager
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@entity_type.manager']

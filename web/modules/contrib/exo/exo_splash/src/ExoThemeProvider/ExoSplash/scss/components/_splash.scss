@@ -1,0 +1,44 @@
+.exo-splash {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 9999;
+  transition: all 1000ms;
+  // opacity: 0.5;
+  // pointer-events: none;
+  // display: none;
+
+  &.active {
+    display: flex;
+  }
+}
+
+.exo-splash-inner {
+  height: 100%;
+
+  img {
+    display: block;
+    height: 100%;
+    width: auto;
+    max-width: auto;
+  }
+}
+
+.exo-splash-logo-white {
+
+  img {
+    filter: brightness(0) invert(1);
+  }
+}
+
+.exo-splash-logo-black {
+
+  img {
+    filter: brightness(0);
+  }
+}

@@ -1,0 +1,44 @@
+////////////////////////////////////////////////////////////////////////////////
+/// Theme Variables
+/// -------
+/// Place all base variables here.
+////////////////////////////////////////////////////////////////////////////////
+
+$themes: (
+  default: (
+    base: theme-base,
+    offset: theme-offset,
+    primary: theme-primary,
+    secondary: theme-secondary,
+  ),
+  inverse: (
+    base: theme-offset,
+    offset: theme-base,
+    primary: theme-primary,
+    secondary: theme-secondary,
+  ),
+  primary: (
+    base: theme-primary,
+    offset: theme-offset,
+    primary: theme-offset,
+    secondary: theme-secondary,
+  ),
+  secondary: (
+    base: theme-secondary,
+    offset: theme-offset,
+    primary: theme-offset,
+    secondary: theme-primary,
+  ),
+  white: (
+    base: theme-white,
+    offset: theme-black,
+    primary: theme-primary,
+    secondary: theme-secondary,
+  ),
+  black: (
+    base: theme-black,
+    offset: theme-white,
+    primary: theme-white,
+    secondary: theme-primary,
+  ),
+) !default;

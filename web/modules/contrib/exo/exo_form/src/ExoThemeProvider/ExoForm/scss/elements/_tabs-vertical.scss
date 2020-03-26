@@ -1,0 +1,92 @@
+.exo-form .exo-form-vertical-tabs {
+
+  // Reset
+  // @see adminimal.
+  .vertical-tabs,
+  .vertical-tabs.form-item,
+  .vertical-tabs .vertical-tabs {
+    background: transparent;
+    border: 0;
+  }
+
+  > label {
+    @include wrapper-label;
+  }
+
+  > .field-input {
+    padding: 0;
+  }
+
+  .vertical-tabs:not(.form-item) {
+    @include flex;
+    @include flex-align(justify, stretch);
+  }
+
+  .vertical-tabs__menu {
+    position: relative;
+    z-index: 2;
+    width: $tab-menu-width;
+    max-width: $tab-menu-width;
+    min-width: $tab-menu-width;
+
+    li {
+      margin-bottom: rem-calc(1);
+
+      a {
+        display: block;
+        padding: $global-padding $global-padding / 2;
+        transition: color $global-speed ease, background-color $global-speed ease;
+        line-height: 1.2;
+
+        .vertical-tabs__menu-item-title {
+          font-size: $tab-menu-font-size;
+          font-weight: $tab-menu-font-weight;
+        }
+
+        .vertical-tabs__menu-item-summary {
+          display: block;
+          font-size: $tab-menu-font-size * 0.9;
+          font-style: italic;
+        }
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      &.is-selected {
+        margin-right: rem-calc(-3);
+      }
+
+      &:after {
+        content: '';
+        display: block;
+        height: 2px;
+        width: 100%;
+        background-size: 0 2px, 100% 1px;
+        background-repeat: no-repeat;
+        background-position: center bottom, center calc(100% - 1px);
+        transition: all $global-speed ease-out;
+      }
+    }
+  }
+
+  .vertical-tabs__panes {
+    position: relative;
+    margin: 0 0 0 rem-calc(2);
+    flex: 1 1 auto;
+    z-index: 1;
+
+    .vertical-tabs__pane {
+      padding: $global-padding;
+      border: 0;
+      margin-top: 0;
+      margin-bottom: 0;
+      background: transparent;
+
+      > summary {
+        display: none;
+      }
+    }
+  }
+}

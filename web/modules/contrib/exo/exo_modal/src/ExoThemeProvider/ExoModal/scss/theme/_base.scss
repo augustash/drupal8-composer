@@ -1,0 +1,88 @@
+////////////////////////////////////////////////////////////////////////////////
+/// Theme Structure
+/// -------
+/// Place all base structures here.
+////////////////////////////////////////////////////////////////////////////////
+
+.exo-modal {
+
+  // Theme support.
+  @each $key, $theme in $themes {
+    $base: map-get($theme, base);
+    $offset: map-get($theme, offset);
+    $primary: map-get($theme, primary);
+
+    &.exo-modal-theme-#{$key} {
+      border-bottom-color: color($base);
+
+      .exo-modal-header {
+        background: color($base);
+      }
+
+      .exo-modal-header-icon,
+      .exo-modal-header-title,
+      .exo-modal-header-subtitle {
+        color: color-fix($base, $offset);
+      }
+
+      .exo-modal-progressbar div {
+        background-color: color($primary);
+      }
+
+      .exo-container-button {
+        background: color($base);
+        color: color-fix($base, $offset);
+      }
+
+      .exo-modal-footer {
+        background: color($base);
+
+        .exo-modal-action {
+          background: transparent;
+          color: color-fix($base, $offset);
+
+          &:hover,
+          &:focus {
+            background: color-scale-inverse($base, 10%);
+          }
+
+          &:focus {
+            outline: 1px dotted color-fix($base, $offset);
+            outline-offset: 1px;
+          }
+
+          &.primary {
+            background: color($primary);
+            color: color-b-or-w($primary);
+
+            &:hover,
+            &:focus {
+              background: alpha($primary, 0.8);
+            }
+
+            &:focus {
+              outline: 1px dotted color($primary);
+              outline-offset: 1px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @each $key, $theme in $themes {
+    $base: map-get($theme, base);
+    $offset: map-get($theme, offset);
+    $primary: map-get($theme, primary);
+
+    &.exo-modal-theme-content-#{$key} {
+      .exo-modal-wrap,
+      .exo-modal-section-header,
+      .exo-modal-section-footer,
+      .exo-modal-panel {
+        background: color-scale-inverse($base, 2%);
+        color: color-fix($base, $offset);
+      }
+    }
+  }
+}

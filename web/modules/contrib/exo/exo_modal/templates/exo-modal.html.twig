@@ -1,0 +1,20 @@
+<div{{ attributes }}>
+  {% if sections.header %}
+    <div class="exo-modal-section-header">
+      {{ sections.header }}
+    </div>
+  {% endif %}
+  <div class="exo-modal-container">
+    <div class="exo-modal-wrap">
+      <div class="exo-modal-content">
+        {{ content }}
+      </div>
+      {{ panels }}
+    </div>
+  </div>
+  {% if sections.footer %}
+    <div class="exo-modal-section-footer">
+      {{ sections.footer }}
+    </div>
+  {% endif %}
+</div>

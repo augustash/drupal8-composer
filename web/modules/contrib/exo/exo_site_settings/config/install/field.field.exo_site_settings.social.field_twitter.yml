@@ -1,0 +1,23 @@
+uuid: b8bee18e-6cc1-42f5-b3c1-af26fecc7fa0
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_site_settings.exo_site_settings_type.social
+    - field.storage.exo_site_settings.field_twitter
+  module:
+    - link
+id: exo_site_settings.social.field_twitter
+field_name: field_twitter
+entity_type: exo_site_settings
+bundle: social
+label: Twitter
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 16
+  title: 0
+field_type: link

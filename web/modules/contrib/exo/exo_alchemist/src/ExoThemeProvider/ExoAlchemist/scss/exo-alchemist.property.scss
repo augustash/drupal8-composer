@@ -1,0 +1,22 @@
+////////////////////////////////////////////////////////////////////////////////
+/// Base style and structure of theme.
+/// -------
+/// All styles that should be altered through themes should be place in the
+/// ./exo-alchemist.exo-alchemist.scss SCSS file.
+////////////////////////////////////////////////////////////////////////////////
+
+@import 'exo-common';
+@import 'base/variables';
+@import 'property/global';
+@import 'property/height';
+@import 'property/width';
+@import 'property/padding';
+@import 'property/margin';
+@import 'property/position';
+@import 'property/containment';
+@import 'property/border';
+@import 'property/border-radius';
+@import 'property/box-shadow';
+@import 'property/overlay';
+@import 'property/column';
+@import 'property/font';

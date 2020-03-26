@@ -1,0 +1,84 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_icon_local_task.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function exo_icon_local_task_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the exo_icon_local_task module.
+    case 'help.page.exo_icon_local_task':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides automatic icon placement within the local task tab items.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function exo_icon_local_task_menu_local_tasks_alter(&$data, $route_name) {
+  if (!empty($data['tabs'])) {
+    foreach ($data['tabs'] as &$group) {
+      foreach ($group as &$tab) {
+        if (!empty($tab['#link']['localized_options']['attributes']['data-icon'])) {
+          $tab['#link']['title'] = exo_icon($tab['#link']['title'])->setIcon($tab['#link']['localized_options']['attributes']['data-icon']);
+          $tab['#exo_icon_only'] = !empty($tab['#link']['localized_options']['attributes']['data-icon-only']);
+          if ($tab['#exo_icon_only']) {
+            $tab['#link']['localized_options']['attributes']['class'][] = 'exo-icon-only';
+            $tab['#exo_icon_only'] = TRUE;
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_local_tasks_alter().
+ */
+function exo_icon_local_tasks_alter(&$local_tasks) {
+  $config = \Drupal::config('exo_icon_local_task.settings');
+  $manager = \Drupal::service('plugin.manager.exo_icon');
+  foreach ($local_tasks as &$local_task) {
+    $icon = $manager->getDefinitionMatch($local_task['title'], ['local_task', 'admin']);
+    if ($icon) {
+      $local_task['options']['attributes']['data-icon'] = $icon;
+      $local_task['options']['attributes']['data-icon-only'] = $config->get('icon_only');
+      switch ($local_task['route_name']) {
+        case 'user.register':
+        case 'user.login':
+        case 'user.logout':
+        case 'user.pass':
+          $local_task['options']['attributes']['data-icon-only'] = FALSE;
+          break;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_local_tasks_alter().
+ */
+function exo_icon_menu_local_actions_alter(&$local_actions) {
+  $manager = \Drupal::service('plugin.manager.exo_icon');
+  foreach ($local_actions as &$action) {
+    $icon = $manager->getDefinitionMatch($action['title'], [
+      'local_action',
+      'local_task',
+      'admin',
+    ]);
+    if ($icon) {
+      $action['options']['attributes']['data-icon'] = $icon;
+    }
+  }
+}

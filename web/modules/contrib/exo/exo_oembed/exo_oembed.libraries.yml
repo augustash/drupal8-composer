@@ -1,0 +1,8 @@
+click:
+  version: VERSION
+  js:
+    js/exo.oembed.click.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal

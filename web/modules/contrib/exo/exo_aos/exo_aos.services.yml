@@ -1,0 +1,7 @@
+services:
+  exo_aos.settings:
+    class: Drupal\exo_aos\ExoAosSettings
+    arguments: ['@config.factory']
+  exo_aos.generator:
+    class: Drupal\exo_aos\ExoAosGenerator
+    arguments: ['@exo_aos.settings']

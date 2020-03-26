@@ -1,0 +1,41 @@
+{
+  "browserSync": {
+    "enabled" : true,
+    "proxy" : "http://localhost",
+    "port" : 3000,
+    "openAutomatically" : false,
+    "notify" : false
+  },
+  "watch": {
+    "src": [
+      "css/**/*.css",
+      "js/**/*.js"
+    ]
+  },
+  "clean": {
+    "src": [
+      "css",
+      "js"
+    ]
+  },
+  "scss": {
+    "dest": "css",
+    "src": [
+      "src/**/**/*.scss"
+    ],
+    "includePaths": [],
+    "outputStyle": "compressed"
+  },
+  "js": {
+    "dest": "js",
+    "src": [
+      "src/js/**/*.js"
+    ]
+  },
+  "ts": {
+    "dest": "js",
+    "src": [
+      "src/js/**/*.ts"
+    ]
+  }
+}

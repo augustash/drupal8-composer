@@ -1,0 +1,140 @@
+<?php
+
+/**
+ * @file
+ */
+
+use Drupal\exo_toolbar\Entity\ExoToolbarItemInterface;
+
+/**
+ * @file
+ * Contains exo_toolbar.module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function exo_toolbar_theme($existing, $type, $theme, $path) {
+  $items['exo_toolbar'] = [
+    'render element' => 'element',
+    'file' => 'exo_toolbar.theme',
+  ];
+  $items['exo_toolbar_region'] = [
+    'render element' => 'element',
+    'file' => 'exo_toolbar.theme',
+  ];
+  $items['exo_toolbar_section'] = [
+    'render element' => 'element',
+    'file' => 'exo_toolbar.theme',
+  ];
+  $items['exo_toolbar_item'] = [
+    'render element' => 'element',
+    'file' => 'exo_toolbar.theme',
+  ];
+  $items['exo_toolbar_item_aside'] = [
+    'render element' => 'element',
+    'file' => 'exo_toolbar.theme',
+  ];
+  $items['exo_toolbar_list'] = [
+    'render element' => 'element',
+    'file' => 'exo_toolbar.theme',
+  ];
+  $items['exo_toolbar_dialog'] = [
+    'render element' => 'element',
+    'file' => 'exo_toolbar.theme',
+  ];
+  $items['exo_toolbar_element'] = [
+    'variables' => [
+      'tag' => 'div',
+      'title' => NULL,
+      'icon' => NULL,
+      'icon_position' => 'before',
+      'image' => NULL,
+      'image_position' => 'before',
+      'badge' => NULL,
+      'attributes' => [],
+      'inner_attributes' => [],
+    ],
+    'file' => 'exo_toolbar.theme',
+  ];
+  return $items;
+}
+
+/**
+ * Implements hook_page_top().
+ *
+ * Add toolbar to the top of the page.
+ */
+function exo_toolbar_page_top(array &$page_top) {
+  $page_top['exo_toolbar'] = exo_toolbar_render();
+}
+
+/**
+ * Render the eXo toolbar.
+ */
+function exo_toolbar_render() {
+  /** @var \Drupal\exo_toolbar\ExoToolbarRepositoryInterface $repository */
+  $repository = \Drupal::service('exo_toolbar.repository');
+  $toolbar = $repository->getActiveToolbar();
+  if ($toolbar) {
+    return [
+      '#type' => 'exo_toolbar',
+      '#exo_toolbar' => $toolbar,
+      '#access' => \Drupal::currentUser()->hasPermission('access exo toolbar'),
+      '#cache' => [
+        'keys' => ['exo_toolbar', $toolbar->id()],
+        'contexts' => $toolbar->getCacheContexts(),
+        'tags' => $toolbar->getCacheTags(),
+        'max-age' => $toolbar->getCacheMaxAge(),
+      ],
+    ];
+  }
+}
+
+/**
+ * Implements hook_preprocess_block().
+ */
+function exo_toolbar_preprocess_block(&$variables) {
+  if (!empty($variables['elements']['#plugin_id'])) {
+    if ($variables['elements']['#plugin_id'] == 'local_tasks_block') {
+      // Hide local tasks block if user can use the toolbar AND the local tasks
+      // plugin is enabled.
+      /** @var \Drupal\exo_toolbar\ExoToolbarRepositoryInterface $repository */
+      $repository = \Drupal::service('exo_toolbar.repository');
+      $toolbar = $repository->getActiveToolbar();
+      if ($toolbar && $repository->hasToolbarItemOfType($toolbar->id(), 'local_tasks')) {
+        $variables['content']['#access'] = FALSE;
+      }
+    }
+    if ($variables['elements']['#plugin_id'] == 'local_actions_block') {
+      // Hide local actions block if user can use the toolbar AND the local tasks
+      // plugin is enabled.
+      /** @var \Drupal\exo_toolbar\ExoToolbarRepositoryInterface $repository */
+      $repository = \Drupal::service('exo_toolbar.repository');
+      $toolbar = $repository->getActiveToolbar();
+      if ($toolbar && $repository->hasToolbarItemOfType($toolbar->id(), 'local_actions')) {
+        $variables['content']['#access'] = FALSE;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function exo_toolbar_exo_toolbar_item_insert(ExoToolbarItemInterface $item) {
+  if ($item->getPluginId() == 'region') {
+    // Clear plugin cache as we need our derivitives to be recreated.
+    \Drupal::service('plugin.manager.exo_toolbar_region')->clearCachedDefinitions();
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function exo_toolbar_exo_toolbar_item_delete(ExoToolbarItemInterface $item) {
+  if ($item->getPluginId() == 'region') {
+    // Clear plugin cache as we need our derivitives to be recreated.
+    \Drupal::service('plugin.manager.exo_toolbar_region')->clearCachedDefinitions();
+  }
+}

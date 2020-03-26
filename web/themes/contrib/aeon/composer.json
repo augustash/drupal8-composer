@@ -1,0 +1,34 @@
+{
+  "name": "jacerider/aeon",
+  "description": "Aeon is a base theme for Drupal. It has Bootstrap, Sass, BrowserSync and Font Awesome built-in.",
+  "type": "drupal-theme",
+  "license": "GPL-2.0+",
+  "homepage": "https://github.com/jacerider/aeon",
+  "authors": [
+    {
+      "name": "Cyle Carlson (JaceRider)",
+      "email": "jacerider@gmail.com",
+      "role": "Maintainer"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/jacerider/aeon/issues",
+    "source": "https://github.com/jacerider/aeon"
+  },
+  "minimum-stability": "dev",
+  "require": {
+    "drupal/components": "^1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Drush\\Commands\\aeon\\": "Commands/aeon/"
+    }
+  },
+  "extra": {
+    "drush": {
+      "services": {
+        "drush.services.yml": "^9"
+      }
+    }
+  }
+}

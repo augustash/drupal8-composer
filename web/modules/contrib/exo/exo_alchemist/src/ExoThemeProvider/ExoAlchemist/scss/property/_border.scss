@@ -1,0 +1,8 @@
+$pixels: 0, 1, 2, 5, 10;
+
+@each $size in $pixels {
+  .exo-modifier--border-#{$size} {
+    border-style: solid;
+    border-width: #{$size}px;
+  }
+}

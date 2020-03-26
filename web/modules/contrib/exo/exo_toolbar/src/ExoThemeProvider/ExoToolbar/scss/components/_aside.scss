@@ -1,0 +1,69 @@
+.exo-toolbar-item-aside {
+  position: fixed;
+  z-index: 100;
+  pointer-events: none;
+
+  .exo-toolbar-aside-disable & {
+    display: none !important;
+  }
+
+  &[data-exo-toolbar-item-position='top:right'],
+  &[data-exo-toolbar-item-position='bottom:right'] {
+    text-align: right;
+  }
+}
+
+.exo-toolbar-item-aside-tip {
+  @include aside-arrow($color: theme-black);
+  display: block;
+  width: 100%;
+  transition: opacity $global-speed;
+  padding: rem-calc(10);
+  margin: 0;
+
+  a {
+    // display: block;
+    @include flex;
+    @include exo-flex-direction(column);
+    @include flex-align(center, middle);
+    text-align: center;
+    text-transform: uppercase;
+    text-rendering: optimizeLegibility;
+    font-size: rem-calc(11);
+    opacity: 0.8;
+    margin: (size(margin) / 10) auto;
+    transition: opacity $global-speed, color $global-speed;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    .exo-icon {
+      text-shadow: none;
+    }
+  }
+
+  // Inverse Toolbar settings.
+  .exo-toolbar-region-inverse & {
+
+    a {
+      font-weight: bold;
+    }
+  }
+}
+
+.exo-toolbar-item {
+
+  // Make sure pointer events are active when item is active.
+  &.exo-toolbar-item-active,
+  // Make sure pointer events are active when hovering over parent item.
+  &:hover {
+
+    .exo-toolbar-item-aside {
+
+      > * {
+        pointer-events: auto;
+      }
+    }
+  }
+}

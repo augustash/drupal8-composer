@@ -1,0 +1,324 @@
+.exo-form-file {
+
+  .file {
+    display: block;
+  }
+}
+
+.exo-form-managed-file {
+  padding: $global-padding;
+
+  .exo-form-element {
+    margin-bottom: 0;
+  }
+
+  .image-widget-data {
+    float: none;
+  }
+
+  .image-widget {
+
+    > .exo-form-inline {
+      padding-top: $global-padding;
+      padding-bottom: $global-padding;
+    }
+
+    .image-preview {
+      @include flex;
+      @include flex-align(center, middle);
+      flex: 0 0 1%;
+      float: none;
+      margin-bottom: 0;
+
+      img {
+        width: auto;
+        max-width: inherit;
+      }
+    }
+
+    .image-widget-data {
+
+      .description {
+        display: none;
+      }
+
+      .file-size {
+        flex: 0 0 1%;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  .file {
+    display: block;
+
+    // Managed file preview.
+    &.exo-form-file-input {
+      flex: 1 1 100%;
+      padding: 0 $global-padding;
+      background-position: $global-padding center;
+
+      > a {
+        padding-left: $global-padding + rem-calc(5);
+      }
+    }
+  }
+
+  .exo-form-element-type-submit {
+    flex: 0 0 1%;
+    // margin-top: rem-calc(5);
+
+    .button.exo-form-button.form-submit {
+      // padding: rem-calc(5);
+      // line-height: 1;
+      // height: auto;
+      // min-height: 0;
+    }
+  }
+}
+
+.exo-form .exo-form-managed-file,
+.exo-form .exo-form-file {
+
+  .description {
+    padding-top: rem-calc(3);
+  }
+}
+
+.exo-form-file-input {
+  position: relative;
+  display: block;
+  min-height: $input-height;
+  line-height: $input-height;
+  padding: 0 $global-padding;
+
+  > * {
+    position:relative;
+    z-index: 3;
+  }
+
+  input[type="file"] {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 99;
+    height: $input-height;
+    margin: 0;
+    padding: 0;
+    display: block;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  &:after {
+    content: attr(data-text);
+    // box-sizing: border-box;
+    // font-size: rem-calc(12);
+    // text-transform: uppercase;
+    // position: absolute;
+    // top: 0;
+    // bottom: 0;
+    // left: 0;
+    // padding: 0 $global-padding;
+    // display: block;
+    // width: 100%;
+    // pointer-events: none;
+    // z-index: 1;
+    // height: $input-height;
+    // border-radius: 5px 10px 10px 5px;
+  }
+
+  &.exo-form-file-button {
+
+    &:after {
+      width: calc(100% - 75px);
+    }
+  }
+}
+
+.exo-form-file-button {
+
+  &:before {
+    content: 'Upload';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: block;
+    z-index: 2;
+    font-size: rem-calc(14);
+    padding: 0 $global-padding;
+    text-transform: capitalize;
+    pointer-events: none;
+    box-sizing: border-box;
+  }
+}
+
+// .exo-form-managed-file,
+// .exo-form-file-item {
+//   display: block;
+//   padding: $global-padding;
+// }
+
+// .exo-form-file {
+
+//   .file {
+//     display: block;
+//   }
+
+//   .exo-form-element {
+//     margin: 0;
+//   }
+
+// }
+
+// .exo-form-managed-file {
+
+//   .exo-form-element-type-file {
+//     margin: 0;
+//   }
+// }
+
+// .exo-form-file {
+
+//   .file {
+//     display: block;
+
+//     > a {
+//       display: block;
+//       height: $input-height;
+//       line-height: $input-height;
+//     }
+//   }
+
+//   &.exo-form-element .description {
+//     padding-top: rem-calc(3);
+//   }
+
+//   .exo-form-file-item,
+//   .image-widget {
+//     min-height: $input-height;
+//     position: relative;
+//     width: 100%;
+//     min-width: rem-calc(200);
+
+//     // &.ready {
+//     pointer-events: auto;
+//     // padding-top: $input-height;
+
+//     input[type="file"] {
+//       opacity: 0;
+//       position: absolute;
+//       top: 0;
+//       right: 0;
+//       bottom: 0;
+//       left: 0;
+//       z-index: 99;
+//       height: $input-height;
+//       margin: 0;
+//       padding: 0;
+//       display: block;
+//       cursor: pointer;
+//       width: 100%;
+//     }
+
+//     &:before {
+//       content: 'Upload';
+//       position: absolute;
+//       top: 0;
+//       right: 0;
+//       display: inline-block;
+//       height: $input-height;
+//       z-index: 25;
+//       font-size: rem-calc(14);
+//       line-height: $input-height;
+//       padding: 0 $global-padding;
+//       text-transform: capitalize;
+//       pointer-events: none;
+//       box-sizing: border-box;
+//     }
+
+//     &:after {
+//       content: attr(data-text);
+//       box-sizing: border-box;
+//       font-size: rem-calc(12);
+//       text-transform: uppercase;
+//       position: absolute;
+//       top: 0;
+//       left: 0;
+//       padding: ($global-padding * 0.75) $global-padding;
+//       display: block;
+//       width: calc(100% - 75px);
+//       pointer-events: none;
+//       z-index: 5;
+//       height: $input-height;
+//       // border-radius: 5px 10px 10px 5px;
+//     }
+
+//     // .description {
+//     //   padding-top: $input-height + $global-padding;
+//     // }
+
+//     // .messages {
+//     //   padding-top: $input-height + $global-padding;
+//     // }
+
+//     input {
+
+//       + .exo-form-container-button {
+//         display: none;
+//       }
+//     }
+
+//     &:hover {
+
+//       &:before,
+//       &:after {
+//         transition: background $global-speed, color $global-speed;
+//       }
+//     }
+//     // }
+//   }
+
+//   &.exo-form-file-unmanaged {
+
+//     .exo-form-file-item.ready {
+
+//       &:before {
+//         content: 'Browse';
+//       }
+//     }
+//   }
+
+//   .image-widget {
+//     @include flex;
+//     @include flex-align(left, middle);
+//     padding-top: rem-calc(5);
+//     box-sizing: border-box;
+
+//     > div,
+//     > span {
+//       padding: 0 $global-padding 0 0;
+//     }
+
+//     .exo-form-element-type-submit {
+//       margin: 0;
+//     }
+
+//     .file-size {
+//       display: block;
+//       margin-bottom: $global-margin;
+//     }
+
+//     .image-widget-data {
+//       width: 100%;
+
+//       .description {
+//         padding-top: 0;
+//       }
+//     }
+//   }
+// }

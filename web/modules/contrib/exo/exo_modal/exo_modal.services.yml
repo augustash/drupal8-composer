@@ -1,0 +1,12 @@
+services:
+  exo_modal.settings:
+    class: Drupal\exo_modal\ExoModalSettings
+    arguments: ['@config.factory']
+  exo_modal.generator:
+    class: Drupal\exo_modal\ExoModalGenerator
+    arguments: ['@exo_modal.settings']
+  main_content_renderer.exo_modal:
+    class: Drupal\exo_modal\Render\ExoModalRenderer
+    arguments: ['@title_resolver']
+    tags:
+      - { name: render.main_content_renderer, format: drupal_exo_modal }

@@ -1,0 +1,9 @@
+exo_fixed.settings:
+  path: '/admin/config/exo/fixed'
+  defaults:
+    _form: '\Drupal\exo_fixed\Form\ExoFixedSettingsForm'
+    _title: 'Fixed Settings'
+  requirements:
+    _permission: 'administer exo fixed'
+  options:
+    _admin_route: TRUE

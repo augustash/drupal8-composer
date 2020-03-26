@@ -1,0 +1,10 @@
+base:
+  version: VERSION
+  js:
+    js/exo.video.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - core/drupal.debounce
+    - exo/exo

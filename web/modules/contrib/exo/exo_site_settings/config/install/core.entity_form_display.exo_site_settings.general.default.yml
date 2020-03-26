@@ -1,0 +1,58 @@
+uuid: e98bef29-0691-457c-80db-82343cc0e029
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_site_settings.exo_site_settings_type.general
+    - field.field.exo_site_settings.general.field_address
+    - field.field.exo_site_settings.general.field_copyright
+    - field.field.exo_site_settings.general.field_email
+    - field.field.exo_site_settings.general.field_name
+    - field.field.exo_site_settings.general.field_phone
+  module:
+    - telephone
+id: exo_site_settings.general.default
+targetEntityType: exo_site_settings
+bundle: general
+mode: default
+content:
+  field_address:
+    weight: 3
+    settings:
+      rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+  field_copyright:
+    weight: 5
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_email:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: email_default
+    region: content
+  field_name:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_phone:
+    weight: 2
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: telephone_default
+    region: content
+hidden: {  }

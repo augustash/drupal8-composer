@@ -1,0 +1,4 @@
+services:
+  exo_splash.settings:
+    class: Drupal\exo_splash\ExoSplashSettings
+    arguments: ['@config.factory']

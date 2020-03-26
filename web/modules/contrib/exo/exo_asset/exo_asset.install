@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the exo_asset module.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function exo_asset_requirements($phase) {
+  $requirements = [];
+
+  $module_handler = \Drupal::service('module_handler');
+  if (!$module_handler->moduleExists('media_library') && !$module_handler->moduleExists('exo_entity_browser')) {
+    $requirements['exo_asset'] = [
+      'title' => t('eXo Asset'),
+      'value' => t('Missing required modules. Must have media_library or exo_entity_browser installed.'),
+      'severity' => REQUIREMENT_ERROR,
+    ];
+  }
+
+  return $requirements;
+}

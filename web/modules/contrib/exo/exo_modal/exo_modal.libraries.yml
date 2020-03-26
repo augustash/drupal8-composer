@@ -1,0 +1,58 @@
+base:
+  version: VERSION
+  js:
+    js/exo.modal.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/underscore
+    - core/drupal
+    - core/drupalSettings
+    - core/drupal.displace
+    - exo/exo
+
+ajax:
+  version: VERSION
+  js:
+    js/exo.modal.ajax.js: { minified: true }
+  dependencies:
+    - core/drupal.ajax
+
+toolbar.dialog:
+  version: VERSION
+  js:
+    js/exo.modal.toolbar.dialog.js: { minified: true }
+  dependencies:
+    - exo_toolbar/dialog
+    - exo_modal/theme
+
+entity_browser:
+  version: VERSION
+  js:
+    js/exo.modal.entity-browser.js: { minified: true }
+  dependencies:
+    - core/drupalSettings
+    - core/underscore
+    - exo_modal/theme
+
+entity_browser.selection:
+  version: VERSION
+  css:
+    component:
+      css/exo-modal.entity-browser.selection.css: {}
+  js:
+    js/exo.modal.entity-browser.selection.js: { minified: true }
+  dependencies:
+    - core/drupalSettings
+
+################################################################################
+## eXo Theme Provider
+################################################################################
+
+theme:
+  version: VERSION
+  css:
+    component:
+      css/exo-modal.css: { minified: true }
+  dependencies:
+    - exo_modal/base

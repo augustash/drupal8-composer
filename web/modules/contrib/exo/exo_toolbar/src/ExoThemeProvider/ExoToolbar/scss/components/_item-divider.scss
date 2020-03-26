@@ -1,0 +1,52 @@
+.exo-toolbar-item-type-divider {
+
+  .exo-toolbar-element-title {
+    font-size: rem-calc(9);
+    font-weight: 700;
+    text-transform: uppercase;
+    opacity: 0;
+  }
+
+  [data-exo-align='horizontal'] & {
+    border-left-width: 1px;
+    border-left-style: solid;
+
+    .exo-toolbar-element-title {
+      padding-left: rem-calc(10);
+      padding-right: rem-calc(5);
+    }
+  }
+
+  [data-exo-align='vertical'] & {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+
+    .exo-toolbar-element-title {
+      padding-top: rem-calc(10);
+      padding-bottom: rem-calc(5);
+      opacity: 0;
+      transition: opacity $global-speed;
+    }
+  }
+
+  .exo-toolbar-region-expanded[data-exo-align='vertical'] & {
+
+    .exo-toolbar-element-title {
+      opacity: 1;
+    }
+  }
+
+  .exo-toolbar-element > div {
+
+    [data-exo-align='horizontal'] & {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    [data-exo-align='vertical'] & {
+      height: auto;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+  }
+}

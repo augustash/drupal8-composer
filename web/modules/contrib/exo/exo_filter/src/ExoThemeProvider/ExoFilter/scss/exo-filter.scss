@@ -1,0 +1,12 @@
+////////////////////////////////////////////////////////////////////////////////
+/// Base style and structure of theme.
+/// -------
+/// All styles that should be altered through themes should be place in the
+/// ./exo-filter.exo-filter.scss SCSS file.
+////////////////////////////////////////////////////////////////////////////////
+
+@import 'exo-common';
+
+@import 'base/variables';
+// @import 'base/mixins';
+@import 'base/global';

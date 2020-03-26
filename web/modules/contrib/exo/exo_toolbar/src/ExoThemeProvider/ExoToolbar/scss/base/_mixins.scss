@@ -1,0 +1,75 @@
+@mixin aside-arrow($color: theme-white) {
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 10px 0 0 10px;
+    border-color: transparent transparent transparent rgba(color($color), 0.9);
+  }
+
+  [data-exo-toolbar-item-position='top:left'] & {
+    &:before {
+      top: -10px;
+      left: 0;
+    }
+  }
+
+  [data-exo-toolbar-item-position='top:right'] & {
+    &:before {
+      top: -10px;
+      right: 0;
+      transform: rotate(-90deg);
+    }
+  }
+
+  [data-exo-toolbar-item-position='bottom:left'] & {
+    &:before {
+      bottom: -10px;
+      left: 0;
+      transform: rotate(90deg);
+    }
+  }
+
+  [data-exo-toolbar-item-position='bottom:right'] & {
+    &:before {
+      bottom: -10px;
+      right: 0;
+      transform: rotate(180deg);
+    }
+  }
+
+  [data-exo-toolbar-item-position='left:top'] & {
+    &:before {
+      left: -10px;
+      top: 0;
+      transform: rotate(180deg);
+    }
+  }
+
+  [data-exo-toolbar-item-position='left:bottom'] & {
+    &:before {
+      left: -10px;
+      bottom: 0;
+      transform: rotate(-90deg);
+    }
+  }
+
+  [data-exo-toolbar-item-position='right:top'] & {
+    &:before {
+      right: -10px;
+      top: 0;
+      transform: rotate(90deg);
+    }
+  }
+
+  [data-exo-toolbar-item-position='right:bottom'] & {
+    &:before {
+      right: -10px;
+      bottom: 0;
+    }
+  }
+}

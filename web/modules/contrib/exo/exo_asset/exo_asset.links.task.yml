@@ -1,0 +1,32 @@
+# Asset routing definition
+exo_asset.settings_tab:
+  route_name: exo_asset.settings
+  title: 'Settings'
+  base_route: exo_asset.settings
+
+entity.exo_asset.collection:
+  route_name: entity.exo_asset.collection
+  base_route: entity.exo_asset.collection
+  title: 'List'
+  weight: -10
+
+exo_asset.settings:
+  route_name: exo_asset.settings
+  base_route: entity.exo_asset.collection
+  title: 'Settings'
+
+entity.exo_asset.edit_form:
+  route_name: entity.exo_asset.edit_form
+  base_route: entity.exo_asset.edit_form
+  title: 'Edit'
+
+entity.exo_asset.version_history:
+  route_name: entity.exo_asset.version_history
+  base_route: entity.exo_asset.edit_form
+  title: 'Revisions'
+
+entity.exo_asset.delete_form:
+  route_name:  entity.exo_asset.delete_form
+  base_route:  entity.exo_asset.edit_form
+  title: Delete
+  weight: 10

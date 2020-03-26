@@ -1,0 +1,66 @@
+{#
+/**
+ * @file
+ * Default theme implementation for the eXo toolbar element.
+ *
+ * @see template_preprocess_exo_toolbar_element()
+ *
+ * @ingroup themeable
+ */
+#}
+{%
+  set classes = [
+    icon ? 'has-icon',
+    icon ? 'has-icon-' ~ icon_position,
+    image ? 'has-image',
+    image ? 'has-image-' ~ image_position,
+  ]
+%}
+<{{ tag }}{{ attributes.addClass(classes) }}>
+  <div class="exo-toolbar-element-mark before">
+    {% if image and image_position == 'before' %}
+      {% spaceless %}
+        <div class="exo-toolbar-element-image">
+          {{ image }}
+        </div>
+      {% endspaceless %}
+    {% elseif icon and icon_position == 'before' %}
+      {% spaceless %}
+        <div class="exo-toolbar-element-icon">
+          {{ icon }}
+        </div>
+      {% endspaceless %}
+    {% endif %}
+  </div>
+  <div {{ inner_attributes.addClass('exo-toolbar-element-inner') }}>
+    {% if title %}
+      {% spaceless %}
+        <div class="exo-toolbar-element-title">{{ title }}</div>
+      {% endspaceless %}
+    {% endif %}
+  </div>
+  {% if (image and image_position == 'after') or (icon and icon_position == 'after') or (badge != NULL) %}
+    <div class="exo-toolbar-element-mark after">
+      {% if badge != NULL %}
+        {% spaceless %}
+          <div class="exo-toolbar-element-badge">
+            {{ badge }}
+          </div>
+        {% endspaceless %}
+      {% endif %}
+      {% if image and image_position == 'after' %}
+        {% spaceless %}
+          <div class="exo-toolbar-element-image">
+            {{ image }}
+          </div>
+        {% endspaceless %}
+      {% elseif icon and icon_position == 'after' %}
+        {% spaceless %}
+          <div class="exo-toolbar-element-icon">
+            {{ icon }}
+          </div>
+        {% endspaceless %}
+      {% endif %}
+    </div>
+  {% endif %}
+</{{ tag }}>

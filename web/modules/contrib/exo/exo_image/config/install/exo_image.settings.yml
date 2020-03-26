@@ -1,0 +1,16 @@
+exo_default: 1
+exo_preset: ''
+ratio_distortion: '60'
+upscale: '320'
+downscale: '1632'
+multiplier: '1'
+webp: 1
+webp_quality: '75'
+animate: '1'
+blur: '1'
+bg: '0'
+visible: '1'
+handler: 'scale'
+ratio:
+  width: '1'
+  height: '1'

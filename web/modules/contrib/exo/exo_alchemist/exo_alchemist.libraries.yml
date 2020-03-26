@@ -1,0 +1,66 @@
+admin:
+  version: VERSION
+  js:
+    js/exo.alchemist.admin.js: { minified: true }
+  css:
+    component:
+      css/exo-alchemist.admin.css: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/underscore
+    - core/drupal
+    - core/drupalSettings
+    - core/drupal.displace
+    - exo/jquery.imagesloaded
+    - exo/jquery.overlap
+    - exo_alchemist/theme
+
+admin.appearance:
+  version: VERSION
+  js:
+    js/exo.alchemist.admin.appearance.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/underscore
+
+admin.choose:
+  version: VERSION
+  js:
+    js/exo.alchemist.admin.choose.js: { minified: true }
+  css:
+    component:
+      css/exo-alchemist.admin.choose.css: { minified: true }
+  dependencies:
+    - exo/jquery.imagesloaded
+    - exo/shuffle
+    - exo_alchemist/theme
+
+admin.preview:
+  version: VERSION
+  css:
+    component:
+      css/exo-alchemist.admin.preview.css: { minified: true }
+  dependencies:
+    - exo_alchemist/admin.appearance
+
+property:
+  version: VERSION
+  css:
+    component:
+      css/exo-alchemist.property.css: { minified: true }
+  dependencies:
+    - exo_alchemist/theme
+
+################################################################################
+## eXo Theme Provider
+################################################################################
+
+theme:
+  version: VERSION
+  css:
+    component:
+      css/exo-alchemist.css: { minified: true }
+  dependencies:
+    - exo/exo

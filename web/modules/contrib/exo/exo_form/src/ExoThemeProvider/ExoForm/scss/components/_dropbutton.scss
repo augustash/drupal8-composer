@@ -1,0 +1,269 @@
+// Dropbuttons
+
+.js .exo-form td {
+
+  &:last-child {
+
+    .dropbutton-widget {
+      width: 100%;
+    }
+
+    .open .dropbutton-widget {
+      right: 0;
+    }
+  }
+
+  .dropbutton-wrapper {
+    height: $button-height / 1.5;
+    line-height: $button-height / 1.5;
+
+    .dropbutton-widget {
+      position: inherit;
+
+      .dropbutton-action {
+
+        &:first-child a {
+          height: $button-height / 1.5;
+          line-height: $button-height / 1.5;
+        }
+      }
+    }
+  }
+
+  .open .dropbutton-widget {
+    position: absolute;
+    width: auto;
+  }
+}
+
+.js .exo-form  {
+
+  .dropbutton-wrapper {
+    height: $button-height;
+    line-height: $button-height;
+    margin-right: 0;
+    padding-right: 0;
+
+    .dropbutton-widget {
+      border-radius: 0;
+      border: 0;
+      background: transparent;
+
+      .dropbutton-action {
+
+        > * {
+          padding: 0;
+        }
+
+        &:first-child a {
+          height: $button-height;
+          line-height: $button-height;
+          padding-top: 0;
+          padding-bottom: 0;
+          box-sizing: border-box;
+          transition: color $global-speed, background-color $global-speed;
+        }
+
+        a,
+        input,
+        button {
+          padding: ($global-padding / 4) $global-padding;
+          display: block;
+          width: 100%;
+          text-align: left;
+          border-radius: 0;
+        }
+
+        .button {
+          display: block;
+          background: transparent;
+          color: inherit;
+          border-width: 0;
+          border-radius: 0;
+          width: calc(100% - #{$global-padding * 2});
+          padding: 0 $global-padding;
+          text-align: left;
+        }
+
+        a:focus,
+        input:focus,
+        button:focus {
+          text-decoration: underline;
+        }
+
+        a:hover,
+        button:hover,
+        input:hover,
+        a:focus,
+        button:focus,
+        input:focus {
+          z-index: 3;
+          border-radius: 0;
+          background: transparent;
+        }
+
+        a:active,
+        input:active,
+        button:active {
+          text-decoration: none;
+        }
+
+        .exo-icon {
+          display: inline-block;
+          // margin-right: rem-calc(3);
+          min-width: rem-calc(16);
+        }
+      }
+
+      .dropbutton-toggle {
+        width: $global-padding * 2;
+
+        button {
+          outline: none;
+          border-radius: 0;
+          transition: background-color $global-speed;
+
+          &:hover,
+          &:focus {
+            text-decoration: none;
+            z-index: 3;
+          }
+        }
+      }
+    }
+
+    &.dropbutton-single {
+
+      .dropbutton-action {
+
+        a {
+          width: auto;
+        }
+      }
+    }
+
+    &.dropbutton-multiple {
+
+      .dropbutton {
+        border: 0;
+      }
+
+      .dropbutton-widget {
+        text-shadow: none;
+        padding-right: $global-padding * 2;
+      }
+
+      &.open {
+
+        .dropbutton-action {
+
+          &:first-child,
+          &:last-child {
+
+            a {
+              border-radius: 0;
+            }
+          }
+        }
+      }
+
+      // .dropbutton-action .ajax-progress {
+      //   right: $global-padding * 2.2;
+      //   top: $global-padding / 10;
+      //   margin-right: 0;
+      // }
+
+      // .secondary-action .ajax-progress {
+      //   top: auto;
+      //   bottom: $global-padding / 3;
+      // }
+    }
+  }
+
+  .dropbutton {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+
+    .dropbutton-action {
+
+      > * {
+        padding: 0;
+        margin: 0;
+      }
+
+      input,
+      a,
+      button {
+        text-decoration: none;
+        padding: 0;
+        margin: 0;
+        font-weight: 600;
+        line-height: normal;
+        text-align: left;
+        font-size: inherit;
+      }
+    }
+
+    li {
+      margin-bottom: 0;
+      margin-right: 0;
+
+      + li {
+        margin-top: 0;
+      }
+    }
+  }
+
+  .form-actions {
+
+    .dropbutton {
+
+      .dropbutton-action {
+
+        > * {
+          font-weight: 700;
+        }
+      }
+    }
+
+    .dropbutton-widget {
+      position: relative;
+    }
+  }
+
+  .dropbutton-arrow {
+    display: none;
+  }
+
+  .dropbutton-toggle {
+
+    button {
+      @include exo-icon(regular, f078);
+    }
+  }
+
+  .open .dropbutton-toggle {
+
+    button {
+
+      &:before {
+        transform: rotateX( 180deg );
+      }
+    }
+  }
+}
+
+// .dropbutton {
+
+//   .dropbutton-action {
+
+//     .ajax-progress {
+//       position: absolute;
+//       z-index: 2;
+//       top: $global-padding / 5;
+//       right: $global-padding / 5;
+//       padding: 0 0 0 ($global-padding / 10);
+//     }
+//   }
+// }

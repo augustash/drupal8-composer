@@ -1,0 +1,22 @@
+.exo-radios-slider {
+  line-height: 1.75;
+}
+
+.exo-radios-slider-slide {
+  padding: 10px 15px;
+
+  .exo-radios-slider-pips & {
+    padding-bottom: 40px;
+  }
+}
+
+.exo-radios-slider-tooltips-on-slide {
+
+  .noUi-tooltip {
+    display: none;
+
+    .noUi-active & {
+      display: block;
+    }
+  }
+}

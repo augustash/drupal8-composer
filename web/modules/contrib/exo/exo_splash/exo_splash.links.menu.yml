@@ -1,0 +1,6 @@
+exo_splash.settings:
+  title: 'Splash'
+  route_name: exo_splash.settings
+  description: 'Splash settings and configuration.'
+  parent: system.admin_config_exo
+  weight: 0

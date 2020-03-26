@@ -1,0 +1,200 @@
+div.exo-form-input {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: flex-end;
+  width: 100%;
+
+  // Flex break items so they are full-width.
+  > label,
+  > .description,
+  > .field-error,
+  .exo-form-input-line,
+  &:after {
+    flex-basis: 100%;
+    margin: 0;
+  }
+
+  // Flex main area take up full width.
+  > .exo-form-input-item,
+  > .field-input,
+  > .counter {
+    flex: 1 1 10%;
+    width: auto;
+    margin: 0;
+  }
+
+  .exo-form-input-item {
+    width: 100%;
+  }
+
+  // The line placed beneath input fields.
+  .exo-form-input-line {
+    display: block;
+    height: 2px;
+    background-size: 0 2px, 100% 1px;
+    background-repeat: no-repeat;
+    background-position: center bottom, center calc(100% - 1px);
+  }
+
+  .exo-form-input-item,
+  .field-prefix,
+  .field-suffix {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    display: block;
+    box-shadow: none;
+    outline: none;
+    border: 0;
+    margin: 0;
+    height: $input-height;
+    line-height: $input-height;
+    font-size: $input-font-size;
+    padding: $input-padding;
+    box-sizing: border-box;
+    overflow: hidden;
+    border-radius: 0;
+    outline: none !important;
+
+    &:focus,
+    &.form-textarea:focus {
+      outline: 0;
+      box-shadow: none;
+    }
+  }
+
+  &.has-prefix {
+
+    .exo-form-input-item {
+      border-left-width: 0px !important;
+      padding-left: 0 !important;
+    }
+  }
+
+  &.has-suffix {
+
+    .exo-form-input-item {
+      border-right-width: 0px !important;
+      padding-right: 0 !important;
+    }
+  }
+
+  .field-prefix {
+    padding-right: rem-calc(5) !important;
+    border-right-width: 0px !important;
+  }
+
+  .field-suffix {
+    padding-left: rem-calc(5) !important;
+    border-left-width: 0px !important;
+  }
+
+  textarea {
+
+    &.exo-form-input-item {
+      overflow: auto;
+
+      &,
+      &:focus {
+        padding-top: $input-line-height / 2;
+        padding-bottom: $input-line-height / 2;
+        line-height: $input-line-height;
+        height: auto;
+        min-height: $input-height;
+      }
+    }
+  }
+
+  .form-textarea-wrapper {
+    width: 100%;
+  }
+
+  // Message area.
+  &:after {
+    display: block;
+    position: absolute;
+    top: 100%;
+    content: '';
+    font-size: $message-font-size;
+    line-height: $label-font-size;
+    text-transform: uppercase;
+    z-index: 10;
+    text-rendering: optimizeLegibility;
+    // visibility: hidden;
+    opacity: 0;
+    // margin-top: $global-margin;
+    transform: scale(0);
+    transform-origin: center top;
+    transition: opacity $global-speed, transform $global-speed !important;
+    z-index: 100;
+
+  }
+
+  // When ready.
+  &.ready {
+
+    > label,
+    > .field-prefix,
+    > .field-suffix,
+    .exo-form-input-line,
+    &:after {
+      transition: all $global-speed ease-out;
+    }
+  }
+
+  // When focused.
+  &.focused {
+
+    .exo-form-input-line {
+      background-size: 100% 2px, 100% 1px;
+    }
+  }
+
+  // When invalid.
+  &.invalid {
+
+    &:after {
+      content: attr(data-error);
+      padding: rem-calc(2 10);
+    }
+  }
+
+  &.invalid.focused {
+
+    &:after {
+      opacity: 1;
+      transform: scale(1);
+      // margin-top: 0;
+    }
+  }
+
+  // When disabled.
+  &.form-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Input labels can be floated above their input fields.
+.exo-form-element-float {
+
+  .exo-form-input {
+
+    > label {
+      @include label-overlay;
+    }
+
+    // Message area.
+    &:after {
+      top: $input-height + rem-calc(1);
+    }
+
+    &.active,
+    &.force-active {
+
+      > label {
+        @include label-float;
+      }
+    }
+  }
+}

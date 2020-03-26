@@ -1,0 +1,5 @@
+embed:
+  js:
+    js/exo.entity-embed.js: {}
+  dependencies:
+    - embed/embed

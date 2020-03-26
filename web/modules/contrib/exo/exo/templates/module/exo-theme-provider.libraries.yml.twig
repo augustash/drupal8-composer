@@ -1,0 +1,12 @@
+
+################################################################################
+## eXo Theme Provider
+################################################################################
+
+theme:
+  version: VERSION
+  css:
+    component:
+      css/{{ module|replace('_', '-') }}.css: { minified: true }
+  dependencies:
+    - exo/exo

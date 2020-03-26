@@ -1,0 +1,19 @@
+div.exo-form-machine-name {
+
+  > .field-prefix {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-end;
+    width: 100%;
+    // border-right-width: 1px !important;
+    border-width: 0 !important;
+    padding: 0 !important;
+    margin-bottom: rem-calc(3);
+    overflow: visible;
+
+    > .field-input {
+      flex: 1 1 10%;
+      width: auto;
+    }
+  }
+}

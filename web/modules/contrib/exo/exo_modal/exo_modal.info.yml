@@ -1,0 +1,7 @@
+name: 'eXo Modal'
+type: module
+description: 'A modal framework for building overlays and offcanvas popups.'
+core: 8.x
+package: 'eXo'
+dependencies:
+  - exo

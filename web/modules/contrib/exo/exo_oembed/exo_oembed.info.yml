@@ -1,0 +1,9 @@
+name: 'eXo oEmbed'
+type: module
+description: 'Provides enhancments to oEmbed.'
+core: 8.x
+package: 'eXo'
+dependencies:
+  - drupal:media
+  - exo:exo
+  - exo_icon:exo_icon

@@ -1,0 +1,12 @@
+.exo-toolbar {
+  @include exo-progress-throbber;
+  position: relative;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  .menu-item {
+    list-style-type: none;
+  }
+}

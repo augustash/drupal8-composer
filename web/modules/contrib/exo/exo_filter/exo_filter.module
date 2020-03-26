@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_filter.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function exo_filter_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the exo_filter module.
+    case 'help.page.exo_filter':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides various enhancements, plugins and filters for exposed Views widgets.') . '</p>';
+      return $output;
+
+    default:
+  }
+}

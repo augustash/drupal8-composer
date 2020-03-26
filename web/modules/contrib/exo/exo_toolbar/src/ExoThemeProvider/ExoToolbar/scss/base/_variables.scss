@@ -1,0 +1,41 @@
+$region-edges: (
+  top: (
+    top: 0,
+    left: 0,
+    right: 0,
+  ),
+  bottom: (
+    bottom: 0,
+    left: 0,
+    right: 0,
+  ),
+  left: (
+    top: 0,
+    left: 0,
+    bottom: 0,
+  ),
+  right: (
+    top: 0,
+    right: 0,
+    bottom: 0,
+  ),
+) !default;
+
+$region-sizes: (
+  standard: (
+    element: 50,
+    expanded: 280,
+    text: 13,
+    icon: 16,
+    badge: 9,
+    padding: 10,
+  ),
+  small: (
+    element: 36,
+    expanded: 220,
+    text: 13,
+    icon: 14,
+    badge: 8,
+    padding: 10,
+  ),
+) !default;

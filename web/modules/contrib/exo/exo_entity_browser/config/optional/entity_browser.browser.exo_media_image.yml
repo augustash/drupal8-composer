@@ -1,0 +1,61 @@
+uuid: 0a73512c-3a4d-4021-ba61-7b30dfb787fd
+langcode: en
+status: true
+dependencies:
+  config:
+    - media.type.image
+    - views.view.exo_media_browser_image
+  module:
+    - dropzonejs_eb_widget
+    - exo_entity_browser
+    - media
+    - views
+name: exo_media_image
+label: 'eXo Media | Image'
+display: exo_modal
+display_configuration:
+  modal_description: 'Select from library or upload new.'
+  width: ''
+  height: ''
+  link_text: 'Image Library'
+  auto_open: false
+selection_display: multi_step_display
+selection_display_configuration:
+  entity_type: media
+  display: rendered_entity
+  display_settings:
+    view_mode: media_library
+  select_text: 'Use selected'
+  selection_hidden: false
+widget_selector: tabs
+widget_selector_configuration: {  }
+widgets:
+  28b8ce11-0f3d-4a65-94e5-7f52f3b1b30d:
+    settings:
+      view: exo_media_browser_image
+      view_display: entity_browser_1
+      submit_text: Select
+      auto_select: true
+    uuid: 28b8ce11-0f3d-4a65-94e5-7f52f3b1b30d
+    weight: 1
+    label: Library
+    id: view
+  f2483f0f-3b33-40a1-912a-985cd08ec061:
+    settings:
+      form_mode: default
+      media_type: image
+      upload_location: 'public://images'
+      dropzone_description: 'Drop images here to upload them'
+      max_filesize: 500M
+      extensions: 'jpg jpeg gif png'
+      clientside_resize: false
+      resize_width: null
+      resize_height: null
+      resize_quality: !!float 1
+      resize_method: contain
+      thumbnail_method: contain
+      submit_text: Select
+    uuid: f2483f0f-3b33-40a1-912a-985cd08ec061
+    weight: 2
+    label: Upload
+    id: dropzonejs_media_entity_inline_entity_form

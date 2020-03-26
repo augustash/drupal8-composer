@@ -1,0 +1,78 @@
+@import 'exo-common';
+
+.exo-icon-list {
+  @include exo-grid;
+  @include exo-gutters($gutters: 1px, $gutter-position: top right bottom left);
+  // @include flex;
+  // @include flex-align(justify, middle);
+  flex-wrap: wrap;
+  list-style-type: none;
+  // margin: 0;
+  padding: 0;
+  text-align: center;
+
+  > li {
+    @include exo-cell(6, $gutters: -1px, $gutter-position: top right bottom left);
+    background: color(theme-offset);
+    // max-width: rem-calc(120);
+    padding: size(padding) / 2;
+    border: 1px solid color(theme-base);
+    box-sizing: border-box;
+
+    > div {
+      margin-bottom: 0;
+    }
+
+    @include breakpoint(large) {
+      @include exo-cell(2, $gutters: -1px, $gutter-position: top right bottom left);
+    }
+  }
+
+  .exo-icon {
+    display: block;
+    font-size: rem-calc(40);
+    line-height: rem-calc(40);
+
+    &:before {
+      color: color(theme-black);
+    }
+  }
+
+  .exo-icon-image {
+    margin: 0 auto;
+  }
+
+  .form-item {
+    margin: 0;
+  }
+
+  input {
+
+    &.form-text {
+      display: block;
+      text-align: center;
+      width: 100%;
+      margin: 0 4px;
+      box-sizing: border-box;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      font-size: rem-calc(10);
+    }
+  }
+
+  .info {
+    font-style: italic;
+  }
+
+  .svg {
+    color: color(theme-black);
+  }
+}
+
+.exo-icon-table {
+
+  .exo-icon {
+    font-size: rem-calc(16);
+  }
+}

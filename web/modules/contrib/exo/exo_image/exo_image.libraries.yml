@@ -1,0 +1,18 @@
+base:
+  version: VERSION
+  js:
+    js/exo.image.js: { minified: true }
+  dependencies:
+    - exo_image/theme
+
+################################################################################
+## eXo Theme Provider
+################################################################################
+
+theme:
+  version: VERSION
+  css:
+    component:
+      css/exo-image.css: { minified: true }
+  dependencies:
+    - exo/exo

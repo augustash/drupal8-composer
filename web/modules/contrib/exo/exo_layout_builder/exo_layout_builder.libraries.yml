@@ -1,0 +1,31 @@
+base:
+  version: VERSION
+  js:
+    js/exo-layout.builder.js: { minified: true }
+  dependencies:
+    - exo_layout_builder/theme
+    - core/drupal.displace
+
+section:
+  version: VERSION
+  css:
+    theme:
+      layouts/exo/layout--exo.css: {}
+
+twocol_section:
+  version: VERSION
+  css:
+    theme:
+      layouts/twocol_section/twocol_section.css: {}
+
+################################################################################
+## eXo Theme Provider
+################################################################################
+
+theme:
+  version: VERSION
+  css:
+    component:
+      css/exo-layout-builder.css: { minified: true }
+  dependencies:
+    - exo/exo

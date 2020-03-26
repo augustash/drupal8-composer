@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_toolbar.exo_toolbar.default
+_core:
+  default_config_hash: JTqLxnKvl1ccycZz0KwJAV7tuHLfQkS1ll7xaVz2bjg
+id: user
+toolbar: default
+region: top
+section: right
+weight: 0
+plugin: user
+settings:
+  dialog_type: tip
+  dialog_settings:
+    id: tip
+    animate_in: comingIn
+    animate_out: comingOut
+  id: user
+  title: User
+  provider: exo_toolbar
+  mark_only_horizontal: 0
+  icon: ''
+  badge_type: ''
+  badge_settings: {  }
+  toolbar_item_id: null
+visibility: {  }

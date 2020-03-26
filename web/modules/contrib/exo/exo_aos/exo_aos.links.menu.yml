@@ -1,0 +1,6 @@
+exo_aos.settings:
+  title: 'Animate on Scroll'
+  route_name: exo_aos.settings
+  description: 'AOS settings and configuration.'
+  parent: system.admin_config_exo
+  weight: 0

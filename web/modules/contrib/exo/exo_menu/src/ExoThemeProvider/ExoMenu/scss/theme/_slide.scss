@@ -1,0 +1,58 @@
+.exo-menu-slide-vertical {
+
+  // Theme support.
+  @each $key, $theme in $themes {
+    $base: map-get($theme, base);
+    $offset: map-get($theme, offset);
+    $primary: map-get($theme, primary);
+
+    &.exo-menu-theme-#{$key} {
+      background: color($base);
+
+      .exo-menu-top {
+        background: color-scale-inverse($base, 3%);
+
+        a {
+          color: alpha($offset, 0.8);
+          transition: color $global-speed;
+
+          &:hover {
+            color: color($offset);
+          }
+        }
+      }
+
+      .exo-menu-seperator {
+        color: alpha($offset, 0.6);
+      }
+
+      .exo-menu-item {
+        border-bottom: 1px dotted darken(color($base), 10%);
+
+        &:first-child {
+          border-top: 1px dotted darken(color($base), 10%);
+        }
+      }
+
+      .exo-menu-link {
+        // color: color($primary);
+        color: color-fix($base, $offset);
+        text-shadow: 0 0 1px darken(color($base), 20%);
+        transition: background $global-speed;
+
+        .exo-icon {
+          opacity: 0.5;
+          transition: opacity $global-speed;
+        }
+
+        &:hover {
+          background: darken(color($base), 3%);
+
+          .exo-icon {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+}

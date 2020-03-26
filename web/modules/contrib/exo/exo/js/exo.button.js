@@ -1,0 +1,1 @@
+"use strict";!function(e){Drupal.behaviors.exoButton={attach:function(t){e(".exo-button-trigger",t).once("exo-button").on("click",function(t){t.preventDefault(),e(this).closest(".exo-button").find('input[type="submit"]').trigger("mousedown").trigger("mouseup").trigger("click")})}}}(jQuery);

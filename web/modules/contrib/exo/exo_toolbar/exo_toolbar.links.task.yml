@@ -1,0 +1,24 @@
+exo_toolbar.toolbars:
+  route_name: entity.exo_toolbar.collection
+  base_route: exo_toolbar.toolbars
+  title: 'Toolbars'
+
+exo_toolbar.items:
+  route_name: exo_toolbar.items
+  base_route: exo_toolbar.toolbars
+  title: 'Items'
+
+exo_toolbar.settings:
+  route_name: exo_toolbar.settings
+  base_route: exo_toolbar.toolbars
+  title: 'Settings'
+
+entity.exo_toolbar.edit_form:
+  route_name: entity.exo_toolbar.edit_form
+  base_route: entity.exo_toolbar.edit_form
+  title: 'Toolbar'
+
+entity.exo_toolbar.items:
+  route_name: entity.exo_toolbar.items
+  base_route: entity.exo_toolbar.edit_form
+  title: 'Items'

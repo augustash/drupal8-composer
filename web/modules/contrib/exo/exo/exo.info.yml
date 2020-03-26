@@ -1,0 +1,5 @@
+name: 'eXo'
+type: module
+description: 'Provides a number of UI enhancements and features for the refined site developer and builder.'
+core: 8.x
+package: 'eXo'

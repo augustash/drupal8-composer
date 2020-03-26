@@ -1,0 +1,25 @@
+{#
+/**
+ * @file
+ * Theme override for an image field widget.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the containing element.
+ * - data: Render elements of the image widget.
+ *
+ * @see template_preprocess_image_widget()
+ */
+#}
+<div{{ attributes }}>
+  <div class="exo-form-inline exo-form-inline-all exo-form-inline-align-middle">
+    {% if data.preview %}
+      <div{{ image_preview_attributes }}>
+        {{ data.preview }}
+      </div>
+    {% endif %}
+    <div{{ image_data_attributes }}>
+      {# Render widget data without the image preview that was output already. #}
+      {{ data|without('preview') }}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+exo_icon.api.browser:
+  path: '/api/exo/icon/browser/{id}/{packages}'
+  defaults:
+    _controller: '\Drupal\exo_icon\Controller\ExoIconBrowserController::view'
+    _title: 'View icon browser'
+    packages: ''
+  requirements:
+    _access: 'TRUE'
+  options:
+    _admin_route: TRUE
+
+exo_icon.rebuild:
+  path: '/admin/config/exo/icons/rebuild'
+  defaults:
+    _form: '\Drupal\exo_icon\Form\ExoIconPackageRebuildForm'
+    _title: 'ExoIconPackageRebuildForm'
+  requirements:
+    _permission: 'administer exo icon'
+  options:
+    _admin_route: TRUE
+
+exo_icon.entity_type_form:
+  path: '/admin/config/exo/icons/entity-type'
+  defaults:
+    _form: '\Drupal\exo_icon\Form\ExoIconEntityTypeForm'
+    _title: 'Entity Type Icons'
+  requirements:
+    _permission: 'administer exo icon'
+  options:
+    _admin_route: TRUE

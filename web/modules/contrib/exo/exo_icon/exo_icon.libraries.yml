@@ -1,0 +1,46 @@
+icon:
+  version: VERSION
+  css:
+    component:
+      css/exo.icon.icon.css: {}
+
+svg:
+  version: VERSION
+  css:
+    component:
+      css/exo.icon.svg.css: {}
+  js:
+    js/exo.icon.svg.js: { minified: true }
+
+admin:
+  version: VERSION
+  css:
+    component:
+      css/exo.icon.admin.css: {}
+  js:
+    js/exo.icon.admin.js: { minified: true }
+
+field:
+  version: VERSION
+  css:
+    component:
+      css/exo.icon.field.css: {}
+  js:
+    js/exo.icon.field.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+
+browser:
+  version: VERSION
+  css:
+    component:
+      css/exo.icon.browser.css: {}
+  js:
+    js/exo.icon.browser.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - core/drupalSettings
+    - exo/exo

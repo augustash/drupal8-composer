@@ -1,0 +1,9 @@
+name: eXo Link Menu
+type: module
+description: Provides the ability to set icons for menu link content.
+core: 8.x
+package: eXo
+dependencies:
+  - menu_link_content
+  - menu_ui
+  - exo_link

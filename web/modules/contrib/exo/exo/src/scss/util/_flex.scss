@@ -1,0 +1,105 @@
+@function -exo-flex-justify($text-direction) {
+  $-exo-flex-justify: (
+    'left': if($text-direction == rtl, flex-end, flex-start),
+    'right': if($text-direction == rtl, flex-start, flex-end),
+    'center': center,
+    'justify': space-between,
+    'spaced': space-around,
+  );
+  @return $-exo-flex-justify;
+}
+
+$-exo-flex-align: (
+  'top': flex-start,
+  'bottom': flex-end,
+  'middle': center,
+  'stretch': stretch,
+  'baseline': baseline,
+);
+
+$-exo-flex-direction: (
+  'row': row,
+  'row-reverse': row-reverse,
+  'column': column,
+  'column-reverse': column-reverse,
+);
+
+/// Enables flexbox by adding `display: flex` to the element.
+@mixin flex {
+  display: flex;
+}
+
+/// Horizontally or vertically aligns the items within a flex container.
+///
+/// @param {Keyword} $x [null] - Horizontal alignment to use. Can be `left`, `right`, `center`, `justify`, or `spaced`. Or, set it to `null` (the default) to not set horizontal alignment.
+/// @param {Keyword} $y [null] - Vertical alignment to use. Can be `top`, `bottom`, `middle`, `baseline`, or `stretch`. Or, set it to `null` (the default) to not set vertical alignment.
+@mixin flex-align($x: null, $y: null) {
+  @if $x {
+    @if map-has-key($-exo-flex-justify, $x) {
+      $x: map-get($-exo-flex-justify, $x);
+    }
+    @else {
+      @warn 'flex-grid-row-align(): #{$x} is not a valid value for horizontal alignment. Use left, right, center, justify, or spaced.';
+    }
+  }
+  @if $y {
+    @if map-has-key($-exo-flex-align, $y) {
+      $y: map-get($-exo-flex-align, $y);
+    }
+    @else {
+      @warn 'flex-grid-row-align(): #{$y} is not a valid value for vertical alignment. Use top, bottom, middle, or stretch.';
+    }
+  }
+
+  justify-content: $x;
+  align-items: $y;
+}
+
+/// Vertically align a single column within a flex row. Apply this mixin to a flex column.
+///
+/// @param {Keyword} $y [null] - Vertical alignment to use. Can be `top`, `bottom`, `middle`, or `stretch`. Or, set it to `null` (the default) to not set vertical alignment.
+@mixin flex-align-self($y: null) {
+  @if $y {
+    @if map-has-key($-exo-flex-align, $y) {
+      $y: map-get($-exo-flex-align, $y);
+    }
+    @else {
+      @warn 'flex-grid-column-align(): #{$y} is not a valid value for alignment. Use top, bottom, middle, or stretch.';
+    }
+  }
+
+  align-self: $y;
+}
+
+/// Changes the source order of a flex child. Children with lower numbers appear first in the layout.
+/// @param {Number} $order [0] - Order number to apply.
+@mixin flex-order($order: 0) {
+  order: $order;
+}
+
+/// Change flex-direction
+/// @param {Keyword} $direction [row] - Flex direction to use. Can be
+///   - row (default): same as text direction
+///   - row-reverse: opposite to text direction
+///   - column: same as row but top to bottom
+///   - column-reverse: same as row-reverse top to bottom
+/// @param {Keyword} $medium-direction [$direction] - Flex direction to use for medium. Defaults to $direction but can be `row`, `row-reverse`, `column`, or `column-reverse`.
+/// @param {Keyword} $large-direction [$medium-direction] - Flex direction to use for large. Defaults to $medium-direction but can be `row`, `row-reverse`, `column`, or `column-reverse`.
+@mixin exo-flex-direction($direction: row, $medium-direction: $direction, $large-direction: $medium-direction) {
+  flex-direction: $direction;
+
+  @if ($medium-direction != $direction) {
+
+    @include breakpoint(medium) {
+      flex-direction: $medium-direction;
+    }
+  }
+
+  @if ($large-direction != $medium-direction) {
+
+    @include breakpoint(large) {
+      flex-direction: $large-direction;
+    }
+  }
+}
+

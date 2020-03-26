@@ -1,0 +1,27 @@
+.exo-form-container.credit-card-form {
+
+  .credit-card-form__expiration {
+    display: flex;
+    margin-top: $global-margin;
+    margin-bottom: $global-margin;
+
+    > div {
+      flex: 1 1 auto;
+      margin: auto 0 0;
+    }
+
+    .credit-card-form__divider {
+      margin: 0 $global-margin / 2 $global-margin;
+      flex: 0 0 0;
+    }
+
+    .exo-form-element-name-payment-information-add-payment-method-payment-details-expiration-divider {
+      flex: 0 0 auto;
+    }
+
+    .exo-form-select {
+      display: block;
+      width: 100%;
+    }
+  }
+}

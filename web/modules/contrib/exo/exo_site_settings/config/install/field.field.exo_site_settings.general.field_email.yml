@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_site_settings.exo_site_settings_type.general
+    - field.storage.exo_site_settings.field_email
+  module:
+    - exo_site_settings
+third_party_settings:
+  exo_site_settings:
+    config_name: system.site
+    config_key: mail
+_core:
+  default_config_hash: SLpPxNhn90QF-BSDnJuEAjbB5OCFUN-1putBmN88qtE
+id: exo_site_settings.general.field_email
+field_name: field_email
+entity_type: exo_site_settings
+bundle: general
+label: Email
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: email

@@ -1,0 +1,170 @@
+.exo-menu-slide {
+
+  .exo-menu-wrap {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    transition: height 300ms;
+  }
+
+  .exo-menu-top {
+    display: flex;
+  }
+
+  .exo-menu-level {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+
+    &:focus {
+      outline: none;
+    }
+
+    &.current {
+      visibility: visible;
+    }
+
+    &[class^='animate-'], &[class*=' animate-'] {
+      visibility: visible;
+    }
+  }
+
+  .exo-menu-item {
+    @include flex;
+    width: 100%;
+  }
+
+  .exo-menu-link {
+    display: block;
+    transition: color $global-speed;
+    line-height: 1.2;
+    width: 100%;
+    cursor: pointer;
+
+    .exo-icon {
+      display: block;
+      font-size: rem-calc(10);
+      line-height: 1.2;
+      float: right;
+    }
+  }
+
+  .exo-menu-breadcrumb,
+  .exo-menu-back {
+
+    *,
+    *:before {
+      font-size: rem-calc(11);
+      line-height: 1;
+      // vertical-align: middle;
+    }
+  }
+
+  .exo-menu-breadcrumbs {
+    flex: auto;
+
+    .exo-menu-breadcrumb {
+      display: inline-block;
+      cursor: pointer;
+      padding: 0 6px 0 0;
+
+      .exo-icon {
+        padding: 0 2px 0 0;
+      }
+
+      &.animate-fadeIn {
+        animation: exo-animate-fadeIn 0.6s;
+      }
+
+      &.animate-fadeOut {
+        animation: exo-animate-fadeOut 0.6s;
+      }
+
+      &:last-child {
+        pointer-events: none;
+      }
+    }
+  }
+
+  .exo-menu-back {
+    display: inline-block;
+    z-index: 100;
+    cursor: pointer;
+    text-transform: uppercase;
+    opacity: 0;
+    font-size: rem-calc(10);
+    line-height: rem-calc(10);
+
+    .exo-icon {
+      padding: 0 2px 0 0;
+      line-height: normal;
+      font-size: rem-calc(10);
+      line-height: rem-calc(10);
+    }
+
+    &.animate-fadeIn {
+      animation: exo-animate-fadeIn 0.6s;
+      opacity: 1;
+    }
+
+    &.animate-fadeOut {
+      pointer-events: none;
+      animation: exo-animate-fadeOut 0.6s;
+      opacity: 0;
+    }
+
+    &:hover,
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .exo-menu-back--hidden {
+    pointer-events: none;
+    animation: exo-animate-fadeOut 0.6s;
+  }
+
+  .animate-fadeOutRight .exo-menu-item {
+    animation: exo-animate-fadeOutRight 0.6s both cubic-bezier(0.7, 0, 0.3, 1);
+  }
+
+  .animate-fadeOutLeft .exo-menu-item {
+    animation: exo-animate-fadeOutLeft 0.6s both cubic-bezier(0.7, 0, 0.3, 1);
+  }
+
+  .animate-fadeInLeft .exo-menu-item {
+    animation: exo-animate-fadeInLeft 0.6s both cubic-bezier(0.7, 0, 0.3, 1);
+  }
+
+  .animate-fadeInRight .exo-menu-item {
+    animation: exo-animate-fadeInRight 0.6s both cubic-bezier(0.7, 0, 0.3, 1);
+  }
+
+  &[class^='exo-menu-theme-'], &[class*=' exo-menu-theme-'] {
+
+    .exo-menu-top {
+      font-size: rem-calc(12);
+      line-height: rem-calc(12);
+    }
+
+    .exo-menu-breadcrumbs,
+    .exo-menu-back {
+      padding: size('padding') / 2;
+    }
+
+    .exo-menu-link {
+      padding: size(padding) / 2;
+      font-weight: 600;
+
+      .exo-icon {
+        float: right;
+      }
+    }
+  }
+}

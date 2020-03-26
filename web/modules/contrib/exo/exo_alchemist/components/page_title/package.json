@@ -1,0 +1,22 @@
+{
+  "name": "alchemist_asset_build",
+  "version": "0.0.1",
+  "description": "Build js and css assets from scss and ts.",
+  "keywords": [
+    "exo_alchemist"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jquery": "^3.3.31",
+    "browser-sync": "^2.26.7",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^7.0.1",
+    "gulp-clean-css": "^4.2.0",
+    "gulp-plumber": "^1.2.1",
+    "gulp-sass": "^4.0.2",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "typescript": "^3.7.4"
+  }
+}

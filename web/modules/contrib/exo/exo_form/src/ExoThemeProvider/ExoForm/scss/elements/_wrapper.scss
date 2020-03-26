@@ -1,0 +1,146 @@
+
+.exo-form-wrapper {
+
+  > .exo-form-element-inner {
+    padding: $global-padding;
+  }
+
+  .details-wrapper {
+    padding: 0;
+  }
+
+  summary,
+  fieldset:not(.fieldgroup) > legend > .fieldset-legend {
+    @include wrapper-label;
+  }
+
+  .exo-form-element-wrapper-description {
+    @include wrapper-description;
+  }
+}
+
+.exo-form-element-type-details {
+
+  details {
+    display: block;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    background: none;
+
+    > summary {
+      cursor: pointer;
+
+      &::-webkit-details-marker {
+        display:none;
+      }
+    }
+
+    .seven-details__description {
+      margin-top: $global-margin / 2 * -1;
+      margin-bottom: $global-margin;
+    }
+
+    .exo-form-element-wrapper-description {
+      padding: 0;
+    }
+
+    &[open] {
+
+      > summary {
+        margin-bottom: $global-margin;
+      }
+    }
+  }
+}
+
+.exo-form-element-type-fieldset {
+
+  fieldset:not(.fieldgroup) {
+    display: block;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    background: none;
+
+    > legend {
+      position: relative;
+      top: 0;
+    }
+
+    > .fieldset-wrapper {
+      margin-top: $global-margin;
+    }
+
+    &.no-legend {
+
+      > legend {
+        display: none;
+      }
+
+      > .fieldset-wrapper {
+        margin-top: 0;
+
+        > * {
+
+          &:first-child,
+          &.exo-form-element-first {
+            margin-top: 0;
+          }
+        }
+      }
+    }
+  }
+
+  legend {
+    margin: 0;
+  }
+
+  > .exo-form-element-inner > fieldset > .fieldset-wrapper {
+
+    > .description {
+      margin-top: $global-margin / 2 * -1 !important;
+      padding: 0;
+    }
+
+    // Some items are not handled by the exo module and as a result we want
+    // to give them global margin.
+    > *:not(.exo-form-element) {
+      margin-top: $global-margin;
+      margin-bottom: $global-margin;
+
+      // &.exo-form-element-float {
+      //   margin-top: $global-margin + $label-height;
+      // }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .field-group-fieldset:not(.fieldgroup) {
+
+    &.no-legend {
+      margin-top: $global-margin * -1;
+    }
+  }
+}
+
+.exo-form-container-hide {
+  display: none;
+}
+
+.exo-form .exo-form-fieldset-as-field {
+
+  .required .fieldset-legend {
+
+    &:after {
+      display: none;
+    }
+  }
+
+  .exo-form-other {
+    margin: 0;
+  }
+}

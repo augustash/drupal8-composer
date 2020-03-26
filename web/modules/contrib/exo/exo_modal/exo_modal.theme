@@ -1,0 +1,105 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_modal.theme.
+ */
+
+/**
+ * Prepares variables for modal trigger.
+ *
+ * Default template: exo-modal-trigger.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the icon
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_exo_modal_trigger(array &$variables) {
+  $element = $variables['element'];
+  // Ensure properties are set.
+  $element += ['#attributes' => [], '#content' => []];
+  $variables['attributes'] = $element['#attributes'];
+  $variables['attributes']['class'][] = 'exo-modal-trigger';
+  if (!empty($element['#url'])) {
+    $variables['attributes']['href'] = $element['#url'];
+  }
+  $variables['content'] = $element['#content'];
+}
+
+/**
+ * Prepares variables for modal.
+ *
+ * Default template: exo-modal.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the icon
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_exo_modal(array &$variables) {
+  $element = $variables['element'];
+  // Ensure properties are set.
+  $element += ['#attributes' => [], '#content' => []];
+  $variables['attributes'] = $element['#attributes'];
+  $variables['attributes']['class'][] = 'exo-modal';
+  $variables['content'] = $element['#content'];
+  $variables['sections'] = $element['#sections'];
+  $variables['panels'] = $element['#panels'];
+}
+
+/**
+ * Prepares variables for container templates.
+ *
+ * Default template: container.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties of the element.
+ *     Properties used: #id, #attributes, #children.
+ */
+function template_preprocess_exo_modal_container(array &$variables) {
+  $variables['has_parent'] = FALSE;
+  $element = $variables['element'];
+
+  // Ensure properties are set.
+  $element += [
+    '#modal_settings' => [],
+    '#attributes' => [],
+    '#field_prefix' => NULL,
+    '#field_suffix' => NULL,
+    '#title_display' => NULL,
+    '#required' => NULL,
+  ];
+  $element['#modal_settings'] += [
+    'trigger' => [],
+    'modal' => [],
+  ];
+  $variables['prefix'] = $element['#field_prefix'];
+  $variables['suffix'] = $element['#field_suffix'];
+
+  if (!empty($element['#trigger_as_button'])) {
+    $element['#trigger_attributes']['class'][] = 'button';
+    $element['#trigger_attributes']['class'][] = 'exo-form-button';
+  }
+
+  if (!empty($element['#trigger_text'])) {
+    $element['#modal_settings']['trigger']['text'] = $element['#trigger_text'];
+  }
+  if (!empty($element['#trigger_icon'])) {
+    $element['#modal_settings']['trigger']['icon'] = $element['#trigger_icon'];
+  }
+  if (!empty($element['#trigger_icon_only'])) {
+    $element['#modal_settings']['trigger']['icon_only'] = $element['#trigger_icon_only'];
+  }
+
+  $modal = \Drupal::service('exo_modal.generator')->generate($element['#id'] . '-modal', $element['#modal_settings'], $element['#children'])
+    ->addTriggerClass('button')
+    ->setTriggerAttributes($element['#trigger_attributes'])
+    ->setModalAttributes($element['#modal_attributes']);
+
+  // We do not cache the modal content as any caching information
+  // should be provided by the element itself.
+  $variables['modal'] = $modal->setCache(FALSE)->toRenderable();
+  $variables['attributes'] = $element['#attributes'];
+}

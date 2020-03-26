@@ -1,0 +1,19 @@
+{
+  "name": "jacerider/exo",
+  "description": "Provides a number of UI enhancements and features for the refined site developer and builder.",
+  "type": "drupal-module",
+  "license": "proprietary",
+  "homepage": "https://github.com/jacerider/exo",
+  "authors": [
+    {
+      "name": "Cyle Carlson (JaceRider)",
+      "email": "jacerider@gmail.com",
+      "role": "Maintainer"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/jacerider/exo/issues",
+    "source": "https://github.com/jacerider/exo"
+  },
+  "minimum-stability": "dev"
+}

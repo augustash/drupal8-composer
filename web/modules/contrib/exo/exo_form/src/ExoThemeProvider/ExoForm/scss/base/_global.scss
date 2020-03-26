@@ -1,0 +1,359 @@
+.exo-form {
+  @include exo-progress-throbber;
+
+  .exo-form-hide {
+    display: none;
+  }
+
+  &.exo-form-wrap {
+
+    > .exo-form-inline {
+      margin-top: $global-margin * -1;
+      margin-bottom: $global-margin * -1;
+    }
+
+    .exo-modal & {
+      border: 0;
+      box-shadow: none;
+      background: inherit;
+      padding: 0;
+
+      > * {
+        &.exo-form-element-first,
+        &:first-child {
+          margin-top: 0;
+        }
+        &.exo-form-element-last,
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  .messages {
+    margin-top: $global-margin;
+    margin-bottom: $global-margin;
+  }
+
+  .exo-form-container-js-hide {
+
+    .js & {
+      display: none;
+    }
+  }
+
+  // Many themes put margin and padding here. We don't want that.
+  .form-item,
+  #field-display-overview .field-plugin-settings-edit-form .form-item:not(.fieldgroup) {
+    padding: 0;
+    margin: 0;
+  }
+
+  .exo-form-element {
+    margin-top: $global-margin;
+    margin-bottom: $global-margin;
+
+    label,
+    .fieldgroup .fieldset-legend {
+      @include label;
+    }
+
+    .label {
+      font-weight: inherit;
+    }
+
+    legend {
+      margin: 0;
+    }
+
+    .description {
+      @include description;
+    }
+
+    &:first-child,
+    &.exo-form-element-first {
+      margin-top: 0;
+    }
+
+    &:last-child,
+    &.exo-form-element-last {
+      margin-bottom: 0;
+    }
+  }
+
+  .exo-form-element-float {
+    &:before {
+      content: '';
+      display: block;
+      height: $label-height;
+    }
+  }
+
+  .exo-form-element-inner {
+    position: relative;
+
+    &:after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+  }
+
+  .tabledrag-toggle-weight-wrapper {
+    position: relative;
+
+    a,
+    button {
+      position: absolute;
+      bottom: 2px;
+      right: 0;
+      text-transform: uppercase;
+      font-size: rem-calc(10);
+      font-weight: 300;
+      white-space: nowrap;
+    }
+  }
+
+  label.form-required, // sass-lint:disable-line no-qualifying-elements
+  .required label,
+  .required .fieldset-legend {
+
+    &:after {
+      content: '*';
+      display: inline-block;
+      background: none;
+      padding-left: rem-calc(3);
+      font-size: 13px;
+      width: auto;
+      height: auto;
+      vertical-align: middle;
+    }
+  }
+
+  .field-error {
+    @include error;
+  }
+
+  .exo-ripple {
+    @include exo-ripple;
+  }
+
+  ::-webkit-input-placeholder {
+    @include placeholder;
+  }
+
+  :-moz-placeholder {
+    @include placeholder;
+  }
+
+  ::-moz-placeholder {
+    @include placeholder;
+  }
+
+  :-ms-input-placeholder {
+    @include placeholder;
+  }
+
+  ::placeholder {
+    @include placeholder;
+  }
+}
+
+.exo-form-inline {
+  @include flex;
+  @include exo-flex-direction(column, row);
+
+  > label {
+    margin-left: $global-margin / 2 !important;
+    margin-right: $global-margin / 2 !important;
+  }
+
+  @include breakpoint(medium) {
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    // min-width: 100%;
+    box-sizing: border-box;
+    margin-left: $global-margin / 2 * -1;
+    margin-right: $global-margin / 2 * -1;
+
+    > a {
+      align-self: center;
+    }
+
+    .separator {
+      align-self: center;
+      padding: 0 $global-padding;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    > .fieldset-wrapper {
+      margin-left: $global-margin / 2 * -1;
+      margin-right: $global-margin / 2 * -1;
+    }
+
+    &,
+    > .fieldset-wrapper {
+
+      &.exo-form-inline-all > *,
+      > .exo-form-element,
+      > .form-item,
+      > .button {
+        flex: 1 1 100%;
+        padding: 0;
+        margin-left: $global-margin / 2;
+        margin-right: $global-margin / 2;
+        // Needed for IE but ignored.
+        width: 100%;
+
+        > .exo-form-element-inner .exo-form-button {
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        &.exo-form-element-type-actions,
+        &.form-actions {
+          width: auto;
+          flex: 0 1 0%;
+          white-space: nowrap;
+        }
+      }
+
+      > .exo-form-element-compact {
+        width: auto;
+        flex: 0 1 0%;
+        white-space: nowrap;
+      }
+
+      > .exo-form-element {
+
+        &,
+        &.exo-form-element-first,
+        &.exo-form-element-last,
+        &:first-child,
+        &:last-child {
+          margin-top: $global-margin;
+          margin-bottom: $global-margin;
+        }
+      }
+
+      .exo-form-inline {
+        margin-left: $global-margin / 2 * -1;
+        margin-right: $global-margin / 2 * -1;
+      }
+    }
+
+    &.exo-form-inline-pad-top {
+      padding-top: $global-padding;
+    }
+
+    &.exo-form-inline-pad-bottom {
+      padding-bottom: $global-padding;
+    }
+
+    &.exo-form-inline-align-top {
+      @include flex-align(left, top);
+    }
+
+    &.exo-form-inline-align-middle {
+      @include flex-align(left, middle);
+    }
+
+    &.exo-form-inline-compact {
+
+      &.exo-form-inline-all > *,
+      > .exo-form-element,
+      > .form-item,
+      > .button {
+        flex: 0 1 auto;
+        width: auto;
+      }
+    }
+
+    // Make sure all nested elements will fit. The parent will handle the margin.
+    .exo-form-element & {
+
+      .exo-form-element {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+    }
+
+    > .exo-form-element-type-fieldset.exo-form-element & {
+
+      .exo-form-element {
+        margin-top: $global-margin;
+      }
+    }
+
+    > .exo-form-container {
+      flex-basis: 100%;
+      // padding-top: $global-padding;
+    }
+
+    .fieldset-wrapper,
+    .details-wrapper {
+      display: flex;
+      flex-flow: row nowrap;
+      align-items: center;
+
+      .exo-form-container {
+        flex: auto;
+        width: 100%;
+      }
+    }
+
+    &.exo-form-inline-top,
+    > .fieldset-wrapper {
+
+      > .exo-form-element {
+
+        &,
+        .exo-form-element-type-fieldset.exo-form-element & {
+          margin-top: 0 !important;
+        }
+      }
+    }
+
+    &.exo-form-inline-bottom,
+    > .fieldset-wrapper {
+
+      > .exo-form-element {
+
+        &,
+        .exo-form-element-type-fieldset.exo-form-element & {
+          margin-bottom: 0 !important;
+        }
+      }
+    }
+  }
+
+  &.exo-form-inline-stack {
+    padding-top: $global-margin;
+
+    > .exo-form-element {
+      margin-top: 0;
+    }
+
+    @include breakpoint(medium) {
+      flex-wrap: wrap;
+
+      > .exo-form-element {
+        flex: 1 1 calc(20% + #{$global-margin} / 2);
+      }
+    }
+
+    @include breakpoint(large) {
+      flex-wrap: wrap;
+
+      > .exo-form-element {
+        flex: 1 1 calc(15% + #{$global-margin} / 2);
+      }
+    }
+  }
+}
+
+.colorpicker {
+  z-index: 100;
+}

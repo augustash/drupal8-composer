@@ -1,0 +1,27 @@
+services:
+  plugin.manager.exo_toolbar_region:
+    class: Drupal\exo_toolbar\Plugin\ExoToolbarRegionManager
+    parent: default_plugin_manager
+  plugin.manager.exo_toolbar_item:
+    class: Drupal\exo_toolbar\Plugin\ExoToolbarItemManager
+    parent: default_plugin_manager
+  plugin.manager.exo_toolbar_dialog_type:
+    class: Drupal\exo_toolbar\Plugin\ExoToolbarDialogTypeManager
+    parent: default_plugin_manager
+  plugin.manager.exo_toolbar_badge_type:
+    class: Drupal\exo_toolbar\Plugin\ExoToolbarBadgeTypeManager
+    parent: default_plugin_manager
+  exo_toolbar.repository:
+    class: Drupal\exo_toolbar\ExoToolbarRepository
+    arguments: ['@entity_type.manager', '@plugin.manager.exo_toolbar_region', '@exo_toolbar.path.matcher', '@current_user', '@context.handler']
+  exo_toolbar.settings:
+    class: Drupal\exo_toolbar\ExoToolbarSettings
+    arguments: ['@config.factory', '@exo_toolbar.repository']
+  exo_toolbar.path.matcher:
+    class: Drupal\exo_toolbar\Routing\ExoToolbarPathMatcher
+    arguments: ['@path.matcher', '@request_stack', '@path.current', '@current_user']
+  cache_context.url.path.is_exo_toolbar_admin:
+    class: Drupal\exo_toolbar\Cache\Context\IsExoToolbarAdminPathCacheContext
+    arguments: ['@exo_toolbar.path.matcher']
+    tags:
+      - { name: cache.context }

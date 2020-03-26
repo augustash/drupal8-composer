@@ -1,0 +1,16 @@
+$pixels: 0, 5, 10, 30, 50;
+$percent: 50;
+
+@each $size in $pixels {
+  .exo-modifier--border-radius-#{$size} {
+    border-radius: #{$size}px;
+    overflow: hidden;
+  }
+}
+
+@each $size in $percent {
+  .exo-modifier--border-radius-#{$size}p {
+    border-radius: #{$size * 1%};
+    overflow: hidden;
+  }
+}

@@ -1,0 +1,94 @@
+.exo-image {
+  display: none;
+  position: relative;
+  overflow: hidden;
+  outline: none;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+
+    &.exo-image-preview {
+      filter: blur(20px);
+      transform: scale(1.05);
+      transform-origin: center;
+    }
+
+    &.exo-image-float {
+      position: absolute;
+    }
+
+    &.exo-image-fadeout {
+      will-change: opacity;
+      animation: exo-image-fadeout 1s ease-out;
+      transform-origin: center;
+    }
+
+    &.exo-image-reveal {
+      position: relative;
+      will-change: transform, opacity;
+      animation: exo-image-reveal 1s ease-out;
+      transform-origin: center;
+      z-index: 0;
+    }
+  }
+
+  &.bg-x-center {
+    background-position-x: center;
+  }
+
+  &.bg-right {
+    background-position-x: right;
+  }
+
+  &.bg-left {
+    background-position-x: left;
+  }
+
+  &.bg-y-center {
+    background-position-y: center;
+  }
+
+  &.bg-top {
+    background-position-y: top;
+  }
+
+  &.bg-bottom {
+    background-position-y: bottom;
+  }
+
+  @include breakpoint(xlarge only) {
+    &.xlarge {
+      display: block;
+    }
+  }
+
+  @include breakpoint(large only) {
+    &.large {
+      display: block;
+    }
+  }
+
+  @include breakpoint(medium only) {
+    &.medium {
+      display: block;
+    }
+  }
+
+  @include breakpoint(small only) {
+    &.small {
+      display: block;
+    }
+  }
+}
+
+@keyframes exo-image-reveal {
+	0% { transform: scale(1.05); opacity: 0; }
+	100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes exo-image-fadeout {
+	0% { opacity: 1; }
+	100% { opacity: 0; }
+}

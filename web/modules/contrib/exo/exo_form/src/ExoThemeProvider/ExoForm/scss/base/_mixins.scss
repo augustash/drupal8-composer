@@ -1,0 +1,129 @@
+@mixin label() {
+  display: block;
+  font-size: $label-font-size;
+  line-height: $label-height;
+  font-weight: normal;
+  text-transform: none;
+  padding: 0 0 3px;
+  margin: 0;
+}
+
+@mixin label-float() {
+  @include label;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateY($label-height * -1);
+}
+
+@mixin label-overlay() {
+  @include label-float;
+  line-height: $input-height;
+  font-size: $input-font-size;
+  height: $input-height;
+  padding: $input-padding;
+  pointer-events: none;
+  transform: translateY(0);
+}
+
+@mixin error() {
+  display: block;
+  padding: rem-calc(5 10);
+  font-size: $message-font-size;
+  line-height: $label-font-size;
+  text-transform: uppercase;
+  text-rendering: optimizeLegibility;
+  text-shadow: none;
+  z-index: 10;
+  margin: $global-margin / 2 0;
+}
+
+@mixin description() {
+  font-size: $description-font-size;
+  margin: 0;
+  padding: 0;
+}
+
+@mixin placeholder() {
+  font-style: italic;
+  font-weight: 300;
+  font-size: rem-calc(14);
+  opacity: 1 !important;
+}
+
+@mixin wrapper-label() {
+  display: block;
+  font-size: $wrapper-font-size;
+  line-height: $wrapper-height;
+  margin: 0;
+  padding: 0;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+@mixin wrapper-description() {
+  font-size: $wrapper-description-font-size;
+  font-weight: 300;
+  margin: 0;
+  padding: rem-calc(5 0 0);
+}
+
+@mixin exo-ripple() {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+
+  &:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transform: scale(1.5, 1.5);
+    opacity: 0;
+    overflow: hidden;
+    transition: transform 0.5s, opacity 1s;
+  }
+
+  &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transform: scale(0, 0);
+    opacity: 0;
+    overflow: hidden;
+    transition: transform 0.5s, opacity 1s;
+  }
+}
+
+@mixin exo-ripple-active() {
+
+  &:before {
+    transform: scale(0, 0);
+    opacity: 0.2;
+    transition: 0s;
+  }
+}
+
+@mixin exo-ripple-focus() {
+
+  &:after {
+    opacity: 0.15;
+    transform: scale(0.7, 0.7);
+    transition: 0s;
+  }
+}

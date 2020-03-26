@@ -1,0 +1,21 @@
+.exo-toolbar-item-type-create {
+
+  .exo-toolbar-element-mark {
+    @include flex-align-self(top);
+
+    [data-exo-align='vertical'] & {
+      margin: rem-calc(2) auto;
+    }
+
+    [data-exo-align='horizontal'] & {
+      margin: rem-calc(2);
+    }
+
+    @each $key, $sizes in $region-sizes {
+      [data-exo-size='#{$key}'] & {
+        width: rem-calc(map-get($sizes, 'element') - 4) !important;
+        height: rem-calc(map-get($sizes, 'element') - 4) !important;
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+permission_callbacks:
+  - Drupal\exo_site_settings\SiteSettingsPermissions::permissions
+
+administer config pages:
+  title: 'Administer config pages'
+  description: 'Allow to access the administration form to configure config pages.'
+  restrict access: true
+
+edit config pages:
+  title: 'Edit config pages'

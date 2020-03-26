@@ -1,0 +1,43 @@
+
+.exo-form {
+
+  .paragraph-top {
+
+    > * {
+      margin: 0;
+    }
+  }
+
+  .paragraphs-actions {
+
+    > * {
+      margin: 0;
+    }
+  }
+
+  .field--widget-entity-reference-paragraphs {
+
+    .field-multiple-table {
+
+      > thead {
+        display: none;
+      }
+
+      .form-item {
+        margin: 0;
+      }
+    }
+
+    .field-multiple-drag {
+      padding: $global-padding + .8 0 $global-padding $global-padding;
+
+      a {
+        padding: 0;
+      }
+    }
+
+    td {
+      padding: $global-padding;
+    }
+  }
+}

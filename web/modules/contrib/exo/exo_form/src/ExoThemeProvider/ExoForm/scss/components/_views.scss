@@ -1,0 +1,263 @@
+.views-ui-dialog .exo-form {
+  margin: $global-margin;
+
+  > * {
+    margin: 0;
+  }
+
+  table {
+    margin: 0;
+  }
+
+  &.exo-form-wrap {
+
+    > .views-override {
+      margin-left: $global-margin * -1;
+      margin-right: $global-margin * -1;
+    }
+
+    > .scroll {
+      margin: $global-margin 0;
+
+      > * {
+        &:first-child {
+          margin-top: 0;
+        }
+      }
+    }
+  }
+
+  > .scroll {
+    @include exo-grid;
+    padding: 0;
+    overflow: visible;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    > * {
+      @include exo-cell(12, $gutters: 0);
+      margin-top: 0;
+    }
+
+    > table {
+      @include exo-cell(12, $gutters: 0);
+      margin-top: $global-margin;
+      margin-bottom: $global-margin;
+    }
+
+    > .clearfix {
+      @include exo-grid;
+      margin: 0;
+
+      > * {
+        @include exo-cell(12, $gutters: 0);
+        display: block;
+      }
+    }
+
+    > .views-expose {
+      margin-bottom: $global-margin;
+    }
+
+    > .views-expose,
+    > .views-grouped,
+    > .views-left-25,
+    > .views-left-30,
+    > .views-left-40,
+    > .views-right-60,
+    > .views-right-70,
+    > .views-right-75 {
+      margin-top: $global-margin;
+    }
+
+    > .views-left-25,
+    > .clearfix > .views-left-25 {
+      @include exo-cell(3, $gutters: 0);
+      padding-right: $global-padding;
+    }
+
+    > .views-left-30,
+    > .clearfix > .views-left-30 {
+      @include exo-cell(3, $gutters: 0);
+      padding-right: $global-padding;
+    }
+
+    > .views-left-40,
+    > .clearfix > .views-left-40 {
+      @include exo-cell(4, $gutters: 0);
+      padding-right: $global-padding;
+    }
+
+    > .views-right-60,
+    > .clearfix > .views-right-60 {
+      @include exo-cell(8, $gutters: 0);
+    }
+
+    > .views-right-70,
+    > .clearfix > .views-right-70 {
+      @include exo-cell(9, $gutters: 0);
+    }
+
+    > .views-right-75,
+    > .clearfix > .views-right-75 {
+      @include exo-cell(9, $gutters: 0);
+    }
+
+    .views-group-box .form-item {
+      margin: 0;
+    }
+  }
+
+  .views-offset-top {
+    border: 0;
+  }
+
+  .views-offset-bottom {
+    border: 0;
+
+    .views-ui-view-title {
+      display: block;
+      font-weight: 700;
+      padding-bottom: rem-calc(5);
+    }
+
+    .views-selected-options {
+      font-style: italic;
+    }
+  }
+
+  .views-override:not(:empty) {
+    padding: 0 $global-padding;
+  }
+
+  .views-filterable-options-controls {
+    display: flex;
+
+    .form-item {
+      width: auto;
+      margin: 0;
+    }
+  }
+}
+
+.js .views-admin .exo-form  {
+
+  .exo-form-element-type-actions {
+    margin-left: $global-margin / 2;
+    margin-right: $global-margin / 2;
+  }
+
+  .dropbutton-wrapper {
+    height: rem-calc(22);
+    line-height: rem-calc(22);
+
+    .dropbutton-widget {
+
+      .dropbutton-action {
+
+        &:first-child a {
+          height: rem-calc(22);
+          line-height: rem-calc(22);
+        }
+
+        .button {
+          height: rem-calc(22);
+          line-height: rem-calc(22);
+        }
+      }
+    }
+  }
+}
+
+.exo-form {
+
+  .views-displays {
+
+    .views-display-top {
+      padding: $global-padding;
+
+      .dropbutton-wrapper {
+        top: $global-padding;
+        right: $global-padding;
+      }
+    }
+
+    .views-display-columns {
+
+      .views-ui-display-tab-bucket__title,
+      summary {
+        font-size: rem-calc(14);
+      }
+    }
+
+    .views-ui-display-tab-bucket {
+
+      .dropbutton-wrapper {
+        top: rem-calc(5);
+      }
+    }
+
+    .tabs.secondary {
+      display: flex;
+      flex-wrap: wrap;
+
+      li {
+        margin: $global-margin / 10;
+
+        .icon.add {
+          display: none;
+        }
+
+        &.add {
+
+          a {
+            @include exo-icon(regular, f067) {
+              padding-right: rem-calc(2);
+            }
+          }
+        }
+
+        a {
+          display: block;
+          height: rem-calc(22);
+          line-height: rem-calc(22);
+          border: 0;
+          margin: 0;
+          padding: 0 $global-padding;
+
+          &.is-active {
+            padding: 0 $global-padding;
+          }
+        }
+      }
+    }
+
+    .tabs .action-list {
+
+      li {
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+
+      .button {
+        display: block;
+        background: transparent;
+        color: inherit;
+        border-radius: 0;
+        width: calc(100% - #{$global-padding * 2});
+        height: rem-calc(22);
+        line-height: rem-calc(22);
+        padding: 0 $global-padding;
+        text-align: left;
+      }
+    }
+  }
+
+  .edit-display-settings {
+    padding: $global-padding;
+    margin: 0;
+  }
+}

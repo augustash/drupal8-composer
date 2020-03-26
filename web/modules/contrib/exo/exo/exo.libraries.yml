@@ -1,0 +1,120 @@
+exo:
+  version: VERSION
+  css:
+    component:
+      css/exo.css: { minified: true }
+  js:
+    js/exo.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/underscore
+    - core/drupal
+    - core/drupal.displace
+    - exo/body-scroll-lock
+    - exo/es6-promise
+    - exo/jquery.imagesloaded
+
+theme.option:
+  version: VERSION
+  css:
+    component:
+      css/exo.theme.option.css: { minified: true }
+
+element.options:
+  version: VERSION
+  js:
+    js/exo.element.options.js: { minified: true }
+  css:
+    component:
+      css/exo.element.options.css: { minified: true }
+
+visibility:
+  version: VERSION
+  js:
+    js/exo.visibility.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/drupal
+
+button:
+  version: VERSION
+  js:
+    js/exo.button.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+
+radios.slider:
+  version: VERSION
+  js:
+    js/exo.radios.slider.js: { minified: true }
+  css:
+    component:
+      css/exo.radios.slider.css: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - exo/nouislider
+
+ajax:
+  version: VERSION
+  js:
+    js/exo.ajax.js: { minified: true }
+  dependencies:
+    - core/drupal.ajax
+
+auto_submit:
+  version: VERSION
+  js:
+    js/exo.auto-submit.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+
+################################################################################
+## Libraries
+################################################################################
+
+jquery.imagesloaded:
+  version: VERSION
+  js:
+    lib/imagesloaded/imagesloaded.pkgd.min.js: {minified: true}
+
+jquery.touchevents:
+  version: VERSION
+  js:
+    lib/touchevents/jquery.mobile-events.min.js: {minified: true}
+
+jquery.overlap:
+  version: VERSION
+  js:
+    lib/overlap/jquery.overlap.min.js: {minified: true}
+
+nouislider:
+  version: 14.1.0
+  css:
+    component:
+      lib/nouislider/nouislider.min.css: { minified: true }
+  js:
+    lib/nouislider/nouislider.min.js: {minified: true}
+
+shuffle:
+  version: 5.2.3
+  js:
+    lib/shuffle/shuffle.min.js: {minified: true}
+
+es6-promise:
+  version: VERSION
+  js:
+    lib/es6-promise/es6-promise.auto.min.js: {minified: true}
+
+autosize:
+  version: VERSION
+  js:
+    lib/autosize/autosize.min.js: {minified: true}
+
+body-scroll-lock:
+  version: VERSION
+  js:
+    lib/body-scroll-lock/body-scroll-lock.min.js: {minified: true}

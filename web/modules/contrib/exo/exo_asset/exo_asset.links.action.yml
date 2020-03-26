@@ -1,0 +1,5 @@
+entity.exo_asset.add_form:
+  route_name: entity.exo_asset.add_form
+  title: 'Add Asset'
+  appears_on:
+    - entity.exo_asset.collection

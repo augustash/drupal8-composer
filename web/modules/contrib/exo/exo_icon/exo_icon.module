@@ -1,0 +1,247 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_icon.module.
+ */
+
+use Drupal\exo_icon\ExoIconTranslatableMarkup;
+use Drupal\Core\Entity\EntityFormInterface;
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\editor\Entity\Editor;
+use Drupal\Core\Entity\ContentEntityInterface;
+
+/**
+ * Implements hook_theme().
+ */
+function exo_icon_theme($existing, $type, $theme, $path) {
+  $themes = [];
+  $themes['exo_icon'] = [
+    'variables' => [
+      'icon' => NULL,
+      'attributes' => [],
+    ],
+    'file' => 'exo_icon.theme',
+  ];
+  $themes['exo_icon_element'] = [
+    'variables' => [
+      'title' => NULL,
+      'attributes' => [],
+      'position' => 'before',
+      'icon' => NULL,
+      'icon_only' => FALSE,
+      'icon_attributes' => [],
+    ],
+    'file' => 'exo_icon.theme',
+  ];
+  $themes['exo_icon_package'] = [
+    'render element' => 'element',
+    'file' => 'exo_icon.theme',
+  ];
+  $themes['exo_icon_list'] = [
+    'render element' => 'element',
+    'file' => 'exo_icon.theme',
+  ];
+  $themes['exo_icon_browser'] = [
+    'render element' => 'element',
+    'file' => 'exo_icon.theme',
+  ];
+  return $themes;
+}
+
+/**
+ * Implements hook_library_info_build().
+ */
+function exo_icon_library_info_build() {
+  $libraries = [];
+  foreach (\Drupal::service('exo_icon.repository')->getPackages() as $exo_icon_package) {
+    /* @var \Drupal\exo_icon\Entity\ExoIconPackageInterface $exo_icon */
+    if ($stylesheet = $exo_icon_package->getStylesheet()) {
+      $libraries['icon.' . $exo_icon_package->id()]['css']['theme'][$stylesheet] = [];
+      $libraries['icon.' . $exo_icon_package->id()]['dependencies'][] = 'exo_icon/icon';
+      // Add SVG library if necessary.
+      if ($exo_icon_package->isSvg()) {
+        $libraries['icon.' . $exo_icon_package->id()]['dependencies'][] = 'exo_icon/svg';
+      }
+    }
+  }
+  return $libraries;
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function exo_icon_element_info_alter(array &$types) {
+  if (isset($types['html'])) {
+    $icon_repository = \Drupal::service('exo_icon.repository');
+    foreach ($icon_repository->getPackagesByGlobal() as $exo_icon_package) {
+      $types['html']['#attached']['library'][] = 'exo_icon/' . 'icon.' . $exo_icon_package->id();
+    }
+  }
+}
+
+/**
+ * Translates a string to the current language or to a given language with icon.
+ *
+ * In order for strings to be localized, make them available in one of the ways
+ * supported by the @link i18n Localization API. @endlink When possible, use
+ * the \Drupal\Core\StringTranslation\StringTranslationTrait $this->t().
+ * Otherwise create a new \Drupal\Core\StringTranslation\TranslatableMarkup
+ * object directly.
+ *
+ * See \Drupal\Core\StringTranslation\TranslatableMarkup::__construct() for
+ * important security information and usage guidelines.
+ *
+ * @param string $string
+ *   A string containing the English text to translate.
+ * @param array $args
+ *   (optional) An associative array of replacements to make after translation.
+ *   Based on the first character of the key, the value is escaped and/or
+ *   themed. See
+ *   \Drupal\Component\Render\FormattableMarkup::placeholderFormat() for
+ *   details.
+ * @param array $options
+ *   (optional) An associative array of additional options, with the following
+ *   elements:
+ *   - 'langcode' (defaults to the current language): A language code, to
+ *     translate to a language other than what is used to display the page.
+ *   - 'context' (defaults to the empty context): The context the source string
+ *     belongs to. See the @link i18n Internationalization topic @endlink for
+ *     more information about string contexts.
+ *
+ * @return \Drupal\exo_icon\ExoIconTranslatableMarkup
+ *   An object that, when cast to a string, returns the translated string.
+ *
+ * @see \Drupal\Component\Render\FormattableMarkup::placeholderFormat()
+ * @see \Drupal\Core\StringTranslation\StringTranslationTrait::t()
+ * @see \Drupal\Core\StringTranslation\TranslatableMarkup::__construct()
+ * @see \Drupal\exo_icon\ExoIconTranslatableMarkup::__construct()
+ *
+ * @ingroup sanitization
+ */
+function exo_icon($string = '', array $args = [], array $options = []) {
+  return new ExoIconTranslatableMarkup($string, $args, $options);
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function exo_icon_form_alter(&$form, $form_state, $form_id) {
+  if ($form_state->getFormObject() instanceof EntityFormInterface) {
+    $entity = $form_state->getFormObject()->getEntity();
+    if ($entity instanceof ConfigEntityInterface && in_array($entity->getEntityTypeId(), exo_icon_entity_support())) {
+      if (
+        strpos($form['#form_id'], '_edit_form') === FALSE &&
+        strpos($form['#form_id'], '_add_form') === FALSE &&
+        $form['#form_id'] !== $entity->getEntityTypeId() . '_form'
+      ) {
+        return;
+      }
+      $form['exo_icon'] = [
+        '#type' => 'exo_icon',
+        '#title' => t('Icon'),
+        '#default_value' => exo_icon_entity_icon($entity),
+        '#weight' => 0,
+      ];
+      $form['#entity_builders'][] = 'exo_icon_form_config_entity_build';
+    }
+  }
+}
+
+/**
+ * Entity form builder for config entities that support icons.
+ */
+function exo_icon_form_config_entity_build($entity_type, ConfigEntityInterface $entity, &$form, FormStateInterface $form_state) {
+  $icon = $form_state->getValue('exo_icon');
+  if (!empty($icon)) {
+    $entity->setThirdPartySetting('exo_icon', exo_icon_entity_icon_key($entity), $icon);
+  }
+  else {
+    $entity->unsetThirdPartySetting('exo_icon', exo_icon_entity_icon_key($entity));
+  }
+}
+
+/**
+ * Config entity types that support icons.
+ */
+function exo_icon_entity_support() {
+  $types = [
+    'media_type',
+    'node_type',
+    'paragraphs_type',
+    'taxonomy_vocabulary',
+    'exo_component_type',
+    'commerce_product_type',
+    'profile_type',
+  ];
+  \Drupal::moduleHandler()->alter('exo_icon_entity_support', $types);
+  return $types;
+}
+
+/**
+ * Get the unique config entity id.
+ */
+function exo_icon_entity_icon_key(ConfigEntityInterface $entity) {
+  return 'entity:' . $entity->getEntityTypeId() . ':' . $entity->id();
+}
+
+/**
+ * Get the icon id for a config entity.
+ *
+ * @param Drupal\Core\Entity\ContentEntityInterface|Drupal\Core\Config\Entity\ConfigEntityInterface|string $entity
+ *   Can be an entity id or config or content entity.
+ */
+function exo_icon_entity_icon($entity) {
+  $id = NULL;
+  if (is_string($entity)) {
+    $id = $entity;
+  }
+  else {
+    if ($entity instanceof ContentEntityInterface) {
+      $entity_type = $entity->getEntityType();
+      $type_key = $entity_type->getKey('bundle');
+      if ($type_key) {
+        $entity = $entity->{$type_key}->entity;
+      }
+      else {
+        $entity = $entity_type;
+      }
+    }
+    if ($entity instanceof ConfigEntityInterface) {
+      return $entity->getThirdPartySetting('exo_icon', exo_icon_entity_icon_key($entity), '');
+    }
+    $id = $entity->id();
+  }
+  if ($id) {
+    $config = \Drupal::config('exo_icon.entity_types');
+    return $config->get($id);
+  }
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function exo_icon_entity_type_alter(array &$entity_types) {
+  /* @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
+  $entity_types['node_type']->setListBuilderClass('Drupal\exo_icon\ListBuilder\ExoIconContentTypeListBuilder');
+  if (isset($entity_types['paragraphs_type'])) {
+    $entity_types['paragraphs_type']->setListBuilderClass('Drupal\exo_icon\ListBuilder\ExoIconParagraphsTypeListBuilder');
+  }
+}
+
+/**
+ * Implements hook_ckeditor_css_alter().
+ */
+function exo_icon_ckeditor_css_alter(array &$css, Editor $editor) {
+  if (!$editor->hasAssociatedFilterFormat()) {
+    return;
+  }
+
+  foreach (\Drupal::service('exo_icon.repository')->getPackagesByGlobal() as $exo_icon_package) {
+    $types['page']['#attached']['library'][] = 'exo_icon/' . 'icon.' . $exo_icon_package->id();
+    if ($stylesheet = $exo_icon_package->getStylesheet()) {
+      $css[] = $stylesheet;
+    }
+  }
+}

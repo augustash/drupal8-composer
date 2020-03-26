@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_splash.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function exo_splash_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the exo_splash module.
+    case 'help.page.exo_splash':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides a splash screen on first visit to the site.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function exo_splash_theme() {
+  return [
+    'exo_splash' => [
+      'variables' => ['heading' => [], 'content' => [], 'attributes' => []],
+      'file' => 'exo_splash.theme',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_page_top().
+ *
+ * Add toolbar to the top of the page.
+ */
+function exo_splash_page_top(array &$page_top) {
+  $usage = \Drupal::moduleHandler()->invokeAll('exo_splash_access');
+  \Drupal::moduleHandler()->alter('exo_splash_access', $usage);
+  if (!in_array(FALSE, $usage)) {
+    $page_top['exo_splash'] = [
+      '#theme' => 'exo_splash',
+    ];
+  }
+}
+
+/**
+ * Implements hook_exo_splash_access().
+ *
+ * Do not show splash on admin pages.
+ */
+function exo_splash_exo_splash_access() {
+  return !\Drupal::service('router.admin_context')->isAdminRoute();
+}

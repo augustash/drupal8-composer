@@ -1,0 +1,13 @@
+.exo-splash {
+
+  // Theme support.
+  @each $key, $theme in $themes {
+    $base: map-get($theme, base);
+    $offset: map-get($theme, offset);
+    $primary: map-get($theme, primary);
+
+    &.exo-splash-theme-#{$key} {
+      background: color($base);
+    }
+  }
+}

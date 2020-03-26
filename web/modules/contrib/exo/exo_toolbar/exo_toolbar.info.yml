@@ -1,0 +1,9 @@
+name: 'eXo Toolbar'
+type: module
+description: 'Provides a toolbar that shows the top-level administration menu items and links from other modules.'
+core: 8.x
+package: 'eXo'
+dependencies:
+  - exo
+  - exo_modal
+  - exo_icon

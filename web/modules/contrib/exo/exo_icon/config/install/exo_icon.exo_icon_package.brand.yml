@@ -1,0 +1,12 @@
+uuid: c6c1b352-fac7-4d70-910e-432a3418dacc
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: W-34SOFRT-66ixRl6uttrBuodio9N14QtulF1LR7r18
+id: brand
+label: Brand
+global: false
+path: 'public://exo-icon-package/brand'
+type: font
+weight: 3

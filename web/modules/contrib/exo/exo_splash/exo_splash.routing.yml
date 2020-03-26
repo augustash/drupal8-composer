@@ -1,0 +1,9 @@
+exo_splash.settings:
+  path: '/admin/config/exo/splash'
+  defaults:
+    _form: '\Drupal\exo_splash\Form\ExoSplashSettingsForm'
+    _title: 'Splash Settings'
+  requirements:
+    _permission: 'administer exo splash'
+  options:
+    _admin_route: TRUE

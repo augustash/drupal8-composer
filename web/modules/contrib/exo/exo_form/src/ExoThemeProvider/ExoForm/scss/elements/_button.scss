@@ -1,0 +1,70 @@
+.exo-form .exo-form-button,
+.exo-form .form-actions .button,
+.is-admin .exo-form .form-actions .exo-modal-trigger {
+  display: inline-block;
+  height: $button-height;
+  padding-left: $button-padding;
+  padding-right: $button-padding;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box;
+  line-height: $button-height;
+  font-size: $button-font-size;
+  cursor: pointer;
+}
+
+.is-admin td > .button,
+.is-admin td > .exo-form-button,
+.is-admin td > .exo-modal-trigger,
+.is-admin td > .ief-entity-operations .button {
+  display: inline-block;
+  margin: 0;
+  line-height: $button-height / 1.5 !important;
+  height: auto !important;
+  padding: 0 $button-padding / 2 !important;
+  box-sizing: border-box !important;
+}
+
+.exo-form .exo-form-button,
+.exo-form .button,
+.exo-form .exo-modal-trigger {
+
+  &.is-disabled {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+  }
+}
+
+.exo-form button {
+
+  &:focus {
+    outline:0;
+  }
+}
+
+// .exo-form-container-button {
+
+//   .ajax-progress {
+//     position: absolute;
+//     top: 0;
+//     left: 0;
+//     right: 0;
+//     bottom: 0;
+//     background: alpha(theme-white, 0.8);
+//     font-size: 12px;
+//     padding: 0 10px 0 20px;
+//     border-radius: 3px;
+//     height: $input-height;
+//     line-height: $input-height;
+//     text-align: center;
+
+//     .throbber {
+//       padding: 0 16px 0 0;
+//     }
+
+//     .message {
+//       display: none;
+//     }
+//   }
+// }

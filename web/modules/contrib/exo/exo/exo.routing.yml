@@ -1,0 +1,17 @@
+system.admin_config_exo:
+  path: '/admin/config/exo'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'eXo'
+  requirements:
+    _permission: 'access administration pages'
+
+exo.theme.settings:
+  path: '/admin/config/exo/theme'
+  defaults:
+    _form: '\Drupal\exo\Form\ExoThemeSettingsForm'
+    _title: 'Theme Settings'
+  requirements:
+    _permission: 'administer exo themes'
+  options:
+    _admin_route: TRUE

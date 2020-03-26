@@ -1,0 +1,12 @@
+uuid: e1e1d500-aa08-4733-a9d8-df6ebf4e9568
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: mRFbpkXN-Erg4K54Dg9D9Wt7qoYsWvgDw1Q9NDpGEHs
+id: regular
+label: Regular
+global: true
+path: 'public://exo-icon-package/regular'
+type: font
+weight: 0

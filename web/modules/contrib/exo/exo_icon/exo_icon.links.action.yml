@@ -1,0 +1,11 @@
+entity.exo_icon.add_form:
+  route_name: entity.exo_icon_package.add_form
+  title: 'Add Icon Package'
+  appears_on:
+    - entity.exo_icon_package.collection
+
+exo_icon.rebuild:
+  route_name: exo_icon.rebuild
+  title: 'Rebuild Base Packages'
+  appears_on:
+    - entity.exo_icon_package.collection

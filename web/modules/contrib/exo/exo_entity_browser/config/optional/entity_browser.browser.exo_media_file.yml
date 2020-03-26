@@ -1,0 +1,63 @@
+uuid: 840c4130-d5db-4ba7-881a-5378401c6def
+langcode: en
+status: true
+dependencies:
+  config:
+    - media.type.file
+    - views.view.exo_media_browser_file
+  module:
+    - dropzonejs_eb_widget
+    - exo_entity_browser
+    - media
+    - views
+name: exo_media_file
+label: 'eXo Media | File'
+display: exo_modal
+display_configuration:
+  modal_description: 'Select from library or upload new.'
+  width: ''
+  height: ''
+  link_text: 'File Library'
+  auto_open: false
+selection_display: multi_step_display
+selection_display_configuration:
+  entity_type: media
+  display: rendered_entity
+  display_settings:
+    view_mode: media_library
+  select_text: 'Use selected'
+  selection_hidden: false
+  view: null
+  view_display: null
+widget_selector: tabs
+widget_selector_configuration: {  }
+widgets:
+  bbf3a30a-8ec2-4e49-ab8a-9c5c1d666a1d:
+    settings:
+      view: exo_media_browser_file
+      view_display: entity_browser_1
+      submit_text: Select
+      auto_select: true
+    uuid: bbf3a30a-8ec2-4e49-ab8a-9c5c1d666a1d
+    weight: 1
+    label: Library
+    id: view
+  365dae94-3d70-407f-accd-e245f96123ae:
+    settings:
+      form_mode: default
+      media_type: file
+      upload_location: 'public://files'
+      dropzone_description: 'Drop files here to upload them'
+      max_filesize: 500M
+      extensions: 'txt rtf doc docx ppt pptx xls xlsx pdf odf odg odp ods odt fodt fods fodp fodg key numbers pages zip'
+      clientside_resize: false
+      resize_width: null
+      resize_height: null
+      resize_quality: !!float 1
+      resize_method: contain
+      thumbnail_method: contain
+      submit_text: 'Select '
+    uuid: 365dae94-3d70-407f-accd-e245f96123ae
+    weight: 2
+    label: Upload
+    id: dropzonejs_media_entity_inline_entity_form

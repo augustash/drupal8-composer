@@ -1,0 +1,1 @@
+"use strict";!function(e,i){i.behaviors.exoAjax={attach:function(a,t){e(".exo-ajax").once("ajax").each(function(){var a={progress:{type:"fullscreen"}},t=e(this).attr("href");t&&(a.url=t,a.event="click"),a.dialogType=e(this).data("dialog-type"),a.dialog=e(this).data("dialog-options"),a.base=e(this).attr("id"),a.element=this,i.ajax(a)})}}}(jQuery,Drupal);

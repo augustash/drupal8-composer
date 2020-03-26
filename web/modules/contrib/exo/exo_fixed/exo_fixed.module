@@ -1,0 +1,85 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_fixed.module.
+ */
+
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Template\Attribute;
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function exo_fixed_element_info_alter(&$type) {
+  if (isset($type['page'])) {
+    $type['page']['#pre_render'][] = 'exo_fixed_page_pre_render';
+  }
+}
+
+/**
+ * Pre-render page element.
+ *
+ * @param array $element
+ *   The page element.
+ *
+ * @return array
+ *   The page element.
+ */
+function exo_fixed_page_pre_render(array $element) {
+  $exo_settings = \Drupal::service('exo_fixed.settings');
+  $theme = \Drupal::service('theme.manager')->getActiveTheme();
+  if ($enabled_regions = $exo_settings->getSetting([
+    'themes',
+    $theme->getName(),
+  ])) {
+    foreach (Element::children($element) as $region) {
+      if ($exo_settings->getSetting([
+        'themes',
+        $theme->getName(),
+        $region,
+        'status',
+      ])) {
+        $html_id = Html::getUniqueId('exo-fixed-' . $region);
+        $element[$region]['#theme_wrappers']['exo_fixed_wrapper'] = ['#weight' => -1000];
+        $element[$region]['#exo_wrapper_attributes']['id'] = $html_id;
+        $element[$region]['#exo_wrapper_attributes']['class'][] = 'exo-fixed';
+        $element[$region]['#exo_wrapper_attributes']['class'][] = 'exo-fixed-' . $region;
+        $element[$region]['#attributes']['class'][] = 'exo-fixed-region';
+        $element[$region]['#attached']['library'][] = 'exo_fixed/base';
+        $element[$region]['#attached']['drupalSettings']['exoFixed']['regions'][$region] = [
+          'type' => $exo_settings->getSetting([
+            'themes',
+            $theme->getName(),
+            $region,
+            'type',
+          ]),
+          'selector' => '#' . $html_id,
+        ];
+      }
+    }
+  }
+  return $element;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function exo_fixed_theme($existing, $type, $theme, $path) {
+  return [
+    'exo_fixed_wrapper' => [
+      'variables' => [
+        'children' => NULL,
+        'exo_wrapper_attributes' => [],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Preprocess exo_fixed_wrapper.
+ */
+function template_preprocess_exo_fixed_wrapper(&$variables) {
+  $variables['exo_wrapper_attributes'] = new Attribute($variables['exo_wrapper_attributes']);
+}

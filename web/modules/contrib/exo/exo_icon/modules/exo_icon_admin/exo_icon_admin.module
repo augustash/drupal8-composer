@@ -1,0 +1,67 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_icon_admin.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function exo_icon_admin_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the exo_icon_admin module.
+    case 'help.page.exo_icon_admin':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides automatic icon placement within admin menu lists.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements template_preprocess_admin_block().
+ */
+function exo_icon_admin_preprocess_admin_block(&$variables) {
+  $variables['block']['title'] = exo_icon($variables['block']['title'])->match(['admin', 'local_task']);
+}
+
+/**
+ * Implements template_preprocess_admin_block_content().
+ */
+function exo_icon_admin_preprocess_admin_block_content(&$variables) {
+  foreach ($variables['content'] as $key => &$item) {
+    $item['title'] = exo_icon($item['title'])->match(['admin', 'local_task']);
+  }
+}
+
+/**
+ * Implements template_preprocess_page_title().
+ */
+function exo_icon_admin_preprocess_page_title(&$variables) {
+  if (!empty($variables['title']) && \Drupal::service('router.admin_context')->isAdminRoute()) {
+    if (is_array($variables['title'])) {
+      $variables['title'] = \Drupal::service('renderer')->render($variables['title']);
+    }
+    $variables['title'] = exo_icon($variables['title'])->match(['admin', 'local_task']);
+  }
+}
+
+/**
+ * Implements template_preprocess_links__dropbutton().
+ */
+function exo_icon_admin_preprocess_links__dropbutton(&$variables) {
+  if (!exo_is_admin()) {
+    return;
+  }
+  foreach ($variables['links'] as $key => &$item) {
+    // Local tasks first as they have more 'action' type links.
+    if (!empty($item['link']['#title'])) {
+      $item['link']['#title'] = exo_icon($item['link']['#title'])->match(['local_task', 'admin']);
+    }
+  }
+}

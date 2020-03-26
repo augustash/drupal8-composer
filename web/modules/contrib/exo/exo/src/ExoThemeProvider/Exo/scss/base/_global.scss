@@ -1,0 +1,146 @@
+////////////////////////////////////////////////////////////////////////////////
+/// Global Styles.
+////////////////////////////////////////////////////////////////////////////////
+
+@include font-face($font-family, '../fonts/Ubuntu-Light', 300, normal, 'ttf');
+@include font-face($font-family, '../fonts/Ubuntu-LightItalic', 300, italic, 'ttf');
+@include font-face($font-family, '../fonts/Ubuntu-Regular', 400, normal, 'ttf');
+@include font-face($font-family, '../fonts/Ubuntu-Italic', 400, italic, 'ttf');
+@include font-face($font-family, '../fonts/Ubuntu-Bold', 700, normal, 'ttf');
+@include font-face($font-family, '../fonts/Ubuntu-BoldItalic', 700, italic, 'ttf');
+
+html,
+body {
+  // Due to body offsets we offload body height calculations to exo.js.
+  height: auto !important;
+}
+
+body {
+  /**
+   * These values will not show up in content, but can be
+   * queried by JavaScript to know which breakpoint is active.
+   * Add or remove as many breakpoints as you like.
+   */
+  &:before {
+    display: none; /* Prevent from displaying. */
+  }
+
+  @each $name, $min in $breakpoints {
+    $max: -exo-map-next($breakpoints, $name);
+    @if $min > 88em {
+      $min: 88em;
+    }
+    @if $max == null or $max > 102em {
+      $max: 102em;
+    }
+    @include breakpoint($name) {
+      &:before {
+        content: 'name:#{$name}|min:#{$min}|max:#{$max}';
+      }
+    }
+  }
+}
+
+html {
+
+  &.exo-lock-overflow {
+    overflow: hidden;
+
+    body {
+      overflow-y: scroll;
+      position: relative;
+    }
+  }
+}
+
+.exo-ready-show {
+  visibility: hidden;
+}
+
+.exo-ready .exo-ready-show {
+  visibility: visible;
+}
+
+.exo-canvas {
+  background: color(theme-black);
+  position: relative;
+}
+
+.exo-content {
+  position: relative;
+  z-index: 5;
+}
+
+.exo-shadow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+  opacity: 0;
+  background: color(theme-black);
+  z-index: 15;
+  transition: opacity 400ms;
+  -webkit-tap-highlight-color: alpha(theme-black, 0); // sass-lint:disable-line no-vendor-prefixes
+
+  &.active {
+    display: block;
+  }
+}
+
+.exo-font {
+  font: normal 13px/1em $font;
+  font-smooth: subpixel-antialiased; // sass-lint:disable-line no-misspelled-properties
+  font-smoothing: subpixel-antialiased; // sass-lint:disable-line no-misspelled-properties
+  -moz-osx-font-smoothing: grayscale; // sass-lint:disable-line no-misspelled-properties
+}
+
+.exo-visually-hidden {
+  display: block !important;
+  position: absolute !important;
+  clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+  clip: rect(1px, 1px, 1px, 1px); // sass-lint:disable-line no-duplicate-properties
+  padding: 0 !important;
+  border: 0 !important;
+  height: 1px !important;
+  width: 1px !important;
+  overflow: hidden;
+}
+
+.exo-color {
+
+  &.success {
+    color: color(theme-success);
+  }
+
+  &.warning {
+    color: color(theme-warning);
+  }
+
+  &.error {
+    color: color(theme-alert);
+  }
+}
+
+.exo-no-transitions {
+
+  &,
+  *,
+  *:before,
+  *:after {
+    transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
+  }
+}
+
+.exo-no-animations {
+
+  &,
+  *,
+  *:before,
+  *:after {
+    animation-duration: 0ms !important;
+    animation-delay: 0ms !important;
+  }
+}

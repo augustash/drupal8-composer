@@ -1,0 +1,120 @@
+.exo-entity-browser-view {
+  padding: 0 !important;
+  border: none !important;
+
+  .exo-form-container-tab {
+    display: none;
+  }
+
+  .form-type-dropzonejs {
+    @include flex;
+    @include exo-flex-direction(column);
+    @include flex-align(center, stretch);
+    height: 100%;
+    margin-bottom: 0;
+
+    > label {
+      display: none;
+    }
+
+    .dropzone {
+      @include flex;
+      @include flex-align(center, middle);
+      padding: rem-calc(20);
+      background: grey(5);
+      border: 3px dashed grey(30);
+      margin: 0;
+      min-height: 0;
+      height: 100%;
+
+      .dz-message {
+        margin: 0;
+
+        p {
+          margin: 0;
+          font-size: rem-calc(10);
+          text-transform: uppercase;
+
+          &:first-child {
+            font-size: rem-calc(14);
+            font-weight: 700;
+            text-transform: none;
+          }
+        }
+      }
+    }
+  }
+
+  .entity-browser-show-selection {
+    display: none;
+  }
+
+  #edit-actions {
+    @include flex;
+    margin: 0;
+
+    > .button {
+      width: 100%;
+    }
+  }
+
+  #ief-dropzone-upload {
+    // @include exo-flex-direction(column);
+    flex-wrap: wrap;
+    padding: rem-calc(5);
+    margin: rem-calc(10) 0;
+    background: grey(5);
+    border: 3px dashed grey(30);
+    border-radius: 5px;
+
+    > .form-wrapper {
+      margin: rem-calc(5);
+      border: 1px dashed grey(10);
+      background: grey(0);
+      padding: rem-calc(10);
+      border-radius: 3px;
+      box-sizing: border-box;
+
+      @include breakpoint(medium) {
+        $width: rem-calc(10);
+        width: calc(50% - #{$width});
+      }
+
+      @include breakpoint(large) {
+        $width: rem-calc(10);
+        width: calc(33.33% - #{$width});
+      }
+    }
+
+    .form-text {
+      width: 100%;
+    }
+
+    .description {
+      font-size: rem-calc(10);
+      line-height: 1.2;
+      color: grey(40);
+    }
+
+    .field--type-image {
+      border: 1px dashed grey(10);
+      background: grey(6);
+      padding: rem-calc(10);
+
+      .form-item {
+        margin: 0;
+      }
+
+      $width: rem-calc(110);
+      .image-preview {
+        box-sizing: border-box;
+        width: $width;
+      }
+
+      .image-widget-data {
+        box-sizing: border-box;
+        width: calc(100% - #{$width});
+      }
+    }
+  }
+}

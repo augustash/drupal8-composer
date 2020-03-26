@@ -1,0 +1,198 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_icon.theme.
+ */
+
+use Drupal\Core\Render\Element;
+use Drupal\exo_icon\ExoIconInterface;
+use Drupal\exo_icon\Entity\ExoIconPackageInterface;
+
+/**
+ * Prepares variables for icon and text display.
+ *
+ * Default template: exo-icon.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the icon
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_exo_icon(array &$variables) {
+  /* @var \Drupal\exo_icon\ExoIconInterface $icon */
+  $icon = $variables['icon'];
+  $variables['tag'] = 'span';
+  $variables['attributes']['class'][] = 'exo-icon';
+  // Allow icon_id to be used as #icon.
+  if (is_string($icon)) {
+    $icon = \Drupal::service('exo_icon.repository')->getInstanceById($icon);
+  }
+  if ($icon instanceof ExoIconInterface) {
+    $variables['icon'] = $icon;
+    $variables['type'] = $icon->getType();
+    $variables['tag'] = $icon->getWrappingElement();
+    $variables['attributes']['class'][] = 'exo-icon-' . $icon->getType();
+    $variables['attributes']['class'][] = $icon->getSelector();
+    $variables['attributes']['aria-hidden'] = 'true';
+    $variables['children'] = $icon->getChildren();
+    $variables['#attached']['library'][] = 'exo_icon/icon.' . $icon->getPackageId();
+  }
+}
+
+/**
+ * Prepares variables for icon and text display.
+ *
+ * Default template: exo-icon-element.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the icon
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_exo_icon_element(array &$variables) {
+  $icon = $variables['icon'];
+  // Allow icon_id to be used as #icon.
+  if (is_string($icon)) {
+    $icon = \Drupal::service('exo_icon.repository')->getInstanceById($icon);
+  }
+  if ($icon instanceof ExoIconInterface) {
+    $variables['icon'] = $icon->setAttributes($variables['icon_attributes'])->toRenderable();
+  }
+  else {
+    // No icon found. We don't want to render anything.
+    $variables['icon'] = '';
+  }
+}
+
+/**
+ * Prepares variables for eXo icon package templates.
+ *
+ * Default template: exo-icon-package.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the icon
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_exo_icon_package(array &$variables) {
+  $entity = $variables['element']['#exo_icon_package'];
+  $variables['exo_icon_package'] = $entity;
+  $variables['type'] = $entity->getType();
+  $variables['#attached']['library'][] = 'exo_icon/admin';
+
+  // Helpful $content variable for templates.
+  $variables['content'] = [];
+  foreach (Element::children($variables['element']) as $key) {
+    $variables['content'][$key] = $variables['element'][$key];
+  }
+
+  $variables['content']['icons'] = [
+    '#type' => 'fieldset',
+    '#title' => $entity->getType() == 'image' ? t('Available SVGs') : t('Available Icons'),
+  ];
+
+  $variables['content']['icons']['#children']['icons'] = [
+    '#theme' => 'exo_icon_list',
+    '#exo_icon_package' => $variables['exo_icon_package'],
+    '#weight' => 100,
+  ];
+}
+
+/**
+ * Prepares variables for the eXo icon list template.
+ *
+ * Default template: exo-icon-list.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the icon
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_exo_icon_list(array &$variables) {
+  $entity = $variables['element']['#exo_icon_package'];
+  $variables['exo_icon_package'] = $entity;
+  $variables['icons'] = [];
+
+  $variables['content']['filters'] = [
+    '#type' => 'container',
+    '#attributes' => [
+      'class' => ['table-filter', 'js-show'],
+    ],
+  ];
+
+  $variables['content']['filters']['text'] = [
+    '#type' => 'search',
+    '#title' => t('Filter icons'),
+    '#title_display' => 'invisible',
+    '#size' => 30,
+    '#placeholder' => t('Filter by name or description'),
+    '#description' => t('Enter a part of the icon name.'),
+    '#description_display' => 'after',
+    '#attributes' => [
+      'class' => ['exo-icon-filter-text'],
+      'data-list' => '.exo-icon-list',
+      'autocomplete' => 'off',
+    ],
+  ];
+
+  foreach ($entity->getInstances() as $key => $icon) {
+    $variables['icons'][$key]['preview'] = $icon->toRenderable();
+    $variables['icons'][$key]['selector'] = [
+      '#type' => 'textfield',
+      '#value' => $icon->getId(),
+      '#attributes' => ['class' => ['selector']],
+    ];
+    $search_values = [
+      $icon->getTag(),
+    ];
+    if ($icon->getType() == 'font') {
+      $search_values[] = $icon->getHex();
+      // Show hex for CSS implementation.
+      $variables['icons'][$key]['hex'] = [
+        '#type' => 'textfield',
+        '#value' => $icon->getHex(),
+        '#attributes' => ['class' => ['info']],
+      ];
+    }$variables['icons'][$key]['search']['#markup'] = '<div class="exo-icon-filter-text visually-hidden">' . str_replace('-', ' ', implode(' ', $search_values)) . '</div>';
+  }
+}
+
+/**
+ * Prepares variables for the eXo icon browser template.
+ *
+ * Default template: exo-icon-browser.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the icon
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_exo_icon_browser(array &$variables) {
+  $element = $variables['element'];
+  $variables['attributes']['id'] = 'exo-icon-browser-' . $element['#id'];
+  $variables['attributes']['class'][] = 'exo-icon-browser';
+  $variables['attributes']['class'][] = 'exo-form';
+
+  $variables['package_options'] = [];
+  if (count($element['#packages']) != 1) {
+    $variables['package_options']['all'] = t('From all categories');
+    foreach ($element['#packages'] as $package_id => $definition) {
+      if ($definition instanceof ExoIconPackageInterface) {
+        $variables['package_options'][$definition->id()] = $definition->label();
+      }
+    }
+  }
+
+  $variables['package_search'] = [
+    '#type' => 'textfield',
+    '#placeholder' => t('Search icons...'),
+    '#attributes' => ['class' => ['exo-icon-browser-search-input']],
+  ];
+
+  $variables['package_select'] = [
+    '#type' => 'select',
+    '#options' => $variables['package_options'],
+    '#attributes' => ['class' => ['exo-icon-browser-category-select']],
+  ];
+}

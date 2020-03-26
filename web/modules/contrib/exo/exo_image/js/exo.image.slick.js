@@ -1,0 +1,1 @@
+"use strict";!function(e){Drupal.behaviors.exoImageSlick={attach:function(i){Drupal.drimage&&e(".slick",i).once("exo.image.slick").on("init",function(i,e){Drupal.drimage.init(i.target)})}}}(jQuery,document);

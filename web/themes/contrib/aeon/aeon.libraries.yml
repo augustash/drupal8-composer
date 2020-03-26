@@ -1,0 +1,12 @@
+base:
+  version: VERSION
+  js:
+    assets/js/aeon.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+
+views.ajax:
+  js:
+    js/modules/views/ajax_view.js: {}

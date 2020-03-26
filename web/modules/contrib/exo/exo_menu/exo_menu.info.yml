@@ -1,0 +1,8 @@
+name: 'eXo Menu'
+type: module
+description: 'Advanced menu features that allow for dropdown and mobile menus.'
+core: 8.x
+package: 'eXo'
+dependencies:
+  - exo
+  - exo_icon

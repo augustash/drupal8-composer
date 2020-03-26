@@ -1,0 +1,116 @@
+uuid: 84b7209e-5f02-4cd4-b89a-46755cd8c695
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_site_settings.exo_site_settings_type.social
+    - field.field.exo_site_settings.social.field_facebook
+    - field.field.exo_site_settings.social.field_instagram
+    - field.field.exo_site_settings.social.field_linkedin
+    - field.field.exo_site_settings.social.field_pinterest
+    - field.field.exo_site_settings.social.field_twitter
+    - field.field.exo_site_settings.social.field_youtube
+  module:
+    - exo_link
+id: exo_site_settings.social.default
+targetEntityType: exo_site_settings
+bundle: social
+mode: default
+content:
+  field_facebook:
+    weight: 0
+    label: hidden
+    settings:
+      trim_length: '80'
+      rel: nofollow
+      target: _blank
+      title: 'Visit us on Facebook'
+      icon: brand-facebook-square
+      position: ''
+      url_only: false
+      url_plain: false
+      title_only: 0
+    third_party_settings: {  }
+    type: exo_link
+    region: content
+  field_instagram:
+    weight: 2
+    label: hidden
+    settings:
+      trim_length: '80'
+      rel: nofollow
+      target: _blank
+      title: 'Visit us on Instagram'
+      icon: brand-instagram
+      position: ''
+      url_only: false
+      url_plain: false
+      title_only: 0
+    third_party_settings: {  }
+    type: exo_link
+    region: content
+  field_linkedin:
+    weight: 4
+    label: hidden
+    settings:
+      trim_length: '80'
+      rel: nofollow
+      target: _blank
+      title: 'Visit us on LinkedIn'
+      icon: brand-linkedin
+      position: ''
+      url_only: false
+      url_plain: false
+      title_only: 0
+    third_party_settings: {  }
+    type: exo_link
+    region: content
+  field_pinterest:
+    weight: 5
+    label: hidden
+    settings:
+      trim_length: '80'
+      rel: nofollow
+      target: _blank
+      title: 'Visit us on Pinterest'
+      icon: brand-pinterest-square
+      position: ''
+      url_only: false
+      url_plain: false
+      title_only: 0
+    third_party_settings: {  }
+    type: exo_link
+    region: content
+  field_twitter:
+    weight: 1
+    label: hidden
+    settings:
+      trim_length: '80'
+      rel: nofollow
+      target: _blank
+      title: 'Visit us on Twitter'
+      icon: brand-twitter-square
+      position: ''
+      url_only: false
+      url_plain: false
+      title_only: 0
+    third_party_settings: {  }
+    type: exo_link
+    region: content
+  field_youtube:
+    weight: 3
+    label: hidden
+    settings:
+      trim_length: '80'
+      rel: nofollow
+      target: _blank
+      title: 'Visit us on YouTube'
+      icon: brand-youtube
+      position: ''
+      url_only: false
+      url_plain: false
+      title_only: 0
+    third_party_settings: {  }
+    type: exo_link
+    region: content
+hidden: {  }

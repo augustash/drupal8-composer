@@ -1,0 +1,58 @@
+.exo-toolbar-item-aside-label {
+  @include aside-arrow(theme-primary);
+  position: absolute;
+  display: none;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  text-align: center;
+  pointer-events: none !important;
+  margin-top: rem-calc(5);
+  transition: visibility $global-speed, opacity $global-speed, margin $global-speed, width $global-speed;
+  transition-delay: 0;
+  box-shadow: 0 10px 10px rgba(color(theme-black), 0.3);
+  min-width: rem-calc(60);
+
+  @each $key, $sizes in $region-sizes {
+
+    [data-exo-size='#{$key}'] & {
+      padding: rem-calc(5 map-get($sizes, 'padding'));
+    }
+  }
+
+  // Set label to full width of dialog that opens on open.
+  .exo-toolbar-has-dialog-type-tip & {
+    width: 100%;
+  }
+
+  // Show when in a horizontal toolbar that is mark only.
+  .exo-toolbar-region-mark-only[data-exo-align='horizontal'] & {
+    display: inline-block;
+  }
+
+  [data-exo-align='horizontal'] .mark-only-horizontal & {
+    display: inline-block;
+  }
+}
+
+.exo-toolbar-item {
+
+  &.is-hover,
+  &.exo-toolbar-item-active {
+
+    .exo-toolbar-item-aside-label {
+
+      &.is-current {
+        visibility: visible;
+        opacity: 1;
+        margin-top: 0;
+        transition-delay: $global-speed;
+      }
+
+      [data-exo-region='bottom'] &,
+      [data-exo-region='bottom_alt'] & {
+        z-index: 1;
+      }
+    }
+  }
+}

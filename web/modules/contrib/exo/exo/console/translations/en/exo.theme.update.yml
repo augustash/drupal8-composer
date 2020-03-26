@@ -1,0 +1,7 @@
+description: 'Generate eXo theme update plugin.'
+help: 'The <info>exo:theme:update</info> command helps you update an eXo theme.'
+welcome: 'Welcome to the eXo theme updater'
+options:
+  theme: 'The theme name'
+questions:
+  theme: 'Enter the theme name'

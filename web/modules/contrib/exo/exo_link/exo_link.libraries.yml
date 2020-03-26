@@ -1,0 +1,12 @@
+linkit:
+  version: VERSION
+  js:
+    js/exo.link.linkit.js: {}
+  css:
+    component:
+      css/exo-link.linkit.css: {}
+  dependencies:
+    - linkit/linkit.base
+    - core/drupal.ajax
+    - core/jquery.ui.autocomplete
+    - core/underscore

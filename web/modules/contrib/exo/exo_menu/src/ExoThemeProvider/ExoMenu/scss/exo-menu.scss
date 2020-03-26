@@ -1,0 +1,13 @@
+////////////////////////////////////////////////////////////////////////////////
+/// Base style and structure of theme.
+/// -------
+/// All styles that should be altered through themes should be place in the
+/// ./exo-menu.exo-menu.scss SCSS file.
+////////////////////////////////////////////////////////////////////////////////
+
+@import 'exo-common';
+
+@import 'components/global';
+@import 'components/dropdown';
+@import 'components/slide';
+@import 'components/mega';

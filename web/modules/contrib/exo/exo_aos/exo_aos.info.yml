@@ -1,0 +1,7 @@
+name: 'eXo Animate on Scroll'
+type: module
+description: 'Provides support for the AOS library for animations on scroll.'
+core: 8.x
+package: 'eXo'
+dependencies:
+  - exo:exo

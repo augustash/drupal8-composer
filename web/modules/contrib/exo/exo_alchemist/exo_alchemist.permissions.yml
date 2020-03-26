@@ -1,0 +1,4 @@
+administer exo alchemist:
+  title: 'Administer eXo Alchemist'
+  description: 'Allow to access the administration forms to configure eXo Alchemist.'
+  restrict access: true

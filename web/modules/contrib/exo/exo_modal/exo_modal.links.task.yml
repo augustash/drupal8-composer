@@ -1,0 +1,14 @@
+exo_modal.settings:
+  route_name: exo_modal.settings
+  base_route: exo_modal.settings
+  title: 'Settings'
+
+exo_modal.items:
+  route_name: exo_modal.demo
+  base_route: exo_modal.settings
+  title: 'Demo'
+
+exo_modal.demo_form:
+  route_name: exo_modal.demo_form
+  base_route: exo_modal.settings
+  title: 'Form Demo'

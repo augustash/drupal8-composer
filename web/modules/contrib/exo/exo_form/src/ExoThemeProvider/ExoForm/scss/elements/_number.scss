@@ -1,0 +1,37 @@
+div.exo-form-number {
+
+  .field-prefix,
+  .field-suffix {
+    flex: 0 0 auto;
+    min-width: $input-height;
+    text-align: center;
+    font-weight: 300;
+    padding: 0 !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    cursor: pointer;
+
+    .exo-icon {
+      line-height: $input-height;
+      vertical-align: middle;
+    }
+  }
+
+  .field-input {
+    flex: 1 1 1;
+    min-width: rem-calc(60);
+  }
+
+  .exo-form-input-item {
+    text-align: center;
+    -moz-appearance: textfield;
+    // width: auto;
+
+    // removing the arrows from the input.
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+}

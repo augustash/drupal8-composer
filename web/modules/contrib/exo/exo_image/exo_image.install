@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * @file
+ * Install hooks for exo_image.
+ */
+
+/**
+ * Migrade exo_image formatters to renamed exo_image_media.
+ */
+function exo_image_update_8001() {
+  if ($view_displays = \Drupal::entityTypeManager()->getStorage('entity_view_display')->loadMultiple()) {
+    foreach ($view_displays as $view_display_id => $view_display) {
+      foreach ($view_display->getComponents() as $field_name => $component) {
+        if (isset($component['type']) && $component['type'] == 'exo_image') {
+          $component['type'] = 'exo_image_media';
+          $view_display->setComponent($field_name, $component)->save();
+        }
+        if (isset($component['type']) && $component['type'] == 'exo_asset') {
+          if (isset($component['settings']['image']['formatter']) && $component['settings']['image']['formatter'] == 'exo_image') {
+            $component['settings']['image']['formatter'] = 'exo_image_media';
+            $view_display->setComponent($field_name, $component)->save();
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Migrade exo_image_media formatters to renamed exo_image_media_drimage.
+ */
+function exo_image_update_8002() {
+  if ($view_displays = \Drupal::entityTypeManager()->getStorage('entity_view_display')->loadMultiple()) {
+    foreach ($view_displays as $view_display_id => $view_display) {
+      foreach ($view_display->getComponents() as $field_name => $component) {
+        if (isset($component['type']) && $component['type'] == 'exo_image_media') {
+          $component['type'] = 'exo_image_media_drimage';
+          $view_display->setComponent($field_name, $component)->save();
+        }
+      }
+    }
+  }
+}

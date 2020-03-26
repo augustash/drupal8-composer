@@ -1,0 +1,23 @@
+<div{{ attributes }}>
+  <div class="exo-icon-browser-search">
+    {{ package_search }}
+  </div>
+  {% if package_options %}
+    <div class="exo-icon-browser-category">
+      {{ package_select }}
+    </div>
+  {% endif %}
+  <div class="exo-icon-browser-icons">
+    <div class="exo-icon-browser-loading">{{ 'Loading icons...'|t }}</div>
+  </div>
+  <div class="exo-icon-browser-bottom">
+    <div class="exo-icon-browser-info">
+      <span class="exo-icon-browser-info-pages"></span>
+      <span class="exo-icon-browser-info-total"></span>
+    </div>
+    <div class="exo-icon-browser-pager">
+      <a class="exo-icon-browser-pager-link exo-icon-browser-pager-prev">{{ icon('regular-chevron-left') }} <span>{{ 'Prev'|t }}</span></a>
+      <a class="exo-icon-browser-pager-link exo-icon-browser-pager-next"><span>{{ 'Next'|t }}</span> {{ icon('regular-chevron-right') }}</a>
+    </div>
+  </div>
+</div>

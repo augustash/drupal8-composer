@@ -1,0 +1,33 @@
+exo_form.settings:
+  path: '/admin/config/exo/form'
+  defaults:
+    _form: '\Drupal\exo_form\Form\ExoFormSettingsForm'
+    _title: 'Form Settings'
+  requirements:
+    _permission: 'administer exo form'
+  options:
+    _admin_route: TRUE
+
+exo_form.demo:
+  path: '/exo/form/demo'
+  defaults:
+    _form: '\Drupal\exo_form\Form\ExoFormDemoForm'
+    _title: 'Frontend Demo'
+  requirements:
+    _permission: 'view exo form demo'
+
+exo_form.demo.admin:
+  path: '/admin/config/exo/form/demo'
+  defaults:
+    _form: '\Drupal\exo_form\Form\ExoFormDemoForm'
+    _title: 'Backend Demo'
+  requirements:
+    _permission: 'view exo form demo'
+
+exo_form.demo.mix:
+  path: '/admin/config/exo/form/mix'
+  defaults:
+    _controller: '\Drupal\exo_form\Controller\ExoFormDemoController::demoMix'
+    _title: 'Demo of elements both inside and outside a form'
+  requirements:
+    _permission: 'view exo form demo'

@@ -1,0 +1,71 @@
+
+@import 'exo-common';
+
+.exo-icon-field {
+
+  input {
+    display: none;
+  }
+
+  &.form-disabled {
+
+    .exo-icon-field-widget {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+
+  .exo-icon-field-widget {
+    display: inline-flex;
+    border: 1px solid grey(20);
+    height: rem-calc(42);
+    background: grey(0);
+
+    &,
+    * {
+      box-sizing: border-box;
+    }
+
+    .exo-icon-field-icon {
+      // display: block;
+      @include flex;
+      @include flex-align(center, middle);
+      font-size: rem-calc(20);
+      line-height: rem-calc(20);
+      height: rem-calc(40);
+      text-align: center;
+      width: rem-calc(50);
+      padding: rem-calc(10);
+      color: grey(90);
+
+      * {
+        vertical-align: baseline;
+        line-height: inherit;
+      }
+    }
+
+    .exo-modal-trigger {
+      display: block;
+      padding: rem-calc(10);
+      background: grey(5);
+      color: grey(50);
+      transition: background-color 300ms;
+      font-size: rem-calc(10);
+      line-height: rem-calc(20);
+      height: rem-calc(40);
+      text-shadow: 0 1px 0 grey(0);
+      border-left: 1px solid grey(20);
+
+      &:hover {
+        background: grey(15);
+      }
+    }
+  }
+
+  &.empty {
+
+    .exo-icon-field-icon {
+      opacity: 0.2;
+    }
+  }
+}

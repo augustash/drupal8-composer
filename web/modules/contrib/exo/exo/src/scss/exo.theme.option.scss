@@ -1,0 +1,30 @@
+@import 'exo-common';
+
+.exo-theme-option {
+  display: block;
+  min-width: rem-calc(200);
+  color: color(theme-black);
+  border: 1px solid grey(15);
+  border-radius: 5px;
+  overflow: hidden;
+  margin: rem-calc(5) 0;
+
+  .exo-theme-option-label {
+    font-weight: 700;
+    text-align: center;
+    background: color(theme-white);
+    border-bottom: 1px solid grey(15);
+    text-shadow: none;
+    padding: rem-calc(4);
+  }
+
+  .exo-theme-option-colors {
+    @include flex;
+    @include flex-align(spaced);
+  }
+
+  .exo-theme-option-color {
+    height: rem-calc(30);
+    width: 100%;
+  }
+}

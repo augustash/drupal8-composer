@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_asset.page.inc.
+ *
+ * Page callback for Asset entities.
+ */
+
+use Drupal\Core\Render\Element;
+
+/**
+ * Prepares variables for Asset templates.
+ *
+ * Default template: exo_asset.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the user information and any
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_exo_asset(array &$variables) {
+  // Fetch ExoAsset Entity Object.
+  $exo_asset = $variables['elements']['#exo_asset'];
+  $variables['wrap'] = !isset($variables['elements']['#wrap']) || $variables['elements']['#wrap'] !== FALSE;
+  $variables['tag'] = !empty($variables['elements']['#tag']) ? $variables['elements']['#tag'] : 'div';
+
+  // Helpful $content variable for templates.
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+
+  $variables['attributes']['class'][] = 'exo-asset';
+  foreach ($exo_asset->getAttributeClasses() as $attribute_class) {
+    $variables['attributes']['class'][] = $attribute_class;
+  }
+}

@@ -1,0 +1,64 @@
+modal:
+  version: VERSION
+  js:
+    js/exo.entity-browser.modal.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupalSettings
+    - core/underscore
+    - exo_modal/theme
+    - exo_entity_browser/theme
+    - exo_entity_browser/entities-list
+
+modal.selection:
+  version: VERSION
+  js:
+    js/exo.entity-browser.modal.selection.js: { minified: true }
+  dependencies:
+    - core/drupalSettings
+
+iframe:
+  version: VERSION
+  js:
+    js/exo.entity-browser.iframe.js: { minified: true }
+  dependencies:
+    - core/drupalSettings
+    - core/jquery.once
+    - entity_browser/common
+    - exo_entity_browser/theme
+
+iframe.selection:
+  version: VERSION
+  js:
+    js/exo.entity-browser.iframe.selection.js: { minified: true }
+  dependencies:
+    - core/drupalSettings
+
+view:
+  version: VERSION
+  js:
+    js/exo.entity-browser.view.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - exo_entity_browser/theme
+    - exo_entity_browser/entities-list
+
+entities-list:
+  version: VERSION
+  js:
+    js/exo.entity-browser.entities-list.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+
+################################################################################
+## eXo Theme Provider
+################################################################################
+
+theme:
+  version: VERSION
+  css:
+    component:
+      css/exo-entity-browser.css: { minified: true }

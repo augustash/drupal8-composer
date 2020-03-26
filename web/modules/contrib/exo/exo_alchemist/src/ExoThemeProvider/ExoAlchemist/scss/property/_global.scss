@@ -1,0 +1,39 @@
+.exo-component-wrapper {
+  @include flex();
+  @include flex-align(center, middle);
+  position: relative;
+  overflow: hidden;
+
+  > .exo-component {
+    flex: 1 1 auto;
+    position: static;
+  }
+}
+
+.exo-component-content {
+  position: relative;
+  z-index: 10;
+  padding-left: $global-padding;
+  padding-right: $global-padding;
+}
+
+// [class^='exo-modifier--color-bg-'],
+// [class*=' exo-modifier--color-bg-'] {
+
+//   .exo-component-content {
+//     padding-left: 0;
+//     padding-right: 0;
+//   }
+// }
+
+.exo-modifier {
+  transition: all $global-speed;
+
+  .exo-component {
+
+    &:before,
+    &:after {
+      transition: all $global-speed;
+    }
+  }
+}

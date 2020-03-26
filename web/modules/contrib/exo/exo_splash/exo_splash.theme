@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_splash.theme.
+ */
+
+/**
+ * Prepares variables for eXo splash templates.
+ *
+ * Default template: exo-splash.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties and children of
+ *     the tray. Properties used: #children, #attributes and #bar.
+ */
+function template_preprocess_exo_splash(array &$variables) {
+  $site_config = \Drupal::config('system.site');
+  $theme_config = \Drupal::config('system.theme');
+  $theme = $theme_config->get('default');
+  $logo_uri = theme_get_setting('logo.url', $theme);
+
+  $variables['#attached']['library'][] = 'exo_splash/theme';
+  $variables['heading']['name']['#markup'] = $site_config->get('name');
+  $variables['attributes']['id'] = 'exo-splash';
+
+  $exo_settings = \Drupal::service('exo_splash.settings');
+  if (($theme = $exo_settings->getSetting(['theme'])) && $theme != '_custom') {
+    $variables['attributes']['class'][] = 'exo-splash-theme-' . $theme;
+  }
+
+  // ksm(str_replace('.svg', '-white.svg', $logo_uri), file_exists(drupal_get_path('theme', 'ash') . str_replace('.svg', '-white.svg', $logo_uri)));.
+  if ($color = $exo_settings->getSetting(['logo_color'])) {
+    if ($color == 'white') {
+      if (file_exists(DRUPAL_ROOT . '/' . str_replace('.svg', '-white.svg', $logo_uri))) {
+        $logo_uri = str_replace('.svg', '-white.svg', $logo_uri);
+      }
+      else {
+        $variables['attributes']['class'][] = 'exo-splash-logo-' . $color;
+      }
+    }
+    else {
+      $variables['attributes']['class'][] = 'exo-splash-logo-' . $color;
+    }
+  }
+
+  if (!$exo_settings->getSetting(['once']) || $exo_settings->getSetting(['debug'])) {
+    $variables['attributes']['class'][] = 'active';
+  }
+
+  if ($exo_settings->getSetting(['debug'])) {
+    $variables['attributes']['class'][] = 'debug';
+  }
+
+  $variables['attributes']['data-exo-splash'] = $exo_settings->getSetting(['animation']);
+
+  $variables['content']['site_logo'] = [
+    '#theme' => 'image',
+    '#uri' => $logo_uri,
+    '#alt' => t('Home'),
+    '#weight' => -100,
+  ];
+}

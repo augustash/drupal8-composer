@@ -1,0 +1,67 @@
+.exo-form {
+
+  table {
+    margin: 0;
+
+    .is-admin & {
+      margin-bottom: $global-margin;
+    }
+  }
+
+  .exo-form-element-inner > table {
+
+    .is-admin & {
+      margin-bottom: 0;
+    }
+  }
+
+  td {
+
+    > .exo-form-element,
+    > .exo-form-inline > .exo-form-element {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
+    .tabledrag-handle {
+      vertical-align: middle;
+      padding: 0 $global-padding;
+      height: 16px;
+      width: 16px;
+
+      .handle {
+        height: 16px;
+        width: 16px;
+        margin: 0;
+        padding: 0;
+        background-position: 0 0;
+      }
+    }
+  }
+
+  td.exo-form-table-compact {
+    width: 1%;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  tr.draggable {
+
+    td {
+      vertical-align: middle;
+
+      &:first-child {
+
+        > * {
+          float: none;
+          display: inline-block;
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+
+  .exo-form-table-overflow {
+    overflow-x: auto;
+  }
+}

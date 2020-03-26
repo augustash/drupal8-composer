@@ -1,0 +1,7 @@
+services:
+  exo_form.settings:
+    class: Drupal\exo_form\ExoFormSettings
+    arguments: ['@config.factory']
+  plugin.manager.exo_form:
+    class: Drupal\exo_form\Plugin\ExoFormManager
+    parent: default_plugin_manager

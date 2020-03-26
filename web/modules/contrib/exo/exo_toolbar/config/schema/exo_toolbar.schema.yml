@@ -1,0 +1,57 @@
+exo_toolbar.exo_toolbar.*:
+  type: config_entity
+  label: 'eXo Toolbar config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
+    weight:
+      type: integer
+      label: 'Weight'
+    settings:
+      type: exo_toolbar.settings.[%parent.plugin]
+    visibility:
+      type: sequence
+      label: 'Visibility Conditions'
+      sequence:
+        type: condition.plugin.[id]
+        label: 'Visibility Condition'
+
+exo_toolbar.settings.*:
+  type: exo_toolbar_settings
+
+exo_toolbar_settings:
+  type: mapping
+  label: 'eXo Toolbar settings'
+  mapping:
+    exo_default:
+      type: boolean
+      label: 'Use eXo default'
+    enabled:
+      type: sequence
+      label: 'Enabled regions'
+      sequence:
+        type: string
+    debug:
+      type: boolean
+      label: 'Debug mode enabled'
+    regions:
+      type: sequence
+      label: 'Region settings'
+      sequence:
+        type: exo_toolbar_settings.region
+    context_mapping:
+      type: sequence
+      label: 'Context assignments'
+      sequence:
+        type: string
+
+exo_toolbar_settings.region:
+  type: sequence
+  sequence:
+    type: string

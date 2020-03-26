@@ -1,0 +1,64 @@
+
+.page.login {
+  padding: $global-padding;
+  position: relative;
+
+  @include breakpoint(large) {
+    padding: $global-padding * 3;
+  }
+
+  .main {
+    max-width: rem-calc(600);
+    margin: 0 auto;
+    border: 10px solid color(theme-white);
+    border-radius: $global-radius;
+    padding: $global-padding;
+    float: none;
+
+    @include breakpoint(large) {
+      padding: $global-padding * 2;
+    }
+
+    > .content {
+      width: 100%;
+
+      .block.local.tasks {
+        margin-bottom: $global-margin;
+      }
+
+      .user-login-form,
+      .user-pass {
+        @include flex;
+        @include exo-flex-direction(column);
+        padding: 0 ($global-padding);
+
+        .exo-form-element {
+          margin-top: $global-margin;
+          margin-bottom: $global-margin / 2;
+        }
+      }
+    }
+  }
+
+  .site-logo {
+    display: block;
+    margin: 0 auto ($global-margin * 2);
+    max-width: rem-calc(150);
+  }
+
+  .page.title {
+    text-align: center;
+    margin: $global-margin auto;
+  }
+
+  .form-actions {
+    display: block;
+    width: 100%;
+    margin-top: $global-margin;
+
+    .button {
+      @include component-button;
+      width: 100%;
+    }
+  }
+}

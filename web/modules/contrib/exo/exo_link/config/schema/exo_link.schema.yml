@@ -1,0 +1,50 @@
+field.formatter.settings.micon_link:
+  type: mapping
+  label: 'Link format settings'
+  mapping:
+    trim_length:
+      type: integer
+      label: 'Trim link text length'
+    url_only:
+      type: boolean
+      label: 'URL only'
+    url_plain:
+      type: boolean
+      label: 'Show URL as plain text'
+    rel:
+      type: string
+      label: 'Add rel="nofollow" to links'
+    title:
+      type: string
+      label: 'Link text'
+    target:
+      type: string
+      label: 'Open link in new window'
+    class:
+      type: string
+      label: 'CSS class to add to link'
+    icon:
+      type: string
+      label: 'Link icon'
+
+field.widget.settings.micon_link:
+  type: mapping
+  label: 'Link with icon settings'
+  mapping:
+    placeholder_url:
+      type: string
+      label: 'Placeholder for URL'
+    placeholder_title:
+      type: label
+      label: 'Placeholder for link text'
+    target:
+      type: boolean
+      label: 'Open link in new window'
+    class:
+      type: boolean
+      label: 'Allow adding CSS class'
+    packages:
+      type: sequence
+      sequence:
+        type: boolean
+        label: 'Enabled'

@@ -1,0 +1,109 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_menu.module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function exo_menu_theme($existing, $type, $theme, $path) {
+  return [
+    'ux_menu' => [
+      'base hook' => 'menu',
+    ],
+    'ux_menu_levels' => [
+      'variables' => ['menu_name' => NULL, 'levels' => [], 'attributes' => []],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_exo_modal_setting_presets().
+ */
+function exo_menu_exo_menu_slide_vertical_setting_presets($config_id) {
+  $presets = [];
+  $presets['regular_icons'] = [
+    'label' => t('Regular Icons'),
+    'backIcon' => 'regular-arrow-square-left',
+    'breadcrumbIcon' => 'regular-home',
+    'breadcrumbSeparatorIcon' => 'regular-long-arrow-alt-right',
+    'itemIcon' => 'regular-chevron-right',
+  ];
+  $presets['thin_icons'] = [
+    'label' => t('Thin Icons'),
+    'backIcon' => 'thin-arrow-square-left',
+    'breadcrumbIcon' => 'thin-home',
+    'breadcrumbSeparatorIcon' => 'thin-long-arrow-alt-right',
+    'itemIcon' => 'thin-chevron-right',
+  ];
+  $presets['solid_icons'] = [
+    'label' => t('Solid Icons'),
+    'backIcon' => 'solid-arrow-square-left',
+    'breadcrumbIcon' => 'solid-home',
+    'breadcrumbSeparatorIcon' => 'solid-long-arrow-alt-right',
+    'itemIcon' => 'solid-chevron-right',
+  ];
+  return $presets;
+}
+
+/**
+ * Implements hook_exo_modal_setting_presets().
+ */
+function exo_menu_exo_menu_dropdown_horizontal_setting_presets($config_id) {
+  $presets = [];
+  $presets['regular_icons'] = [
+    'label' => t('Regular Icons'),
+    'itemIcon' => 'regular-chevron-down',
+  ];
+  $presets['thin_icons'] = [
+    'label' => t('Thin Icons'),
+    'itemIcon' => 'thin-chevron-down',
+  ];
+  $presets['solid_icons'] = [
+    'label' => t('Solid Icons'),
+    'itemIcon' => 'solid-chevron-down',
+  ];
+  return $presets;
+}
+
+/**
+ * Implements hook_exo_modal_setting_presets().
+ */
+function exo_menu_exo_menu_dropdown_vertical_setting_presets($config_id) {
+  $presets = [];
+  $presets['regular_icons'] = [
+    'label' => t('Regular Icons'),
+    'itemIcon' => 'regular-chevron-down',
+  ];
+  $presets['thin_icons'] = [
+    'label' => t('Thin Icons'),
+    'itemIcon' => 'thin-chevron-down',
+  ];
+  $presets['solid_icons'] = [
+    'label' => t('Solid Icons'),
+    'itemIcon' => 'solid-chevron-down',
+  ];
+  return $presets;
+}
+
+/**
+ * Implements hook_exo_modal_setting_presets().
+ */
+function exo_menu_exo_menu_mega_vertical_setting_presets($config_id) {
+  $presets = [];
+  $presets['regular_icons'] = [
+    'label' => t('Regular Icons'),
+    'itemIcon' => 'regular-chevron-right',
+  ];
+  $presets['thin_icons'] = [
+    'label' => t('Thin Icons'),
+    'itemIcon' => 'thin-chevron-right',
+  ];
+  $presets['solid_icons'] = [
+    'label' => t('Solid Icons'),
+    'itemIcon' => 'solid-chevron-right',
+  ];
+  return $presets;
+}

@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * @file
+ * Install hooks for exo_site_settings.
+ */
+
+/**
+ * Migrate exo_site_settings config clone to third party settings.
+ */
+function exo_site_settings_update_8001() {
+  $field_configs = \Drupal::entityTypeManager()->getStorage('field_config')->loadMultiple(['exo_site_settings.general.field_name', 'exo_site_settings.general.field_email']);
+  foreach ($field_configs as $field_config) {
+    $name = 'system.site';
+    switch ($field_config->getName()) {
+      case 'field_name':
+        $key = 'name';
+        break;
+
+      case 'field_email':
+        $key = 'mail';
+        break;
+    }
+    $field_config->setThirdPartySetting('exo_site_settings', 'config_name', $name);
+    $field_config->setThirdPartySetting('exo_site_settings', 'config_key', $key);
+    $field_config->save();
+  }
+}

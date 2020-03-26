@@ -1,0 +1,5 @@
+// Size
+// Retrive size from $size.
+@function size($key, $multiplier: 1) {
+  @return map-get($sizes, $key) * $multiplier;
+}

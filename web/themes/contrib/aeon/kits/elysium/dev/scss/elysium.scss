@@ -1,0 +1,49 @@
+// Make sure the charset is set appropriately
+@charset 'UTF-8';
+
+////////////////////////////////////////////////////////////////////////////////
+// Vendor
+// -----------------------------------------------------------------------------
+// Here we load vendor utilities. Foundation 6 mixins and base Aeon styling is
+// included by default. Inidividual Foundation components can be included via
+// the base/foundation-components.scss file.
+
+@import 'foundation';
+@import 'aeon-minimal';
+@import 'base/breakpoints';
+@import 'base/mixins';
+@import 'base/functions';
+@import 'base/placeholders';
+@import 'base/variables';
+@import 'base/foundation-components';
+// @include foundation-everything;
+
+////////////////////////////////////////////////////////////////////////////////
+// Base
+// -----------------------------------------------------------------------------
+// The utils/ folder gathers all Sass tools and helpers we’ll use across the
+// project. Got a function? A mixin? Put it in there.
+
+@import 'base/typography';
+@import 'base/table';
+
+////////////////////////////////////////////////////////////////////////////////
+// REGIONS
+// -----------------------------------------------------------------------------
+// The regions/ directory usually contains a number of files, each of them
+// setting some styles for the main sections of the regions (header, footer, and
+// so on). It also contains the _grid file which is the grid system used to
+// build the regions.
+
+@import 'regions/*.scss';
+
+////////////////////////////////////////////////////////////////////////////////
+// COMPONENT
+// -----------------------------------------------------------------------------
+// For smaller components, there is the components/ folder. While layout/ is
+// kind of macro (defining the global wireframe), components/ is more micro. It
+// can contain all kinds of specific modules like a slider, a loader, a widget,
+// or anything along those lines. There are usually a lot of files in
+// components/ since your site should be mostly composed of tiny modules.
+
+@import 'components/**/*.scss';

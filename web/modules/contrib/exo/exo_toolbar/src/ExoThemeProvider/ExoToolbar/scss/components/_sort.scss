@@ -1,0 +1,41 @@
+.exo-toolbar-sorting {
+
+  .exo-toolbar-section {
+    outline: dotted 1px transparent;
+    outline-offset: -1px;
+  }
+
+  .exo-toolbar-create {
+    display: none;
+  }
+}
+
+.exo-toolbar-sortable {
+
+  .exo-toolbar-element {
+    cursor: move !important;
+  }
+}
+
+.exo-toolbar-sort-placeholder {
+  @include flex;
+  @include flex-align(center, middle);
+  outline: dotted 1px transparent;
+  outline-offset: -4px;
+  width: 100%;
+
+  &::before {
+    content: 'Dropzone';
+    display: block;
+    font-weight: 200;
+    font-style: italic;
+
+    [data-exo-align='horizontal'] & {
+      padding: 0 rem-calc(10);
+    }
+
+    [data-exo-align='vertical'] & {
+      padding: rem-calc(10) 0;
+    }
+  }
+}

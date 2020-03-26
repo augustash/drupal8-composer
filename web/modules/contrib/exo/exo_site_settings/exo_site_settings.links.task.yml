@@ -1,0 +1,32 @@
+# config page routing definition
+
+entity.exo_site_settings.collection:
+  route_name: entity.exo_site_settings.collection
+  base_route: entity.exo_site_settings.collection
+  title: 'Settings'
+
+entity.exo_site_settings_type.collection:
+  route_name: entity.exo_site_settings_type.collection
+  base_route: entity.exo_site_settings.collection
+  title: 'Manage'
+
+entity.exo_site_settings.canonical:
+  route_name: entity.exo_site_settings.canonical
+  base_route: entity.exo_site_settings.canonical
+  title: 'View'
+
+entity.exo_site_settings.edit_form:
+  route_name: entity.exo_site_settings.edit_form
+  base_route: entity.exo_site_settings.canonical
+  title: 'Edit'
+
+entity.exo_site_settings.delete_form:
+  route_name:  entity.exo_site_settings.delete_form
+  base_route:  entity.exo_site_settings.canonical
+  title: Delete
+  weight: 10
+
+entity.exo_site_settings_type.edit_form:
+  route_name: entity.exo_site_settings_type.edit_form
+  base_route: entity.exo_site_settings_type.edit_form
+  title: 'Edit'

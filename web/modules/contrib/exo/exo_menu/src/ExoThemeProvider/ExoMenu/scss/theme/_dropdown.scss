@@ -1,0 +1,65 @@
+.exo-menu-dropdown {
+
+  // Theme support.
+  @each $key, $theme in $themes {
+    $base: map-get($theme, base);
+    $offset: map-get($theme, offset);
+    $primary: map-get($theme, primary);
+
+    &.exo-menu-theme-#{$key} {
+      background: color($base);
+
+      a {
+        color: color-fix($base, $offset);
+      }
+
+      .exo-icon {
+        color: alpha($offset, 0.7);
+      }
+
+      .level-0 {
+
+        > ul > li {
+
+          > a {
+            text-shadow: 0 0 1px darken(color($base), 20%);
+            transition: background $global-speed;
+          }
+
+          &:hover,
+          &.active-trail {
+
+            > a {
+              background: darken(color($base), 3%);
+            }
+          }
+        }
+      }
+
+      .level-1 {
+        background: color($base);
+
+        ul > li {
+
+          a {
+            transition: background $global-speed;
+            font-size: rem-calc(12);
+            border-top: 1px dotted darken(color($base), 10%);
+          }
+
+          &:hover,
+          &.active-trail {
+
+            a {
+              background: darken(color($base), 6%);
+
+              &:hover {
+                background: darken(color($base), 3%);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+name: 'eXo Asset'
+type: module
+description: 'Provides an enhanced media entity that combines both image and video.'
+core: 8.x
+package: 'eXo'
+dependencies:
+  - exo
+  - media
+  - inline_entity_form

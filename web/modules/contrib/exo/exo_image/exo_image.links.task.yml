@@ -1,0 +1,4 @@
+exo_image.settings:
+  route_name: exo_image.settings
+  base_route: exo_image.settings
+  title: 'Settings'

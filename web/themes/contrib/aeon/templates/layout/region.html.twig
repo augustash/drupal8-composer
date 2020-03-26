@@ -1,0 +1,25 @@
+{#
+/**
+ * @file
+ * Theme override to display a region.
+ *
+ * @see template_preprocess_region()
+ */
+#}
+{%
+  set classes = [
+    'region',
+    region|clean_class|replace({'-': ' '}),
+  ]
+%}
+{% if content %}
+  <{{ tag }}{{ attributes.addClass(classes) }}>
+    {% if content_tag %}
+      <{{ content_tag}}{{ content_attributes }}>
+    {% endif %}
+    {{ content }}
+    {% if content_tag %}
+      </{{ content_tag}}>
+    {% endif %}
+  </{{ tag }}>
+{% endif %}

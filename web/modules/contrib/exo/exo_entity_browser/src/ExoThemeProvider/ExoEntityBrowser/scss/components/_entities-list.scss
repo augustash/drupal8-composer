@@ -1,0 +1,17 @@
+.entities-list {
+  border: 1px solid grey(10);
+  background: grey(3);
+  padding: rem-calc(5);
+  margin-top: rem-calc(10);
+
+  .item-container {
+    border: 1px solid grey(10);
+    background: grey(6);
+    padding: rem-calc(10);
+    margin: rem-calc(2);
+
+    input {
+      width: 100%;
+    }
+  }
+}

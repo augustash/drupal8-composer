@@ -1,0 +1,16 @@
+$sizes: 12, 6, 3, 4;
+
+@each $size in $sizes {
+  .exo-modifier--column-#{$size} {
+    @include exo-grid;
+    @include exo-gutters($gutter-position: top right left bottom, $negative: true);
+
+    > * {
+      @include exo-cell(12, $gutter-position: top right left bottom);
+
+      @include breakpoint(large) {
+        @include exo-cell($size, $gutter-position: top right left bottom);
+      }
+    }
+  }
+}

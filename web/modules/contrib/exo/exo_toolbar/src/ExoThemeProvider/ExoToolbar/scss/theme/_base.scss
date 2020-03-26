@@ -1,0 +1,165 @@
+////////////////////////////////////////////////////////////////////////////////
+/// Theme Structure
+/// -------
+/// Place all base structures here.
+////////////////////////////////////////////////////////////////////////////////
+
+.exo-toolbar-region {
+
+  // Theme support.
+  @each $key, $theme in $themes {
+    $base: map-get($theme, base);
+    $offset: map-get($theme, offset);
+    $primary: map-get($theme, primary);
+    $secondary: map-get($theme, secondary);
+
+    .badge-theme-#{$key} {
+
+      .exo-toolbar-element-badge {
+        background: color($base);
+        color: color($offset);
+      }
+    }
+
+    &.exo-toolbar-region-theme-#{$key} {
+
+      .exo-toolbar-region-inner {
+        background: color($base);
+        color: color($offset);
+      }
+
+      .exo-toolbar-element {
+        color: color-fix($base, $offset);
+
+        &.as-link {
+
+          &:hover,
+          &:active,
+          &.is-active,
+          &.is-primary,
+          .exo-toolbar-item-active & {
+            // color: color($primary);
+            color: color-fix($base, $primary);
+          }
+        }
+
+        &.as-pill {
+          background: color-scale-inverse($base, 10%);
+
+          &:hover {
+            background: color-scale-inverse($base, 5%);
+          }
+
+          &.is-active,
+          &.is-primary {
+            color: color-pick-contrast(color($primary));
+            background: color($primary);
+          }
+
+          &.is-primary {
+
+            &:hover {
+              background: color-scale-inverse($primary, 5%);
+            }
+          }
+        }
+      }
+
+      .exo-toolbar-item-active .exo-toolbar-element.as-link {
+        color: color-fix($base, $primary);
+      }
+
+      .exo-toolbar-list-secondary {
+        background: color($base);
+        box-shadow: 0 10px 15px rgba(color($offset), 0.1);
+
+        .exo-toolbar-element.is-active {
+          color: color-scale-inverse($base, 40%);
+          background-color: color-scale-inverse($base, 2%);
+        }
+
+        .exo-toolbar-element.as-link {
+
+          &:hover {
+            background-color: color-scale-inverse($base, 5%);
+          }
+        }
+      }
+
+      .exo-toolbar-sorting {
+
+        .exo-toolbar-section {
+          outline-color: alpha($offset, 0.6);
+        }
+      }
+
+      .exo-toolbar-sort-placeholder {
+        color: alpha($offset, 0.6);
+        outline-color: alpha($offset, 0.6);
+      }
+
+      .exo-toolbar-item-type-create {
+
+        .exo-toolbar-element-mark {
+          color: color-pick-contrast(color($primary));
+          background: color($primary);
+          transition: background 300ms;
+        }
+
+        &:hover {
+          .exo-toolbar-element-mark {
+            background: lighten(color($primary), 10%);
+          }
+        }
+      }
+
+      .exo-toolbar-element-grid {
+
+        > li {
+
+          &:hover {
+
+            .exo-icon {
+              color: color-fix($base, $primary);
+            }
+
+            .exo-icon-label {
+              color: color-fix($base, $offset);
+            }
+          }
+        }
+      }
+
+      .exo-toolbar-item-aside-label {
+        background: color($primary);
+        color: color-pick-contrast(color($primary));
+
+        &:before {
+          border-color: transparent transparent transparent rgba(color($primary), 0.9);
+        }
+      }
+
+      .exo-toolbar-item-aside-tip {
+        background: alpha($base, 0.9);
+        box-shadow: 0 10px 10px rgba(color($base), 0.3);
+
+        &:before {
+          border-color: transparent transparent transparent rgba(color($base), 0.9);
+        }
+
+        a {
+          color: color-fix($base, $offset);
+          text-shadow: 0 1px 2px rgba(color-fix($base, $offset), 0.5);
+        }
+      }
+
+      .exo-toolbar-item-type-divider {
+        border-color: rgba(color-fix($base, $offset), 0.2);
+
+        .exo-toolbar-element-title {
+          color: alpha($offset, 0.6);
+        }
+      }
+    }
+  }
+}

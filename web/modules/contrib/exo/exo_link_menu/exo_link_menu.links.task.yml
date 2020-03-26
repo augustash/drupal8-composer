@@ -1,0 +1,4 @@
+# exo_link_menu.config:
+#   route_name: exo_link_menu.exo_link_menu_config_form
+#   base_route: entity.exo_link_menu.collection
+#   title: 'Menu Settings'

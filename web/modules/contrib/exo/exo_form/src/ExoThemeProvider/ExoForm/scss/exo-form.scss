@@ -1,0 +1,50 @@
+////////////////////////////////////////////////////////////////////////////////
+/// Base style and structure of theme.
+/// -------
+/// All styles that should be altered through themes should be place in the
+/// ./exo-form.exo-form.scss SCSS file.
+////////////////////////////////////////////////////////////////////////////////
+
+@import 'exo-common';
+
+@import 'base/variables';
+@import 'base/mixins';
+@import 'base/global';
+@import 'base/table';
+
+@import 'elements/wrapper';
+@import 'elements/input';
+@import 'elements/pseudo';
+@import 'elements/radio';
+@import 'elements/checkbox';
+@import 'elements/select';
+@import 'elements/datetime';
+@import 'elements/text-format';
+@import 'elements/exo-icon';
+@import 'elements/number';
+@import 'elements/machine-name';
+@import 'elements/tabs-vertical';
+@import 'elements/tabs-horizontal';
+@import 'elements/views-exposed-form';
+@import 'elements/button';
+@import 'elements/file';
+@import 'elements/linkit';
+
+@import 'components/misc';
+@import 'components/layout';
+@import 'components/layout-builder';
+@import 'components/entity-meta';
+@import 'components/webform';
+@import 'components/metatags';
+@import 'components/paragraphs';
+@import 'components/commerce';
+@import 'components/address';
+@import 'components/views';
+@import 'components/search-api';
+@import 'components/entity-reference-tree';
+@import 'components/credit-card';
+@import 'components/password';
+@import 'components/media-library';
+@import 'components/inline-entity-form';
+@import 'components/dropbutton';
+@import 'components/action-links';

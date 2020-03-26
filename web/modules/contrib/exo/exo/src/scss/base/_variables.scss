@@ -1,0 +1,60 @@
+////////////////////////////////////////////////////////////////////////////////
+/// Colors
+////////////////////////////////////////////////////////////////////////////////
+
+$global-colors: (
+  theme-black: #1a1a1a,
+  theme-white: #fff,
+  theme-gray: #777,
+  theme-base: #373a3c,
+  theme-offset: #f1f1f1,
+  theme-primary: #2780e3,
+  theme-secondary: #b6bf3d,
+  theme-success: #86c13d,
+  theme-warning: #f1ba2e,
+  theme-alert: #e54040,
+) !default;
+
+// Themes will add colors to this variable.
+$colors: () !default;
+
+////////////////////////////////////////////////////////////////////////////////
+/// Globals
+////////////////////////////////////////////////////////////////////////////////
+$global-speed: 350ms;
+$global-radius: 3px;
+$global-font-size: 100%;
+$global-lineheight: 1.5;
+$global-speed: 350ms;
+$global-radius: 3px;
+$global-menu-padding: 0.7rem 1rem !default;
+$menu-items-padding: $global-menu-padding !default;
+$body-antialiased: true;
+$global-margin: 1rem;
+$global-padding: 1rem;
+$global-position: 1rem;
+$global-weight-normal: normal;
+$global-weight-bold: bold;
+$global-width: rem-calc(1100);
+$grid-row-width: $global-width;
+$grid-container: $global-width;
+
+/// Sets the text direction of the CSS. Can be either `ltr` or `rtl`.
+/// @type Keyword
+$global-text-direction: ltr !default;
+$global-left: if($global-text-direction == rtl, right, left);
+$global-right: if($global-text-direction == rtl, left, right);
+
+// Internal variable that contains the flex justifying options
+$-exo-flex-justify: -exo-flex-justify($global-text-direction);
+
+$sizes: (
+  margin: rem-calc(30),
+  padding: rem-calc(30),
+  font: rem-calc(16),
+);
+
+/// Global tolerance for color pick contrast.
+/// @type Number
+$global-color-pick-contrast-tolerance: 0 !default;
+$contrast-warnings: true !default;

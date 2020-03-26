@@ -1,0 +1,239 @@
+.exo-toolbar-element {
+  // @include flex;
+  // @include flex-align(left, stretch);
+  display: flex;
+  // flex
+  text-decoration: none;
+  border: 0;
+  transition: all $global-speed;
+  white-space: nowrap;
+  width: 100%;
+  user-select: none;
+
+  &.as-link {
+    cursor: pointer;
+
+    &.is-active {
+      cursor: default;
+      font-weight: bold;
+    }
+  }
+
+  &.as-pill {
+    box-sizing: border-box;
+
+    &:not(.has-icon) {
+
+      .exo-toolbar-element-mark {
+        padding: 0;
+      }
+    }
+
+    .is-ie & {
+      width: auto;
+    }
+
+    @each $key, $sizes in $region-sizes {
+      [data-exo-size='#{$key}'] & {
+        border-radius: rem-calc(map-get($sizes, 'element') / 2);
+        margin: rem-calc(map-get($sizes, 'padding') / 2);
+
+        .exo-toolbar-element-inner {
+          font-size: rem-calc(map-get($sizes, 'text') * 0.75);
+          text-transform: uppercase;
+        }
+
+        .exo-toolbar-element-inner,
+        .exo-toolbar-element-mark {
+          height: rem-calc(map-get($sizes, 'element') - map-get($sizes, 'padding'));
+        }
+      }
+
+      [data-exo-size='#{$key}'] .mark-only-horizontal & {
+        &.has-mark .exo-toolbar-element-mark {
+          min-width: rem-calc(map-get($sizes, 'element') * 1.2);
+        }
+      }
+    }
+
+    [data-exo-align='vertical'] & {
+      width: calc(100% - #{rem-calc(map-get($sizes, 'padding') / 3)});
+    }
+
+    [data-exo-section='left'] & {
+      margin-right: 0 !important;
+    }
+
+    [data-exo-section='right'] & {
+      margin-left: 0 !important;
+    }
+  }
+}
+
+.exo-toolbar-element-hidden {
+  display: none;
+}
+
+.exo-toolbar-element-inner {
+  @include flex;
+  @include flex-align(left, middle);
+  flex: auto;
+
+  @each $key, $sizes in $region-sizes {
+    [data-exo-size='#{$key}'] & {
+      padding: rem-calc(map-get($sizes, 'padding'));
+      height: rem-calc(map-get($sizes, 'element'));
+      font-size: rem-calc(map-get($sizes, 'text'));
+    }
+  }
+
+  .has-icon-before & {
+    padding-left: size(padding) / 4;
+  }
+
+  .has-icon-after & {
+    padding-right: size(padding) / 4;
+  }
+
+  // A toolbar can be set to icon only mode.
+  .exo-toolbar-region-mark-only .has-mark & {
+    display: none;
+  }
+
+  // An element can be set to icon only when contained in a horizontal region.
+  [data-exo-align='horizontal'] .mark-only-horizontal .has-mark & {
+    display: none;
+  }
+  // An element can be set to icon only when contained in a vertical region.
+  [data-exo-align='vertical'] .mark-only-vertical .has-mark & {
+    display: none;
+  }
+}
+
+.exo-toolbar-element-mark {
+  @include flex;
+  @include flex-align(center, middle);
+  text-align: center;
+
+  @each $key, $sizes in $region-sizes {
+
+    [data-exo-size='#{$key}'] & {
+      height: rem-calc(map-get($sizes, 'element'));
+    }
+
+    [data-exo-align='horizontal'][data-exo-size='#{$key}'] & {
+      padding: rem-calc(map-get($sizes, 'padding'));
+    }
+
+    &.before {
+
+      [data-exo-align='horizontal'][data-exo-size='#{$key}'] & {
+        padding-right: 0;
+      }
+    }
+
+    &.after {
+
+      [data-exo-align='horizontal'][data-exo-size='#{$key}'] & {
+        padding-left: 0;
+      }
+
+      // A toolbar can be set to icon only mode.
+      .exo-toolbar-region-mark-only[data-exo-align='horizontal'][data-exo-size='#{$key}'] & {
+        // @TODO: We may want to hide the after mark?
+        padding-left: rem-calc(map-get($sizes, 'padding') / 2);
+      }
+    }
+
+    // No padding is needed when in horizontal and showing mark only.
+    [data-exo-align='horizontal'][data-exo-size='#{$key}'] .mark-only-horizontal .has-mark & {
+      width: rem-calc(map-get($sizes, 'element'));
+      padding: 0;
+    }
+
+    [data-exo-align='vertical'][data-exo-size='#{$key}'] .has-mark & {
+      width: rem-calc(map-get($sizes, 'element'));
+      padding: 0;
+    }
+  }
+
+  &.before {
+
+    .has-image-before & {
+      padding: 0 !important;
+    }
+  }
+
+  &.after {
+
+    .has-image-after & {
+      padding: 0 !important;
+    }
+  }
+}
+
+.exo-toolbar-element-icon {
+
+  @each $key, $sizes in $region-sizes {
+    [data-exo-size='#{$key}'] & {
+
+      i {
+
+        &:before {
+          display: block;
+          font-size: rem-calc(map-get($sizes, 'icon'));
+          line-height: rem-calc(map-get($sizes, 'icon'));
+        }
+
+        &.exo-icon-size-small {
+
+          &:before {
+            font-size: rem-calc(map-get($sizes, 'icon') * 0.6);
+          }
+        }
+
+        &.exo-icon-size-large {
+
+          &:before {
+            font-size: rem-calc(map-get($sizes, 'icon') * 1.6);
+          }
+        }
+      }
+    }
+  }
+}
+
+.exo-toolbar-element-badge {
+  padding: rem-calc(2 3);
+  border-radius: 3px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+
+  @each $key, $sizes in $region-sizes {
+    [data-exo-size='#{$key}'] & {
+      font-size: rem-calc(map-get($sizes, 'badge'));
+    }
+  }
+
+  .has-icon-after & {
+    margin-right: rem-calc(map-get($sizes, 'padding') / 4);
+  }
+}
+
+.exo-toolbar-element-image {
+
+  &,
+  img {
+    @each $key, $sizes in $region-sizes {
+      [data-exo-size='#{$key}'] & {
+        width: rem-calc(map-get($sizes, 'element'));
+        height: rem-calc(map-get($sizes, 'element'));
+      }
+    }
+  }
+
+  img {
+    display: block;
+  }
+}

@@ -1,0 +1,13 @@
+.exo-modifier--position-h-left {
+
+  @include breakpoint(large) {
+    order: 0;
+  }
+}
+
+.exo-modifier--position-h-right {
+
+  @include breakpoint(large) {
+    order: 2;
+  }
+}

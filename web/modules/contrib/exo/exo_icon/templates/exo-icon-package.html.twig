@@ -1,0 +1,22 @@
+{#
+/**
+ * @file exo-icon-package.html.twig
+ * Default theme implementation to present Micon package data of type ICON.
+ *
+ * @see template_preprocess_exo_icon_package_icon()
+ *
+ * @ingroup themeable
+ */
+#}
+{%
+  set classes = [
+    'exo-icon-package',
+    'exo-icon-package-' ~ type,
+  ]
+%}
+
+<div{{ attributes.addClass(classes) }}>
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</div>

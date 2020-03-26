@@ -1,0 +1,7 @@
+exo_default: 1
+exo_preset: ''
+theme: 'primary'
+animation: 'slide-up-left'
+logo_color: ''
+once: true
+debug: false

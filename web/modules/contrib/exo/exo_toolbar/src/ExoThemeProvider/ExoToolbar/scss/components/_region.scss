@@ -1,0 +1,122 @@
+.exo-toolbar-region {
+  @include flex;
+  position: fixed;
+
+  // This class is used rarely to make sure a region has a high z-index.
+  // @see toggle.
+  &.exo-toolbar-region-focus {
+    z-index: 100 !important;
+  }
+
+  .exo-toolbar-region-inner {
+    @include flex;
+    @include flex-align(justify, stretch);
+    position: relative;
+    // Removed due to bug with Safari "fixed" positioning that caused asides
+    // not to show up.
+    // z-index: 2;
+  }
+
+  @each $key, $edge in $region-edges {
+    &[data-exo-edge='#{$key}'] {
+      @each $property, $value in map-get($region-edges, $key) {
+        #{$property}: $value;
+      }
+    }
+  }
+
+  &[data-exo-align='horizontal'] {
+    @include exo-flex-direction(row);
+    z-index: 12;
+
+    .exo-toolbar-region-overflow {
+      width: 100%;
+    }
+
+    .exo-toolbar-region-inner {
+      @include exo-flex-direction(row);
+      width: 100%;
+      overflow-x: auto;
+    }
+  }
+
+  &[data-exo-align='vertical'] {
+    @include exo-flex-direction(column);
+    z-index: 10;
+    transition: width $global-speed;
+
+    .exo-toolbar-region-overflow {
+      height: 100%;
+    }
+
+    .exo-toolbar-region-inner {
+      @include exo-flex-direction(column);
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .exo-toolbar-section,
+    .exo-toolbar-item {
+      @include exo-flex-direction(column);
+    }
+
+    // Vertical regions have the ability to be expanded.
+    @each $key, $sizes in $region-sizes {
+      &[data-exo-size='#{$key}'] {
+        width: rem-calc(map-get($sizes, 'element'));
+
+        .exo-toolbar-region-overflow {
+          overflow: hidden;
+        }
+
+        .exo-toolbar-region-inner {
+          width: rem-calc(map-get($sizes, 'expanded'));
+        }
+
+        &.exo-toolbar-region-expanded {
+          width: rem-calc(map-get($sizes, 'expanded'));
+        }
+      }
+    }
+  }
+}
+
+.exo-toolbar-region-divider {
+  $divider-offset: 20px;
+  position: absolute;
+  z-index: -1;
+  box-shadow: 0 0 2px color(theme-black);
+  pointer-events: none;
+
+  .exo-toolbar-region-last & {
+    box-shadow: 0 0 20px color(theme-black);
+  }
+
+  [data-exo-edge='top'] & {
+    bottom: 0;
+    height: 100px;
+    border-radius: 100px / 10px;
+    opacity: 0.3;
+  }
+
+  [data-exo-edge='bottom'] & {
+    top: 0;
+    height: 100px;
+    border-radius: 100px / 10px;
+    opacity: 0.3;
+  }
+
+  [data-exo-edge='left'] & {
+    right: 0;
+    width: 100px;
+    border-radius: 10px / 100px;
+    opacity: 0.3;
+  }
+
+  [data-exo-edge='right'] & {
+    left: 0;
+    width: 100px;
+    border-radius: 10px / 100px;
+    opacity: 0.3;
+  }
+}

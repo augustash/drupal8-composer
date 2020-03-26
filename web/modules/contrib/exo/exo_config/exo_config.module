@@ -1,0 +1,78 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_config.module.
+ */
+
+use Drupal\Core\Site\Settings;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_help().
+ */
+function exo_config_help($route_name, RouteMatchInterface $route_match) {
+  if (\Drupal::currentUser()->hasPermission('access administration pages') && !Settings::get('config_readonly')) {
+    if ($route_name == 'system.status') {
+      $message = t('eXo Config is not configured correctly.');
+    }
+    else {
+      $message = t('eXo Config is not configured correctly. <a href=":url">View Status</a>.', [':url' => Url::fromRoute('system.status')->toString()]);
+    }
+    \Drupal::messenger()->addError($message);
+  }
+
+  switch ($route_name) {
+    // Main module help for the exo_config module.
+    case 'help.page.exo_config':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides base configuration for Config Split and Config Readonly and ties the two together in a best-practices workflow.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_config_readonly_whitelist_patterns().
+ */
+function exo_config_config_readonly_whitelist_patterns() {
+  return \Drupal::config('config_ignore.settings')->get('ignored_config_entities');
+}
+
+/**
+ * Returns TRUE if config should be locked.
+ *
+ * @return bool
+ *   Returns TRUE if config should be locked.
+ */
+function exo_config_lock() {
+  if (PHP_SAPI === 'cli') {
+    return FALSE;
+  }
+  // If config split dev is enabled, allow editing of everything.
+  $status = \Drupal::config('config_split.config_split.dev')->get('status');
+  if ($status) {
+    return FALSE;
+  }
+  // Allow importing from the single form.
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  if ($route_name) {
+    if (in_array($route_name, [
+      'config.import_single',
+    ])) {
+      return FALSE;
+    }
+  }
+  // We allow all config edits on pantheon dev.
+  if (isset($_SERVER['PANTHEON_ENVIRONMENT']) && $_SERVER['PANTHEON_ENVIRONMENT'] == 'dev') {
+    return FALSE;
+  }
+  // Allow force override.
+  if (!empty(\Drupal::request()->query->get('exo_config_force'))) {
+    return FALSE;
+  }
+  return TRUE;
+}

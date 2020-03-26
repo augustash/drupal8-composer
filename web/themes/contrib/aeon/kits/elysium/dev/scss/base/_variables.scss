@@ -1,0 +1,40 @@
+////////////////////////////////////////////////////////////////////////////////
+// VARIABLES
+// -----------------------------------------------------------------------------
+
+$global-width: rem-calc(1200);
+$grid-row-width: $global-width;
+
+$colors: (
+  theme-black: #333,
+  theme-white: #fff,
+  theme-primary: #2199e8,
+  theme-secondary: #3d3f41,
+  theme-success: #86c13d,
+  theme-warning: #f1ba2e,
+  theme-alert: #e54040,
+);
+
+@include add-foundation-colors;
+
+// Base
+// ----------
+$body-font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;
+$header-font-family: $body-font-family;
+$body-background: $white;
+$body-font-color: $black;
+$anchor-color: $primary-color;
+$anchor-color-hover: scale-color($anchor-color, $lightness: -14%);
+
+// Button
+// ----------
+$button-background: $primary-color;
+$button-background-hover: scale-color($button-background, $lightness: -15%);
+
+// Menu
+// ----------
+$menu-item-background-active: map-get($foundation-palette, primary);
+
+// Breadcrumb
+// ----------
+$breadcrumbs-item-color: $primary-color;

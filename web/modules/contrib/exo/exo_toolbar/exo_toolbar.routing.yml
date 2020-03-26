@@ -1,0 +1,73 @@
+exo_toolbar.items:
+  path: '/admin/config/exo/toolbar/items'
+  defaults:
+    _controller: '\Drupal\exo_toolbar\Controller\ExoToolbarItemController::listing'
+    _title: 'Toolbar Layout'
+  requirements:
+    _permission: 'administer exo toolbar'
+
+exo_toolbar.settings:
+  path: '/admin/config/exo/toolbar/settings'
+  defaults:
+    _form: '\Drupal\exo_toolbar\Form\ExoToolbarSettingsForm'
+    _title: 'Toolbar Settings'
+  requirements:
+    _permission: 'administer exo toolbar'
+
+entity.exo_toolbar.items:
+  path: '/admin/config/exo/toolbar/{exo_toolbar}/items'
+  defaults:
+    _controller: '\Drupal\exo_toolbar\Controller\ExoToolbarItemController::listing'
+    _title: 'Toolbar Layout'
+  requirements:
+    _permission: 'administer exo toolbar'
+
+entity.exo_toolbar.item.items:
+  path: '/admin/config/exo/toolbar/items/{exo_toolbar_item}/items'
+  defaults:
+    _controller: '\Drupal\exo_toolbar\Controller\ExoToolbarItemController::items'
+    _title: 'Region Items'
+  requirements:
+    _entity_access: 'exo_toolbar_item.update'
+
+entity.exo_toolbar.library:
+  path: '/admin/config/exo/toolbar/{exo_toolbar}/library/{exo_toolbar_region}'
+  defaults:
+    _controller: '\Drupal\exo_toolbar\Controller\ExoToolbarLibraryController::listing'
+    _title: 'Place Item'
+  requirements:
+    _permission: 'administer exo toolbar'
+
+entity.exo_toolbar.add:
+  path: '/admin/config/exo/toolbar/{exo_toolbar}/add/{exo_toolbar_region}/{plugin_id}'
+  defaults:
+    _controller: '\Drupal\exo_toolbar\Controller\ExoToolbarAddController::addForm'
+    _title: 'Configure Item'
+  requirements:
+    _permission: 'administer exo toolbar'
+
+exo_toolbar.api.items.update:
+  path: '/api/exo/toolbar/items/update'
+  defaults:
+    _controller: '\Drupal\exo_toolbar\Controller\ExoToolbarAdminController::updateItems'
+    _title: 'Update Items'
+  requirements:
+    _permission: 'administer exo toolbar'
+    _method: POST
+
+exo_toolbar.api.item.region:
+  path: '/api/exo/toolbar/region/{exo_toolbar_item}'
+  defaults:
+    _controller: '\Drupal\exo_toolbar\Controller\ExoToolbarItemController::items'
+    _title: 'Region Items'
+  requirements:
+    _entity_access: 'exo_toolbar_item.view'
+
+exo_toolbar.api.dialog.view:
+  path: '/api/exo/toolbar/dialog/{exo_toolbar_item}/{arg}'
+  defaults:
+    _controller: '\Drupal\exo_toolbar\Controller\ExoToolbarDialogController::view'
+    _title: 'View dialog content'
+    arg: NULL
+  requirements:
+    _permission: 'access exo toolbar'

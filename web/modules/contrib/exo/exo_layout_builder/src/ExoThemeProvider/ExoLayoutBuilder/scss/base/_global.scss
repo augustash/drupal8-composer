@@ -1,0 +1,160 @@
+.exo-layout-builder {
+  @include exo-progress-throbber;
+
+  .layout-builder {
+    display: block !important;
+    padding: $global-padding;
+  }
+
+  .exo-form-element-type-vertical-tabs {
+    margin-top: $global-margin;
+    max-width: rem-calc(800);
+    margin: $global-margin auto;
+
+    .exo-form-container-revision {
+      margin: 0;
+    }
+  }
+
+  .exo-layout-builder-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    text-align: center;
+
+    .exo-layout-builder-top-inner {
+      display: inline-block;
+      margin: 0 auto;
+      background: color(theme-white);
+      border-radius: 0 0 5px 5px;
+      box-shadow: 0 0 10px alpha(theme-black, 0.2);
+
+      .form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        padding: $global-padding / 2;
+        margin: 0;
+
+        > * {
+          margin: 0 $global-margin / 4;
+        }
+
+        .button {
+          font-size: rem-calc(12);
+          border-radius: 3px;
+          transition: background-color $global-speed;
+          border: 0;
+
+          &.exo-layout-builder-submit {
+            font-weight: 700;
+          }
+        }
+      }
+    }
+
+    .layout-builder__message {
+      margin: 0;
+
+      .messages {
+        font-size: rem-calc(11);
+        background: color(theme-success);
+      }
+    }
+  }
+
+  .layout-builder__add-section {
+    padding: 0;
+    margin: 0;
+  }
+
+  .layout-builder__section {
+    margin: 0;
+
+    > .layout-builder__link {
+      display: inline-block;
+      line-height: 1;
+      vertical-align: bottom;
+      width: rem-calc(26);
+      overflow: hidden;
+      background-image: none;
+      text-indent: 0;
+      height: rem-calc(26);
+      width: rem-calc(26);
+      overflow: hidden;
+      text-shadow: none;
+      margin: 0;
+      border-radius: 50% 50% 0 0;
+      transition: background-color $global-speed;
+      margin-right: 1px;
+
+      &:hover {
+        background-image: none;
+      }
+    }
+
+    .layout-builder__link--remove {
+      @include exo-icon('regular', f00d) {
+        display: block;
+        height: rem-calc(26);
+        width: rem-calc(26);
+        line-height: rem-calc(26);
+        text-align: center;
+      };
+    }
+
+    .layout-builder__link--configure {
+      @include exo-icon('regular', f044) {
+        height: rem-calc(26);
+        width: rem-calc(26);
+        font-size: rem-calc(12);
+        line-height: rem-calc(26);
+        text-align: center;
+      };
+    }
+
+    .layout-builder__add-block {
+      padding: 0;
+      margin: 0;
+    }
+  }
+
+  .layout-builder__link--add {
+    @include exo-icon('regular', f055) {
+      padding-right: rem-calc(5);
+    };
+    display: block;
+    padding: $global-padding;
+    background-image: none;
+    font-size: rem-calc(14);
+    text-transform: uppercase;
+    font-weight: 700;
+    transition: color $global-speed;
+  }
+}
+
+.layout-selection {
+  @include exo-grid;
+  @include exo-gutters(top right bottom left, $negative: true);
+  padding: 0;
+  list-style: none;
+
+  > li {
+    @include exo-cell(6, top right bottom left);
+    @include flex;
+    text-align: center;
+
+    a {
+      @include flex;
+      @include flex-align(center, middle);
+      flex-direction: column;
+      padding: $global-padding;
+      height: 100%;
+      width: 100%;
+      font-size: rem-calc(12);
+      text-transform: uppercase;
+    }
+  }
+}

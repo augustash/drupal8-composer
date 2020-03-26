@@ -1,0 +1,1 @@
+"use strict";!function(e,r){r.behaviors.machineName.showMachineName=function(e,i){var a=i.options;""!==e?(e!==a.replace&&(i.$target.val(e).trigger("change"),i.$preview.html(a.field_prefix+r.checkPlain(e)+a.field_suffix)),i.$suffix.show()):(i.$suffix.hide(),i.$target.val(e).trigger("change"),i.$preview.empty())}}(jQuery,Drupal,drupalSettings);

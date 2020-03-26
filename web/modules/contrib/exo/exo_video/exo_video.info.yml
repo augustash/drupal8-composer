@@ -1,0 +1,7 @@
+name: 'eXo Video'
+type: module
+description: 'Provides enhanced video display formatters.'
+core: 8.x
+package: 'eXo'
+dependencies:
+  - exo

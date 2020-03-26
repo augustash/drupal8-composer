@@ -1,0 +1,10 @@
+.exo-media-preview {
+  max-width: rem-calc(100);
+  text-align: center;
+
+  > .field {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

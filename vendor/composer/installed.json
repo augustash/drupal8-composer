@@ -1865,6 +1865,59 @@
         }
     },
     {
+        "name": "drupal/components",
+        "version": "1.1.0",
+        "version_normalized": "1.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupalcode.org/project/components.git",
+            "reference": "8.x-1.1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/components-8.x-1.1.zip",
+            "reference": "8.x-1.1",
+            "shasum": "72af8ff1ca842556ee4b95335595c24703acdb75"
+        },
+        "require": {
+            "drupal/core": "~8.0"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.1",
+                "datestamp": "1556870881",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0-or-later"
+        ],
+        "authors": [
+            {
+                "name": "JohnAlbin",
+                "homepage": "https://www.drupal.org/user/32095"
+            },
+            {
+                "name": "RobLoach",
+                "homepage": "https://www.drupal.org/user/61114"
+            }
+        ],
+        "description": "Registers “component libraries” defined in modules and themes with the Twig system",
+        "homepage": "https://www.drupal.org/project/components",
+        "support": {
+            "source": "https://git.drupalcode.org/project/components"
+        }
+    },
+    {
         "name": "drupal/config_direct_save",
         "version": "1.1.0",
         "version_normalized": "1.1.0.0",
@@ -3489,6 +3542,185 @@
         ]
     },
     {
+        "name": "jacerider/aeon",
+        "version": "2.0",
+        "version_normalized": "2.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/jacerider/aeon.git",
+            "reference": "97d2e9ed954a4844e1e489f23b709188fd61a8ad"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/jacerider/aeon/zipball/97d2e9ed954a4844e1e489f23b709188fd61a8ad",
+            "reference": "97d2e9ed954a4844e1e489f23b709188fd61a8ad",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://packages.augustash.com/repo/private/dists/%package%/%version%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "drupal/components": "^1.0"
+        },
+        "time": "2020-03-26T21:50:19+00:00",
+        "type": "drupal-theme",
+        "extra": {
+            "drush": {
+                "services": {
+                    "drush.services.yml": "^9"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Drush\\Commands\\aeon\\": "Commands/aeon/"
+            }
+        },
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Cyle Carlson (JaceRider)",
+                "email": "jacerider@gmail.com",
+                "role": "Maintainer"
+            }
+        ],
+        "description": "Aeon is a base theme for Drupal. It has Bootstrap, Sass, BrowserSync and Font Awesome built-in.",
+        "homepage": "https://github.com/jacerider/aeon",
+        "support": {
+            "issues": "https://github.com/jacerider/aeon/issues",
+            "source": "https://github.com/jacerider/aeon"
+        }
+    },
+    {
+        "name": "jacerider/exo",
+        "version": "2.0",
+        "version_normalized": "2.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "git@github.com:jacerider/exo.git",
+            "reference": "fe2a3b3e9ab71f3e0bcbedd09dc4308c1e4ff708"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/jacerider/exo/zipball/fe2a3b3e9ab71f3e0bcbedd09dc4308c1e4ff708",
+            "reference": "fe2a3b3e9ab71f3e0bcbedd09dc4308c1e4ff708",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://packages.augustash.com/repo/private/dists/%package%/%version%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "time": "2020-03-26T22:01:43+00:00",
+        "type": "drupal-module",
+        "installation-source": "dist",
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Cyle Carlson (JaceRider)",
+                "email": "jacerider@gmail.com",
+                "role": "Maintainer"
+            }
+        ],
+        "description": "Provides a number of UI enhancements and features for the refined site developer and builder.",
+        "homepage": "https://github.com/jacerider/exo",
+        "support": {
+            "issues": "https://github.com/jacerider/exo/issues",
+            "source": "https://github.com/jacerider/exo"
+        }
+    },
+    {
+        "name": "jacerider/real_favicon",
+        "version": "1.1",
+        "version_normalized": "1.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/jacerider/real_favicon.git",
+            "reference": "10ab49a67ca201ce229ba503c334f09d5cb7f445"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/jacerider/real_favicon/zipball/10ab49a67ca201ce229ba503c334f09d5cb7f445",
+            "reference": "10ab49a67ca201ce229ba503c334f09d5cb7f445",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://packages.augustash.com/repo/private/dists/%package%/%version%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "time": "2020-03-26T21:55:51+00:00",
+        "type": "drupal-module",
+        "installation-source": "dist",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Cyle Carlson (JaceRider)",
+                "email": "jacerider@gmail.com",
+                "role": "Maintainer"
+            }
+        ],
+        "description": "A favicon generator for all platforms utilizing http://realfavicongenerator.net",
+        "homepage": "https://github.com/jacerider/real_favicon",
+        "support": {
+            "issues": "https://github.com/jacerider/real_favicon/issues",
+            "source": "https://github.com/jacerider/real_favicon"
+        }
+    },
+    {
+        "name": "jacerider/valet",
+        "version": "1.3",
+        "version_normalized": "1.3.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/jacerider/valet.git",
+            "reference": "5a0c61e648dadbf68c1148e14ff841b14c603980"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/jacerider/valet/zipball/5a0c61e648dadbf68c1148e14ff841b14c603980",
+            "reference": "5a0c61e648dadbf68c1148e14ff841b14c603980",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://packages.augustash.com/repo/private/dists/%package%/%version%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "time": "2020-03-26T21:17:53+00:00",
+        "type": "drupal-module",
+        "installation-source": "dist",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Cyle Carlson (JaceRider)",
+                "email": "jacerider@gmail.com",
+                "role": "Maintainer"
+            }
+        ],
+        "description": "An Alfred-inspired navigation system for Drupal.",
+        "homepage": "https://github.com/jacerider/valet",
+        "support": {
+            "issues": "https://github.com/jacerider/valet/issues",
+            "source": "https://github.com/jacerider/valet"
+        }
+    },
+    {
         "name": "jakub-onderka/php-console-color",
         "version": "v0.2",
         "version_normalized": "0.2.0.0",
@@ -3999,63 +4231,6 @@
             }
         ],
         "description": "More info available on: http://pear.php.net/package/Console_Getopt"
-    },
-    {
-        "name": "pear/console_table",
-        "version": "v1.3.1",
-        "version_normalized": "1.3.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/pear/Console_Table.git",
-            "reference": "1930c11897ca61fd24b95f2f785e99e0f36dcdea"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/pear/Console_Table/zipball/1930c11897ca61fd24b95f2f785e99e0f36dcdea",
-            "reference": "1930c11897ca61fd24b95f2f785e99e0f36dcdea",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.2.0"
-        },
-        "suggest": {
-            "pear/Console_Color2": ">=0.1.2"
-        },
-        "time": "2018-01-25T20:47:17+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "classmap": [
-                "Table.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-2-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Jan Schneider",
-                "homepage": "http://pear.php.net/user/yunosh"
-            },
-            {
-                "name": "Tal Peer",
-                "homepage": "http://pear.php.net/user/tal"
-            },
-            {
-                "name": "Xavier Noguer",
-                "homepage": "http://pear.php.net/user/xnoguer"
-            },
-            {
-                "name": "Richard Heyes",
-                "homepage": "http://pear.php.net/user/richard"
-            }
-        ],
-        "description": "Library that makes it easy to build console style tables.",
-        "homepage": "http://pear.php.net/package/Console_Table/",
-        "keywords": [
-            "console"
-        ]
     },
     {
         "name": "pear/pear-core-minimal",

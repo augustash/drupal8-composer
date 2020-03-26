@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_toolbar.exo_toolbar.default
+id: exo_site_settings
+toolbar: default
+region: top
+section: right
+weight: -1
+plugin: link
+settings:
+  id: link
+  title: Settings
+  provider: exo_toolbar
+  url: 'internal:/admin/settings'
+  target: 0
+  mark_only_horizontal: 1
+  icon: regular-cog
+  badge_type: ''
+  badge_settings: {  }
+  toolbar_item_id: null
+visibility: {  }

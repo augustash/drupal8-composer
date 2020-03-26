@@ -1,0 +1,8 @@
+uuid: dc13ecc1-ad3a-496e-919a-3a2ad16f8d52
+langcode: en
+status: true
+dependencies: {  }
+id: social
+label: Social
+weight: -9
+aggregate: true

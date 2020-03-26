@@ -1,0 +1,12 @@
+uuid: 33cea7d0-623b-4710-a470-16a69d32c18d
+langcode: en
+status: false
+dependencies: {  }
+_core:
+  default_config_hash: 5bkF7r66ZThjPY0cJpzsJf1GtdhVxgHK_ADODibJsC4
+id: thin
+label: Thin
+global: false
+path: 'public://exo-icon-package/thin'
+type: font
+weight: 2

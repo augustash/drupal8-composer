@@ -1,0 +1,233 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_toolbar.theme.
+ */
+
+use Drupal\Core\Template\Attribute;
+use Drupal\Core\Render\Element;
+
+/**
+ * Prepares variables for eXo toolbar templates.
+ *
+ * Default template: exo-toolbar.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties and children of
+ *     the tray. Properties used: #children, #attributes and #bar.
+ */
+function template_preprocess_exo_toolbar(array &$variables) {
+  $element = $variables['element'];
+  $toolbar = $element['#exo_toolbar'];
+  $variables['exo_toolbar'] = $toolbar;
+  $variables['regions'] = $element['regions'];
+
+  // Prepare the toolbar attributes.
+  $variables['attributes'] = $element['#attributes'];
+  $variables['heading'] = $element['#heading'];
+
+  if ($toolbar->isDebugMode()) {
+    $variables['attributes']['class'][] = 'exo-toolbar-debug';
+  }
+}
+
+/**
+ * Prepares variables for eXo toolbar region templates.
+ *
+ * Default template: exo-toolbar-region.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties and children of
+ *     the tray. Properties used: #children, #attributes and #bar.
+ */
+function template_preprocess_exo_toolbar_region(array &$variables) {
+  $element = $variables['element'];
+  $toolbar = $element['#exo_toolbar'];
+  $region = $element['#exo_toolbar_region'];
+  $variables['sections'] = $element['sections'];
+  $variables['attributes'] = $element['#attributes'] + ['class' => []];
+  // Make sure this class if first.
+  array_unshift($variables['attributes']['class'], 'exo-toolbar-region');
+
+  $variables['exo_toolbar'] = $toolbar;
+  $variables['exo_toolbar_region'] = $region;
+  $variables['attributes']['data-exo-region'] = $region->getPluginId();
+  $variables['attributes']['data-exo-edge'] = $region->getEdge();
+  $variables['attributes']['data-exo-align'] = $region->getAlignment();
+  $variables['attributes']['data-exo-size'] = $region->getSize();
+  $variables['attributes']['class'][] = 'exo-toolbar-region-theme-' . $region->getTheme();
+
+  if ($region->isMarkOnly() && !$toolbar->isAdminMode()) {
+    $variables['attributes']['class'][] = 'exo-toolbar-region-mark-only';
+  }
+
+  if ($region->isExpandable()) {
+    if ($region->isExpanded() || $toolbar->isAdminMode()) {
+      $variables['attributes']['class'][] = 'exo-toolbar-region-expanded';
+    }
+  }
+}
+
+/**
+ * Prepares variables for eXo toolbar section templates.
+ *
+ * Default template: exo-toolbar-section.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties and children of
+ *     the tray. Properties used: #children, #attributes and #bar.
+ */
+function template_preprocess_exo_toolbar_section(array &$variables) {
+  $element = $variables['element'];
+  $toolbar = $element['#exo_toolbar'];
+  $region_id = $element['#exo_toolbar_region_id'];
+  $section_id = $element['#exo_toolbar_section_id'];
+  $variables['items'] = $element['items'];
+
+  $variables['exo_toolbar'] = $toolbar;
+  $variables['exo_toolbar_region_id'] = $region_id;
+  $variables['exo_toolbar_section_id'] = $section_id;
+  $variables['attributes']['data-exo-section'] = $section_id;
+}
+
+/**
+ * Prepares variables for eXo toolbar item templates.
+ *
+ * Default template: exo-toolbar-item.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties of the element.
+ *     Properties used: #id, #attributes, #children.
+ */
+function template_preprocess_exo_toolbar_item(array &$variables) {
+  $element = $variables['element'];
+  $element += [
+    'aside' => [],
+  ];
+
+  $variables['item'] = $element['item'];
+  $variables['attributes'] = $element['#attributes'];
+
+  $variables['aside'] = $element['aside'];
+  $variables['aside']['#theme_wrappers'][] = 'exo_toolbar_item_aside';
+}
+
+/**
+ * Prepares variables for eXo toolbar item aside templates.
+ *
+ * Default template: exo-toolbar-item-aside.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties of the element.
+ *     Properties used: #id, #attributes, #children.
+ */
+function template_preprocess_exo_toolbar_item_aside(array &$variables) {
+  $element = $variables['element'];
+  // Ensure #attributes is set.
+  $element += ['#wrapper_attributes' => []];
+  $variables['children'] = $element['#children'];
+  $variables['attributes'] = $element['#wrapper_attributes'];
+}
+
+/**
+ * Prepares variables for eXo toolbar list templates.
+ *
+ * Default template: exo-toolbar-list.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties of the element.
+ *     Properties used: #id, #attributes, #children.
+ */
+function template_preprocess_exo_toolbar_item_operations(array &$variables) {
+  $element = $variables['element'];
+  // Ensure #attributes is set.
+  $element += ['#attributes' => []];
+  $variables['attributes'] = $element['#attributes'];
+
+  // Prepare children if not called as theme_wrapper.
+  if (empty($variables['children'])) {
+    foreach (Element::children($element) as $key) {
+      $variables['children'][$key] = $element[$key];
+    }
+  }
+}
+
+/**
+ * Prepares variables for eXo toolbar list templates.
+ *
+ * Default template: exo-toolbar-list.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties of the element.
+ *     Properties used: #id, #attributes, #children.
+ */
+function template_preprocess_exo_toolbar_list(array &$variables) {
+  $element = $variables['element'];
+  // Ensure #attributes is set.
+  $element += ['#attributes' => []];
+  $variables['attributes'] = $element['#attributes'];
+  $variables['attributes']['class'][] = 'exo-toolbar-list';
+  $variables['first'] = [];
+  $variables['children'] = [];
+
+  // Prepare children if not called as theme_wrapper.
+  if (empty($variables['children'])) {
+    foreach (Element::children($element) as $key) {
+      if (empty($variables['first'])) {
+        $variables['first'] = $element[$key];
+        $variables['first']['element']['#icon'] = [
+          '#theme' => 'exo_icon',
+          '#icon' => 'regular-chevron-down',
+          '#attributes' => [
+            'class' => ['exo-icon-size-small'],
+          ],
+        ];
+        $variables['first']['element']['#icon_position'] = 'after';
+      }
+      else {
+        $variables['children'][$key] = $element[$key];
+      }
+    }
+  }
+}
+
+/**
+ * Prepares variables for eXo toolbar dialog templates.
+ *
+ * Default template: exo-toolbar-dialog.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties of the element.
+ *     Properties used: #id, #attributes, #children.
+ */
+function template_preprocess_exo_toolbar_dialog(array &$variables) {
+  $element = $variables['element'];
+  // Ensure #attributes is set.
+  $element += ['#wrapper_attributes' => []];
+  $variables['children'] = $element['#children'];
+  $variables['attributes'] = $element['#wrapper_attributes'];
+}
+
+/**
+ * Prepares variables for eXo toolbar item templates.
+ *
+ * Default template: exo-toolbar-item.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties and children of
+ *     the tray. Properties used: #children, #attributes and #bar.
+ */
+function template_preprocess_exo_toolbar_element(array &$variables) {
+  $variables['attributes'] = new Attribute($variables['attributes']);
+  $variables['inner_attributes'] = new Attribute($variables['inner_attributes']);
+}

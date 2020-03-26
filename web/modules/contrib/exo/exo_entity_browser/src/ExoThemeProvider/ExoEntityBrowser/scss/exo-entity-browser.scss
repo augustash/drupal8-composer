@@ -1,0 +1,16 @@
+////////////////////////////////////////////////////////////////////////////////
+/// Base style and structure of theme.
+/// -------
+/// All styles that should be altered through themes should be place in the
+/// ./exo-entity-browser.exo-entity-browser.scss SCSS file.
+////////////////////////////////////////////////////////////////////////////////
+
+@import 'exo-common';
+
+@import 'components/iframe';
+@import 'components/view';
+@import 'components/view-grid';
+@import 'components/view-table';
+@import 'components/form';
+@import 'components/entities-list';
+@import 'components/preview';

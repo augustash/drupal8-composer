@@ -1,0 +1,59 @@
+base:
+  version: VERSION
+  js:
+    js/exo.toolbar.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/underscore
+    - core/drupal
+    - core/drupalSettings
+    - core/drupal.displace
+    - exo/exo
+    - exo/jquery.imagesloaded
+
+toggle:
+  version: VERSION
+  js:
+    js/exo.toolbar.toggle.js: { minified: true }
+  dependencies:
+    - exo_toolbar/theme
+
+dialog:
+  version: VERSION
+  js:
+    js/exo.toolbar.dialog.js: { minified: true }
+  dependencies:
+    - core/drupal.ajax
+
+region:
+  version: VERSION
+  js:
+    js/exo.toolbar.region.js: { minified: true }
+  dependencies:
+    - core/drupal.ajax
+
+adminEscape:
+  version: VERSION
+  js:
+    js/exo.toolbar.admin-escape.js: { minified: true }
+
+sort:
+  version: VERSION
+  js:
+    js/exo.toolbar.sort.js: { minified: true }
+  dependencies:
+    - exo_toolbar/theme
+    - core/jquery.ui.sortable
+
+################################################################################
+## eXo Theme Provider
+################################################################################
+
+theme:
+  version: VERSION
+  css:
+    component:
+      css/exo-toolbar.css: { minified: true }
+  dependencies:
+    - exo_toolbar/base

@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_paragraphs.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function exo_paragraphs_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the exo_paragraphs module.
+    case 'help.page.exo_paragraphs':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides paragraphs enhancements.') . '</p>';
+      return $output;
+
+    default:
+  }
+}

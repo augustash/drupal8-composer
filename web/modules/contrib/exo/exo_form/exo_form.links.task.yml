@@ -1,0 +1,21 @@
+# Form routing definition
+exo_form.settings:
+  title: 'Settings'
+  route_name: exo_form.settings
+  base_route: exo_form.settings
+  weight: -10
+
+exo_form.demo:
+  title: 'Demo'
+  route_name: exo_form.demo
+  base_route: exo_form.settings
+
+exo_form.demo.admin:
+  title: 'Admin Demo'
+  route_name: exo_form.demo.admin
+  base_route: exo_form.settings
+
+exo_form.demo.mix:
+  title: 'Mix Demo'
+  route_name: exo_form.demo.mix
+  base_route: exo_form.settings

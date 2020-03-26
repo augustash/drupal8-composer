@@ -1,0 +1,13 @@
+entity.exo_site_settings_type.collection:
+  title: 'Site Setting Types'
+  route_name: entity.exo_site_settings_type.collection
+  description: 'List and manage site setting types'
+  parent: system.admin_config_exo
+  weight: 0
+
+entity.exo_site_settings.collection:
+  title: 'Settings'
+  route_name: entity.exo_site_settings.collection
+  description: 'Manage site settings.'
+  parent: system.admin
+  weight: 0

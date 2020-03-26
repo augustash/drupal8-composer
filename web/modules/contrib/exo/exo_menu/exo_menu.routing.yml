@@ -1,0 +1,17 @@
+exo_menu.settings:
+  path: '/admin/config/exo/menu'
+  defaults:
+    _form: '\Drupal\exo_menu\Form\ExoMenuSettingsForm'
+    _title: 'Menu Settings'
+  requirements:
+    _permission: 'administer exo menu'
+  options:
+    _admin_route: TRUE
+
+exo_menu.demo:
+  path: '/admin/config/exo/menu/demo'
+  defaults:
+    _controller: '\Drupal\exo_menu\Controller\ExoMenuDemoController::demo'
+    _title: 'Menu Demo'
+  requirements:
+    _permission: 'administer exo menu'

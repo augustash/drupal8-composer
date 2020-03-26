@@ -1,0 +1,16 @@
+/* Remove the border on our iframe element. */
+
+.entity-browser-iframe-container {
+  position: relative;
+
+  iframe {
+    border: none;
+    position: relative;
+    z-index: 501;
+  }
+
+  .ajax-progress-fullscreen {
+    position: absolute;
+    z-index: 500;
+  }
+}

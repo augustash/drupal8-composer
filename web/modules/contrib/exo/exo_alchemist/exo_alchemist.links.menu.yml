@@ -1,0 +1,13 @@
+system.admin_config_exo_alchemist:
+  route_name: system.admin_config_exo_alchemist
+  title: 'Alchemist'
+  parent: system.admin_config_exo
+  description: 'Configure eXo.'
+  weight: 0
+
+exo_alchemist.component.collection:
+  title: 'Component Library'
+  route_name: exo_alchemist.component.collection
+  description: 'Manage components.'
+  parent: system.admin_config_exo_alchemist
+  weight: 2

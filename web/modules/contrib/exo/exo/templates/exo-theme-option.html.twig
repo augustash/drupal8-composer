@@ -1,0 +1,10 @@
+<div{{attributes.addClass('exo-theme-option')}}>
+  {% if label %}
+    <div class="exo-theme-option-label">{{ label }}</div>
+  {% endif %}
+  <div class="exo-theme-option-colors">
+    {% for color in colors %}
+      <div class="exo-theme-option-color" style="background-color:{{ color }};"></div>
+    {% endfor %}
+  </div>
+</div>

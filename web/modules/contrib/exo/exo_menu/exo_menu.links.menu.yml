@@ -1,0 +1,6 @@
+exo_menu.settings:
+  title: 'Menu'
+  route_name: exo_menu.settings
+  description: 'Menu settings and configuration.'
+  parent: system.admin_config_exo
+  weight: 0

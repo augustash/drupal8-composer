@@ -1,0 +1,11 @@
+<div{{ attributes }}>
+  <div{{ content_attributes }}>
+    {% if tagline %}
+      <div{{ tagline.attributes }}>{{ tagline.value }}</div>
+    {% endif %}
+    <h2{{ title.attributes.addClass('page-title') }}>{{ title.value }}</h2>
+    {% if subtitle %}
+      <div{{ subtitle.attributes }}>{{ subtitle.value }}</div>
+    {% endif %}
+  </div>
+</div>

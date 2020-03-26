@@ -1,0 +1,11 @@
+options:
+  theme: 'The theme name'
+  gulp: 'Add gulp tasks'
+questions:
+  theme: 'Enter the theme name'
+  gulp: 'Do you want to include Gulp tasks?'
+messages:
+  no-themes: 'No themes currently exist.'
+  no-theme: 'No theme was found that matches the theme id of %s.'
+  no-theme-updates: 'No updates were needed to the theme with the id of %s.'
+  run-gulp: 'Run this command via your console from %s to generate the new/updated/removed theme files.'

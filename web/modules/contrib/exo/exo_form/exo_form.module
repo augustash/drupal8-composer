@@ -1,0 +1,821 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_form.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Template\Attribute;
+use Drupal\views\Form\ViewsForm;
+
+/**
+ * Provides theme registration for themes across .inc files.
+ */
+function exo_form_theme() {
+  return [
+    'exo_form_element_container' => [
+      'render element' => 'element',
+    ],
+    'exo_form_container' => [
+      'render element' => 'element',
+    ],
+  ];
+}
+
+/**
+ * Check if eXo Form should be used.
+ *
+ * @return bool
+ *   Returns TRUE if eXo Form should be used.
+ */
+function exo_form_access() {
+  $status = &drupal_static(__FUNCTION__);
+  if (!isset($status)) {
+    $route_name = \Drupal::routeMatch()->getRouteName();
+    $status = !empty(exo_form_get_settings());
+    switch ($route_name) {
+      case 'taxonomy_manager.admin_vocabulary':
+        $status = FALSE;
+        break;
+    }
+  }
+  return $status;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function exo_form_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (exo_form_access()) {
+    exo_form_form_alter_process($form);
+    $form['#after_build'][] = 'exo_form_after_build';
+
+    if (isset($form['moderation_state']) && isset($form['meta'])) {
+      $form['moderation_state']['#group'] = 'meta';
+      if (isset($form['meta']['published'])) {
+        $form['moderation_state']['widget'][0]['current']['#access'] = FALSE;
+      }
+    }
+    if ($form_state->getFormObject() instanceof ViewsForm) {
+      if (isset($form['header'])) {
+        foreach (array_keys($form['header']) as $key) {
+          if (substr($key, -10) == '_bulk_form') {
+            $form['header'][$key]['#attributes']['class'][] = 'exo-form-inline';
+            $form['header'][$key]['#attributes']['class'][] = 'exo-form-inline-top';
+            $form['header'][$key]['#attributes']['class'][] = 'exo-form-inline-bottom';
+          }
+        }
+      }
+      if (isset($form['header']['views_bulk_operations_bulk_form']['multipage'])) {
+        $form['multipage'] = [
+          '#type' => 'container',
+          '#weight' => -100,
+          'multipage' => $form['header']['views_bulk_operations_bulk_form']['multipage'],
+        ];
+        unset($form['header']['views_bulk_operations_bulk_form']['multipage']);
+      }
+      if (isset($form['header']['views_bulk_operations_bulk_form']['select_all'])) {
+        $form['header']['views_bulk_operations_bulk_form']['select_all']['#exo_form_default'] = TRUE;
+      }
+    }
+    if (isset($form['meta']['published'])) {
+      if (isset($form['meta']['published']['#markup'])) {
+        $form['meta']['published']['#wrapper_attributes']['class'][] = 'entity-meta__status';
+        if (isset($form['meta']['published']['#markup']) && (string) $form['meta']['published']['#markup'] == (string) t('Published')) {
+          $form['meta']['published']['#wrapper_attributes']['class'][] = 'entity-meta__is_published';
+        }
+      }
+      elseif (isset($form['meta']['published']['#value'])) {
+        $form['meta']['published']['#attributes']['class'][] = 'entity-meta__status';
+        if ((string) $form['meta']['published']['#value'] == (string) t('Published')) {
+          $form['meta']['published']['#attributes']['class'][] = 'entity-meta__is_published';
+        }
+      }
+    }
+  }
+}
+
+/**
+ * After build for all exo-enabeld forms.
+ */
+function exo_form_after_build($element) {
+  exo_form_process_form($element);
+  return $element;
+}
+
+/**
+ * Process element which is the form wrapper.
+ */
+function exo_form_process_form(&$element) {
+  if (exo_form_access() && empty($element['#exo_form_ignore'])) {
+    if (!isset($element['#attributes']['class'])) {
+      $element['#attributes']['class'] = [];
+    }
+    $theme = !empty($element['#exo_theme']) ? $element['#exo_theme'] : NULL;
+    $classes = exo_form_classes($theme, TRUE);
+    $element['#attributes']['class'] = array_merge($element['#attributes']['class'], $classes);
+    $element['#attached']['drupalSettings']['exoForm']['classes'] = $classes;
+  }
+}
+
+/**
+ * Process element which is the form wrapper.
+ */
+function exo_form_classes($theme = NULL, $include_wrap = FALSE) {
+  $classes = &drupal_static(__FUNCTION__);
+  if (!isset($classes[$theme])) {
+    $classes[$theme] = [];
+    if (exo_form_access()) {
+      $settings = exo_form_get_settings();
+      $classes[$theme][] = 'exo-form';
+      $classes[$theme][] = 'exo-font';
+      $classes[$theme][] = 'exo-reset';
+      $classes[$theme][] = 'exo-form-theme-' . ($theme ? $theme : $settings['theme']);
+      $classes[$theme][] = 'exo-form-style-' . $settings['style'];
+      if (!empty($settings['wrap'])) {
+        $classes[$theme][] = 'exo-form-wrap';
+      }
+    }
+  }
+  $cached_classes = $classes[$theme];
+  if (!$include_wrap) {
+    if (($key = array_search('exo-form-wrap', $cached_classes)) !== FALSE) {
+      unset($cached_classes[$key]);
+    }
+  }
+  return $cached_classes;
+}
+
+/**
+ * Implements hook_preprocess_select().
+ */
+function exo_form_preprocess_exo_icon_browser(&$variables) {
+  if (exo_form_access()) {
+    $settings = exo_form_get_settings();
+    $variables['attributes']['class'][] = 'exo-form';
+    $variables['attributes']['class'][] = 'exo-font';
+    $variables['attributes']['class'][] = 'exo-reset';
+    $variables['attributes']['class'][] = 'exo-form-theme-' . $settings['theme'];
+    $variables['attached']['library'][] = 'exo_form/base';
+    if (!empty($variables['package_search'])) {
+      exo_form_element_process($variables['package_search']);
+    }
+    if (!empty($variables['package_select'])) {
+      exo_form_element_process($variables['package_select']);
+    }
+  }
+}
+
+/**
+ * Process each field in a form.
+ *
+ * This may seem redundant but when a field overrides the #process callback
+ * our defaults are not loaded. As a result, they are added back here.
+ */
+function exo_form_form_alter_process(&$element) {
+  if (isset($element['#exo_theme'])) {
+    $theme = !empty($element['#exo_theme']) ? $element['#exo_theme'] : NULL;
+    $classes = exo_form_classes($theme);
+    $element['#theme_wrappers'][] = 'exo_form_element_container';
+    if (!isset($element['#exo_form_attributes']['class'])) {
+      $element['#exo_form_attributes']['class'] = [];
+    }
+    $element['#exo_form_attributes']['class'] = array_merge($element['#exo_form_attributes']['class'], $classes);
+    $element['#exo_form_attributes']['data-exo-theme'] = $theme;
+  }
+  if (isset($element['#type'])) {
+    $exo_form_plugin_manager = \Drupal::service('plugin.manager.exo_form');
+    if (isset($element['#process'])) {
+      if (!in_array('exo_form_element_process', $element['#process']) && $exo_form_plugin_manager->getPluginsByType($element['#type'])) {
+        array_unshift($element['#process'], 'exo_form_element_process');
+      }
+    }
+  }
+  elseif (isset($element['#markup']) && isset($element['#theme_wrappers']) && in_array('container', $element['#theme_wrappers'])) {
+    $element['#theme_wrappers'][] = 'exo_form_element_container';
+  }
+  foreach (Element::children($element) as $id) {
+    $child_element = &$element[$id];
+    exo_form_form_alter_process($child_element);
+  }
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function exo_form_element_info_alter(&$types) {
+  $exo_form_plugin_manager = \Drupal::service('plugin.manager.exo_form');
+  foreach ($types as $type => $data) {
+    if ($plugins = $exo_form_plugin_manager->getPluginsByType($type)) {
+      $types[$type]['#process'][] = 'exo_form_element_process';
+      $types[$type]['#pre_render'][] = 'exo_form_element_pre_render';
+    }
+  }
+}
+
+/**
+ * Get theme config.
+ *
+ * @return array
+ *   An array of config options.
+ */
+function exo_form_get_settings() {
+  $settings = &drupal_static(__FUNCTION__);
+  $active_theme_id = \Drupal::theme()->getActiveTheme()->getName();
+  if (!isset($settings[$active_theme_id])) {
+    $theme_settings = [];
+    $global_settings = \Drupal::service('exo_form.settings')->getSettings();
+    $enabled = isset($global_settings['themes'][$active_theme_id]);
+    if ($enabled) {
+      $theme_settings = !empty($global_settings['themes'][$active_theme_id]) ? $global_settings['themes'][$active_theme_id] : [];
+      $theme_settings += $global_settings;
+      unset($theme_settings['themes'], $theme_settings['exo_default'], $theme_settings['exo_preset']);
+      $settings[$active_theme_id] = $theme_settings;
+    }
+  }
+  return $settings[$active_theme_id];
+}
+
+/**
+ * Implements hook_field_group_build_pre_render_alter().
+ */
+function exo_form_field_group_build_pre_render_alter(&$element, $fieldgroups = NULL) {
+  // We only perform this on admin pages as some elements like fieldsets should
+  // be handled by eXo form.
+  if (!exo_form_access()) {
+    return;
+  }
+  $fieldgroups = $fieldgroups ? $fieldgroups : (!empty($element['#fieldgroups']) ? $element['#fieldgroups'] : []);
+  foreach (Element::children($element) as $id) {
+    if (!isset($fieldgroups[$id])) {
+      continue;
+    }
+    $child_element = &$element[$id];
+    if (isset($child_element['#type'])) {
+      exo_form_element_process($child_element);
+    }
+    exo_form_field_group_build_pre_render_alter($child_element, $fieldgroups);
+  }
+}
+
+/**
+ * Run an element through exo form processing.
+ */
+function exo_form_element_process(&$element) {
+  if (!exo_form_access()) {
+    return $element;
+  }
+  $exo_form_plugin_manager = &drupal_static(__FUNCTION__);
+  if (!isset($exo_form_plugin_manager)) {
+    $exo_form_plugin_manager = \Drupal::service('plugin.manager.exo_form');
+  }
+  $type = $element['#type'];
+  foreach ($exo_form_plugin_manager->getPluginInstancesByType($type) as $id => $instance) {
+    if ($instance->applies($element)) {
+      $instance->process($element);
+    }
+  }
+  return $element;
+}
+
+/**
+ * Run an element through exo form processing.
+ */
+function exo_form_element_pre_render($element) {
+  if (empty($element['#type']) || !exo_form_access()) {
+    return $element;
+  }
+  $is_admin = exo_is_admin();
+  $is_form = !empty($element['#parents']);
+  if ($is_form || $is_admin) {
+    $exo_form_plugin_manager = &drupal_static(__FUNCTION__);
+    if (!isset($exo_form_plugin_manager)) {
+      $exo_form_plugin_manager = \Drupal::service('plugin.manager.exo_form');
+    }
+    $type = $element['#type'];
+    foreach ($exo_form_plugin_manager->getPluginInstancesByType($type) as $id => $instance) {
+      if ($instance->applies($element)) {
+        $element = $instance->preRender($element);
+      }
+    }
+    if (!$is_form && !$is_admin) {
+      $element['#theme_wrappers'][] = 'exo_form_container';
+    }
+    $element['#attached']['library'][] = 'exo_form/base';
+  }
+  return $element;
+}
+
+/**
+ * Implements template_preprocess_region__content().
+ *
+ * Admin will always use the exo form classes.
+ */
+function exo_form_preprocess_region__content(&$variables) {
+  if (!exo_form_access() || !exo_is_admin()) {
+    return;
+  }
+  if (empty($variables['attributes']['class'])) {
+    $variables['attributes']['class'] = [];
+  }
+  $include_wrap = FALSE;
+
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  switch ($route_name) {
+    case 'entity.commerce_order.canonical':
+      $include_wrap = TRUE;
+      break;
+  }
+
+  $variables['attributes']['class'] = array_merge($variables['attributes']['class'], exo_form_classes(NULL, $include_wrap));
+  $variables['#attached']['library'][] = 'exo_form/base';
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function exo_form_theme_registry_alter(&$theme_registry) {
+  $theme_registry['fieldset']['path'] = drupal_get_path('module', 'exo_form') . '/templates';
+  $theme_registry['form_element']['path'] = drupal_get_path('module', 'exo_form') . '/templates';
+  $theme_registry['views_exposed_form']['path'] = drupal_get_path('module', 'exo_form') . '/templates';
+  $theme_registry['image_widget']['path'] = drupal_get_path('module', 'exo_form') . '/templates';
+}
+
+/**
+ * Implements hook_preprocess().
+ */
+function exo_form_preprocess(&$variables, $hook, &$info) {
+  if ($hook == 'form_element') {
+    if (!exo_form_access()) {
+      return;
+    }
+    // Force form elements to use exo form template.
+    $info['theme path'] = drupal_get_path('module', 'exo_form');
+    $info['path'] = drupal_get_path('module', 'exo_form') . '/templates';
+  }
+}
+
+/**
+ * Implements template_form_preprocess_form_element().
+ */
+function exo_form_preprocess_form_element(array &$variables) {
+  $element = $variables['element'];
+  $variables['is_exo_form'] = empty($element['#exo_form_default']) && exo_form_access();
+
+  if (!empty($element['#children_prefix']) || !empty($element['#children_suffix'])) {
+    $variables['children'] = [
+      'content' => is_array($variables['children']) ? $variables['children'] : [
+        '#markup' => $variables['children'],
+      ],
+    ];
+    if (!empty($element['#children_prefix'])) {
+      $variables['children']['_exo_form_prefix'] = is_array($element['#children_prefix']) ? $element['#children_prefix'] : [$element['#children_prefix']];
+      $variables['children']['_exo_form_prefix']['#weight'] = -1000;
+    }
+    if (!empty($element['#children_suffix'])) {
+      $variables['children']['_exo_form_suffix'] = is_array($element['#children_suffix']) ? $element['#children_suffix'] : [$element['#children_suffix']];
+      $variables['children']['_exo_form_suffix']['#weight'] = 1000;
+    }
+    $variables['children'] = \Drupal::service('renderer')->render($variables['children']);
+  }
+
+  if (isset($element['#exo_form_element_attributes']) && is_array($element['#exo_form_element_attributes'])) {
+    if (!isset($variables['attributes'])) {
+      $variables['attributes'] = [];
+    }
+    $variables['attributes'] = NestedArray::mergeDeep($variables['attributes'], $element['#exo_form_element_attributes']);
+  }
+
+  $variables['input_attributes'] = [];
+  if (isset($element['#exo_form_input_attributes']) && is_array($element['#exo_form_input_attributes'])) {
+    $variables['input_attributes'] = $element['#exo_form_input_attributes'];
+  }
+  $variables['input_attributes'] = new Attribute($variables['input_attributes']);
+}
+
+/**
+ * Prepares variables for container templates.
+ *
+ * Default template: container.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties of the element.
+ *     Properties used: #id, #attributes, #children.
+ */
+function exo_form_preprocess_container(array &$variables) {
+  if (!exo_form_access()) {
+    return;
+  }
+  exo_form_preprocess_form_element($variables);
+  if (isset($variables['attributes'])) {
+    if ($variables['attributes'] instanceof Attribute) {
+      $variables['attributes'] = $variables['attributes']->toArray();
+    }
+    exo_form_attribute_convert($variables['attributes'], $variables['element']);
+  }
+  if (isset($variables['element']['#name']) && $variables['element']['#name'] == 'media_library') {
+    // Aeon kills us here. We need this.
+    $variables['children'] = Markup::create('<div class="views-element-container">' . $variables['children'] . '</div>');
+  }
+}
+
+/**
+ * Implements template_preprocess_fieldset().
+ */
+function exo_form_preprocess_fieldset(&$variables) {
+  if (!exo_form_access()) {
+    return;
+  }
+  exo_form_preprocess_form_element($variables);
+  if (isset($variables['attributes'])) {
+    if ($variables['attributes'] instanceof Attribute) {
+      $variables['attributes'] = $variables['attributes']->toArray();
+    }
+    exo_form_attribute_convert($variables['attributes'], $variables['element']);
+  }
+  $no_legend = !isset($variables['legend']['title']);
+  if (!isset($variables['legend']['title']) || (isset($variables['title_display']) && in_array($variables['title_display'], [
+    'hidden',
+    'invisible',
+    'visually_hidden',
+  ]))) {
+    // Add a .no-legend class if no title is provided.
+    $variables['attributes']['class'][] = 'no-legend';
+  }
+  else {
+    $variables['attributes']['class'][] = 'has-legend';
+  }
+}
+
+/**
+ * Prepares variables for radios templates.
+ *
+ * Default template: radios.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties of the element.
+ *     Properties used: #title, #value, #options, #description, #required,
+ *     #attributes, #children.
+ */
+function exo_form_preprocess_radios(array &$variables) {
+  if (!exo_form_access()) {
+    return;
+  }
+  if (isset($variables['element']['#exo_form_attributes']) && is_array($variables['element']['#exo_form_attributes'])) {
+    $variables['attributes'] = NestedArray::mergeDeep($variables['attributes'], $variables['element']['#exo_form_attributes']);
+  }
+}
+
+/**
+ * Implements template_preprocess_field_multiple_value_form().
+ */
+function exo_form_preprocess_field_multiple_value_form(&$variables) {
+  if (!exo_form_access()) {
+    return;
+  }
+  if ($variables['multiple']) {
+    $table = $variables['table'];
+    $button = $variables['button'];
+    $fieldset = [
+      '#type' => 'fieldset',
+      '#id' => '',
+      '#attributes' => [],
+      '#exo_wrapper_supported' => TRUE,
+    ];
+    if (isset($variables['table'])) {
+      if (!empty($variables['table']['#header'][0]['data']['#markup'])) {
+        $fieldset['#title'] = $variables['table']['#header'][0]['data']['#markup'];
+        unset($variables['table']['#header'][0]['data']);
+      }
+      foreach ($variables['table']['#rows'] as &$row) {
+        if (!empty($row['data'][1]['data']['#wrapper_attributes']['class'])) {
+          $row['class'] = array_merge($row['class'], $row['data'][1]['data']['#wrapper_attributes']['class']);
+        }
+      }
+      $fieldset['table'] = $variables['table'];
+      unset($variables['table']);
+    }
+    if (isset($variables['button'])) {
+      $fieldset['button'] = $variables['button'];
+      unset($variables['button']);
+    }
+    if (isset($variables['description']['content'])) {
+      $fieldset['#description'] = $variables['description']['content'];
+      unset($variables['description']['content']);
+    }
+    if (!empty($variables['element']['#table_no_header'])) {
+      $fieldset['table']['#header'] = [];
+    }
+    $variables['table'] = $fieldset;
+    exo_form_element_process($variables['table']);
+  }
+}
+
+/**
+ * Prepares variables for container templates.
+ *
+ * Default template: ex-form-element-container.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties of the element.
+ *     Properties used: #id, #attributes, #children.
+ */
+function template_preprocess_exo_form_element_container(array &$variables) {
+  if (!exo_form_access()) {
+    $variables['children'] = $variables['element']['#children'];
+    return;
+  }
+  $element = $variables['element'];
+  $variables['attributes'] = [
+    'class' => ['exo-form-element', 'exo-form-element-js'],
+  ];
+  $variables['wrapper_prefix'] = isset($element['#wrapper_prefix']) ? $element['#wrapper_prefix'] : [];
+  $variables['wrapper_suffix'] = isset($element['#wrapper_suffix']) ? $element['#wrapper_suffix'] : [];
+
+  $is_widget = isset($element['widget']['#field_name']);
+  if ($is_widget) {
+    $variables['attributes']['class'][] = 'exo-form-widget';
+  }
+  if (isset($element['#type'])) {
+    $variables['attributes']['class'][] = 'exo-form-element-type-' . Html::getClass($element['#type']);
+    // Add container id to wrapper. The id is unset in the preprocess functions.
+    if (in_array($element['#type'], ['fieldset', 'container'])) {
+      if (isset($element['#id'])) {
+        $variables['attributes']['id'] = $element['#id'];
+      }
+      if (isset($element['#attributes']['id'])) {
+        $variables['attributes']['id'] = $element['#attributes']['id'];
+      }
+    }
+  }
+  if (isset($element['#name'])) {
+    $variables['attributes']['class'][] = 'exo-form-element-name-' . Html::getClass($element['#name']);
+  }
+  elseif (isset($element['widget']['#field_name'])) {
+    $variables['attributes']['class'][] = 'exo-form-element-name-' . Html::getClass($element['widget']['#field_name']);
+  }
+  if (isset($element['#attributes']['class']) && is_array($element['#attributes']['class'])) {
+    foreach ($element['#attributes']['class'] as $key => $class) {
+      if (!in_array($class, ['form-wrapper', 'js-form-wrapper'])) {
+        $variables['attributes']['class'][] = 'exo-form-container-' . $class;
+      }
+    }
+  }
+  if (isset($element['#exo_form_attributes']) && is_array($element['#exo_form_attributes'])) {
+    $variables['attributes'] = NestedArray::mergeDeep($variables['attributes'], $element['#exo_form_attributes']);
+  }
+  $variables['inner_attributes'] = [];
+  if (isset($element['#exo_form_inner_attributes']) && is_array($element['#exo_form_inner_attributes'])) {
+    $variables['inner_attributes'] = $element['#exo_form_inner_attributes'];
+  }
+  $variables['inner_attributes'] = new Attribute($variables['inner_attributes']);
+  $variables['children'] = $element['#children'];
+}
+
+/**
+ * Implements preprocess_file_managed_file().
+ */
+function exo_form_preprocess_file_managed_file(array &$variables) {
+  if (!exo_form_access()) {
+    return;
+  }
+  $variables['attributes']['class'][] = 'exo-form-inline';
+  $variables['attributes']['class'][] = 'exo-form-inline-all';
+}
+
+/**
+ * Implements preprocess_file_managed_file().
+ */
+function exo_form_preprocess_image_widget(array &$variables) {
+  if (!exo_form_access()) {
+    return;
+  }
+  $variables['image_preview_attributes'] = new Attribute(['class' => ['image-preview']]);
+  $variables['image_data_attributes'] = new Attribute(['class' => ['image-widget-data']]);
+  if (!empty($variables['element']['#value']['fids'])) {
+    $variables['image_data_attributes']->addClass([
+      'exo-form-inline',
+      'exo-form-inline-all',
+      'exo-form-inline-align-middle',
+    ]);
+  }
+}
+
+/**
+ * Prepares variables for container templates.
+ *
+ * Default template: ex-form-container.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties of the element.
+ *     Properties used: #id, #attributes, #children.
+ */
+function template_preprocess_exo_form_container(array &$variables) {
+  if (!exo_form_access()) {
+    $variables['children'] = $variables['element']['#children'];
+    return;
+  }
+  if (empty($variables['attributes']['class'])) {
+    $variables['attributes']['class'] = [];
+  }
+  $variables['attributes']['class'] = array_merge($variables['attributes']['class'], exo_form_classes());
+  $variables['children'] = $variables['element']['#children'];
+}
+
+/**
+ * Remove inherited classes and ids from fieldset and container elements.
+ *
+ * @param array $attributes
+ *   An attributes array.
+ * @param array $element
+ *   An element array.
+ */
+function exo_form_attribute_convert(array &$attributes, array $element) {
+  // Clean up componsite elements to remove unneeded classes that are being
+  // used in the exo wrapper.
+  if (!empty($attributes['class']) && is_array($attributes['class']) && in_array('form-composite', $attributes['class'])) {
+    // Componsite elements are always wrapped.
+    if (isset($attributes['id'])) {
+      unset($attributes['id']);
+    }
+  }
+  // Remove ID if element is wrapped.
+  if (!empty($element['#exo_wrapper_supported'])) {
+    if (isset($attributes['id'])) {
+      unset($attributes['id']);
+    }
+  }
+  exo_form_inline_convert($attributes);
+}
+
+/**
+ * Convert container-inline to exo-form-inline class.
+ *
+ * @param \Drupal\Core\Template\Attribute|array $attributes
+ *   An attributes array.
+ */
+function exo_form_inline_convert(&$attributes) {
+  if (isset($attributes['class']) && is_array($attributes['class'])) {
+    foreach ($attributes['class'] as $key => &$class) {
+      if ($class == 'form--inline' || $class == 'address-container-inline') {
+        $class = 'exo-form-inline';
+      }
+      if ($class == 'container-inline') {
+        $class = 'exo-form-inline exo-form-inline-compact';
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_library_info_alter().
+ */
+function exo_form_library_info_alter(&$libraries, $extension) {
+  if (!exo_form_access()) {
+    return;
+  }
+  if ($extension == 'media_library') {
+    $path = '/' . drupal_get_path('module', 'exo_form');
+    $libraries['widget']['js'][$path . '/js/exo.form.media-library.widget.js'] = [];
+  }
+  if ($extension == 'views_bulk_operations') {
+    $path = '/' . drupal_get_path('module', 'exo_form');
+    $libraries['frontUi']['js'][$path . '/js/exo.form.views-bulk-operations.js'] = [];
+  }
+  switch ($extension) {
+    case 'adminimal_theme':
+    case 'seven':
+    case 'classy':
+    case 'core':
+    case 'blazy':
+    case 'slick_ui':
+    case 'views_ui':
+      foreach ($libraries as $library => $data) {
+        if (!empty($data['js'])) {
+          foreach ($data['js'] as $filepath => $info) {
+            if ($filepath == 'js/blazy.admin.min.js') {
+              unset($libraries[$library]['js'][$filepath]);
+            }
+            if ($filepath == 'js/views-admin.js') {
+              $libraries[$library]['js']['/' . drupal_get_path('module', 'exo_form') . '/js/exo.form.views.ui.js'] = [];
+            }
+            if ($filepath == 'misc/machine-name.js') {
+              $libraries[$library]['js']['/' . drupal_get_path('module', 'exo_form') . '/js/exo.form.machine-name.js'] = [];
+            }
+          }
+
+        }
+        if (!empty($data['css'])) {
+          foreach ($data['css'] as $type => $files) {
+            foreach ($files as $filepath => $info) {
+              if (strpos($filepath, '/form.css') !== FALSE) {
+                unset($libraries[$library]['css'][$type][$filepath]);
+              }
+              if (strpos($filepath, '/buttons.css') !== FALSE) {
+                unset($libraries[$library]['css'][$type][$filepath]);
+              }
+              if (strpos($filepath, '/details.css') !== FALSE) {
+                unset($libraries[$library]['css'][$type][$filepath]);
+              }
+              if (strpos($filepath, '/entity-meta.css') !== FALSE) {
+                unset($libraries[$library]['css'][$type][$filepath]);
+              }
+              if (strpos($filepath, '/vertical-tabs.css') !== FALSE) {
+                unset($libraries[$library]['css'][$type][$filepath]);
+              }
+              if (strpos($filepath, '/blazy.admin.css') !== FALSE) {
+                unset($libraries[$library]['css'][$type][$filepath]);
+              }
+              if (strpos($filepath, '/slick.admin--vertical-tabs.css') !== FALSE) {
+                unset($libraries[$library]['css'][$type][$filepath]);
+              }
+              if (strpos($filepath, '/dropbutton.component.css') !== FALSE) {
+                unset($libraries[$library]['css'][$type][$filepath]);
+              }
+            }
+          }
+        }
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function exo_form_views_data_alter(array &$data) {
+  if (!exo_form_access()) {
+    return;
+  }
+  if (isset($data['commerce_order_item']['edit_quantity']['field'])) {
+    $data['commerce_order_item']['edit_quantity']['field']['id'] = 'exo_form_commerce_order_item_edit_quantity';
+  }
+}
+
+/**
+ * Implements template_preprocess_views_view_table().
+ */
+function exo_form_preprocess_table(&$variables) {
+  if (!exo_form_access() || !exo_is_admin()) {
+    return;
+  }
+  // Ignore inline entity form entities table.
+  if (isset($variables['attributes']['id']) && strpos($variables['attributes']['id'], 'ief-entity-table') !== FALSE) {
+    return;
+  }
+  if (empty($variables['attributes']['class'])) {
+    $variables['attributes']['class'] = [];
+  }
+  if (!is_array($variables['attributes']['class'])) {
+    $variables['attributes']['class'] = [$variables['attributes']['class']];
+  }
+}
+
+/**
+ * Implements template_preprocess_views_view_table().
+ */
+function exo_form_preprocess_views_view_table(&$variables) {
+  if (!exo_form_access() || !exo_is_admin()) {
+    return;
+  }
+  $view = $variables['view'];
+  if (!$view->hasFormElements()) {
+    $settings = exo_form_get_settings();
+    if (!empty($settings['wrap'])) {
+      $variables['attributes']['class'][] = 'exo-form-table-wrap';
+    }
+  }
+}
+
+/**
+ * Implements template_preprocess_views_ui_views_listing_table().
+ */
+function exo_form_preprocess_views_ui_views_listing_table(&$variables) {
+  if (!exo_form_access()) {
+    return;
+  }
+  $settings = exo_form_get_settings();
+  if (!empty($settings['wrap'])) {
+    $variables['attributes']['class'][] = 'exo-form-table-wrap';
+  }
+}
+
+/**
+ * Implements hook_FORM_ID_alter().
+ */
+function exo_form_form_revision_overview_form_alter(&$form, FormStateInterface $form_state) {
+  foreach (Element::children($form['node_revisions_table']) as $key) {
+    $element = &$form['node_revisions_table'][$key];
+    $element['select_column_one']['#exo_form_default'] = TRUE;
+    $element['select_column_two']['#exo_form_default'] = TRUE;
+  }
+}

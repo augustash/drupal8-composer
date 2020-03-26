@@ -1,0 +1,40 @@
+
+@import 'exo-common';
+
+.exo-aos-demo-wrapper {
+
+  .fieldset-wrapper {
+    @include exo-grid;
+
+    > [data-aos] {
+      @include exo-cell;
+    }
+  }
+
+  &.cell-2 {
+
+    .fieldset-wrapper {
+      > [data-aos] {
+        @include exo-cell(6);
+      }
+    }
+  }
+}
+
+.exo-aos-demo-element {
+  background: color(theme-primary);
+  color: color-b-or-w(theme-primary);
+  text-align: center;
+  padding: rem-calc(40);
+  font-size: rem-calc(60);
+  font-weight: 700;
+  margin: $global-margin 0;
+
+  &.large {
+    padding: rem-calc(80);
+  }
+
+  .exo-aos-demo-element {
+    background: color(theme-secondary);
+  }
+}

@@ -1,0 +1,45 @@
+services:
+  plugin.manager.exo_component:
+    class: Drupal\exo_alchemist\ExoComponentManager
+    arguments: ['@entity_type.manager', '@cache.discovery', '@module_handler', '@theme_handler', '@plugin.manager.exo_component_field', '@plugin.manager.exo_component_property', '@exo_alchemist.animation.manager']
+  plugin.manager.exo_component_field:
+    class: Drupal\exo_alchemist\ExoComponentFieldManager
+    arguments: ['@container.namespaces', '@entity_type.manager', '@cache.discovery', '@module_handler']
+  plugin.manager.exo_component_property:
+    class: Drupal\exo_alchemist\ExoComponentPropertyManager
+    parent: default_plugin_manager
+  exo_alchemist.animation.manager:
+    class: Drupal\exo_alchemist\ExoComponentAnimationManager
+    arguments: ['@module_handler']
+  exo_alchemist.commponent_param_converter:
+    class: Drupal\exo_alchemist\Routing\ExoComponentParamConverter
+    arguments: ['@plugin.manager.exo_component']
+    tags:
+      - { name: paramconverter, priority: 10 }
+  exo_alchemist.route_subscriber:
+    class: Drupal\exo_alchemist\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber, priority: 100 }
+  exo_alchemist.render_block_component_subscriber:
+    class: Drupal\exo_alchemist\EventSubscriber\BlockComponentRenderArray
+    arguments: ['@entity.repository']
+    tags:
+      - { name: event_subscriber }
+  exo_alchemist.get_block_dependency_subscriber:
+    class: Drupal\exo_alchemist\EventSubscriber\ExoComponentSetInlineBlockDependency
+    arguments: ['@entity_type.manager', '@database', '@inline_block.usage', '@plugin.manager.layout_builder.section_storage', '@plugin.manager.exo_component']
+    tags:
+      - { name: event_subscriber }
+  exo_alchemist.config_import_validator:
+    class: Drupal\exo_alchemist\EventSubscriber\ExoComponentConfigImportValidate
+    arguments: ['@config.manager', '@entity_type.manager']
+    tags:
+      - { name: event_subscriber, priority: 100 }
+  # exo_alchemist.config_transform:
+  #   class: Drupal\exo_alchemist\EventSubscriber\ExoComponentConfigTransform
+  #   tags:
+  #     - { name: event_subscriber, priority: 100 }
+  access_check.exo_component:
+    class: Drupal\exo_alchemist\Access\ExoComponentAccessCheck
+    tags:
+      - { name: access_check, applies_to: _exo_component }

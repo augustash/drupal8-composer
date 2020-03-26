@@ -1,0 +1,30 @@
+////////////////////////////////////////////////////////////////////////////////
+/// Base style and structure of theme.
+/// -------
+/// All styles that should be altered through themes should be place in the
+/// ./exo-toolbar.exo-toolbar.scss SCSS file.
+////////////////////////////////////////////////////////////////////////////////
+
+@import 'exo-common';
+@import 'base/functions';
+@import 'base/variables';
+@import 'base/mixins';
+@import 'base/debug';
+
+@import 'components/toolbar';
+@import 'components/region';
+@import 'components/section';
+@import 'components/item';
+@import 'components/item-divider';
+@import 'components/element';
+@import 'components/element-list';
+@import 'components/element-grid';
+@import 'components/list';
+@import 'components/aside';
+@import 'components/aside.label';
+@import 'components/sort';
+@import 'components/dialog';
+
+@import 'items/create';
+@import 'items/user';
+@import 'items/toggle';

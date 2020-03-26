@@ -1,0 +1,20 @@
+.exo-form-element-name-separator {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  align-self: center;
+}
+
+.exo-form .phone-number-field {
+
+  .country-select {
+    min-width: rem-calc(80);
+    border: 0;
+  }
+}
+
+.is-admin .exo-form {
+
+  .search-form {
+    margin-bottom: $global-margin;
+  }
+}

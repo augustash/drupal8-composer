@@ -1,0 +1,74 @@
+{#
+/**
+ * @file
+ * Theme override for a field.
+ *
+ * @see template_preprocess_field()
+ */
+#}
+{%
+  set classes = [
+    'field',
+    field_name|replace({'field_':''})|clean_class,
+    label_display != 'visually_hidden' and label_display != 'hidden' ? 'label-' ~ label_display|clean_class,
+  ]
+%}
+{%
+  set title_classes = [
+    'field-label',
+    label_display == 'visually_hidden' ? 'visually-hidden',
+  ]
+%}
+
+{% if label_hidden %}
+  {% if multiple %}
+    {% if tag %}
+    <{{ tag }}{{ attributes.addClass(classes) }}>
+    {% endif %}
+      {% for item in items %}
+        {% if content_tag %}
+          <{{ content_tag}}{{ item.attributes }}>
+        {% endif %}
+          {{ item.content }}
+        {% if content_tag %}
+          </{{ content_tag}}>
+        {% endif %}
+      {% endfor %}
+    {% if tag %}
+    </{{ tag }}>
+    {% endif %}
+  {% else %}
+    {% for item in items %}
+      {% if tag %}
+      <{{ tag }}{{ attributes.addClass(classes) }}>
+      {% endif %}
+        {{ item.content }}
+      {% if tag %}
+      </{{ tag }}>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% else %}
+  {% if tag %}
+  <{{ tag }}{{ attributes.addClass(classes) }}>
+  {% endif %}
+    <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
+    {% if label_display != 'visually_hidden' %}
+      <div class="field-content">
+    {% endif %}
+    {% for item in items %}
+      {% if content_tag %}
+        <{{ content_tag}}{{ item.attributes }}>
+      {% endif %}
+        {{ item.content }}
+      {% if content_tag %}
+        </{{ content_tag}}>
+      {% endif %}
+    {% endfor %}
+    {% if label_display != 'visually_hidden' %}
+      </div>
+    {% endif %}
+  {% if tag %}
+  </{{ tag }}>
+  {% endif %}
+{% endif %}

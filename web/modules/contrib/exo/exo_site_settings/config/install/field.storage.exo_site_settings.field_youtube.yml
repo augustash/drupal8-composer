@@ -1,0 +1,19 @@
+uuid: c13f789c-8e39-40ae-afc4-6393f2c79efd
+langcode: en
+status: true
+dependencies:
+  module:
+    - exo_site_settings
+    - link
+id: exo_site_settings.field_youtube
+field_name: field_youtube
+entity_type: exo_site_settings
+type: link
+settings: {  }
+module: link
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

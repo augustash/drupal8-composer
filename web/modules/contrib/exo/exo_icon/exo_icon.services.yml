@@ -1,0 +1,11 @@
+services:
+  exo_icon.repository:
+    class: Drupal\exo_icon\ExoIconRepository
+    arguments: ['@entity_type.manager', '@cache.discovery']
+  twig.exo_icon:
+    class: 'Drupal\exo_icon\TwigExtension\ExoIcon'
+    tags:
+      - { name: twig.extension }
+  plugin.manager.exo_icon:
+    class: Drupal\exo_icon\ExoIconManager
+    arguments: ['@module_handler', '@cache.discovery']

@@ -1,0 +1,5 @@
+name: 'eXo Image'
+type: module
+description: 'Provides image handling improvements.'
+core: 8.x
+package: 'eXo'

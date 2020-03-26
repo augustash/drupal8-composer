@@ -1,0 +1,8 @@
+uuid: 33f21313-a6e9-4e09-a21d-49e6724b89d9
+langcode: en
+status: true
+dependencies: {  }
+name: 'Media Tags'
+vid: media_tags
+description: 'Tags used to categorize media.'
+weight: 0

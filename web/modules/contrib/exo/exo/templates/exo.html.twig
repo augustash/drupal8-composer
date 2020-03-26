@@ -1,0 +1,49 @@
+{#
+/**
+ * @file
+ * Default theme implementation for an exo page wrapper.
+ *
+ * For consistent wrapping to {{ page }} render in all themes.
+ *
+ * Available variables:
+ * - children: Contains the child elements of the page.
+ *
+ * @ingroup themeable
+ */
+#}
+{% if children %}
+  <div id="exo-body"{{ attributes|without('id') }}>
+    <div id="exo-canvas" class="exo-canvas">
+      {{ canvas_before }}
+      <div id="exo-content" class="exo-content">
+        {{ children }}
+      </div>
+      <div id="exo-shadow" class="exo-shadow"></div>
+      {{ canvas_after }}
+    </div>
+  </div>
+  <script type="text/javascript">
+    <!--
+      if (window.localStorage) {
+        // To avoid snapping around as things load, we store the body size and
+        // set it immediately. The exo-ready class can be used to act on his
+        // operation.
+        var s = window.localStorage.getItem('exoBodySize');
+        var b;
+        if (s) {
+          b = document.getElementById("exo-body");
+          s = JSON.parse(s);
+          b.style.paddingTop = s.top + 'px';
+          b.style.paddingRight = s.right + 'px';
+          b.style.paddingBottom = s.bottom + 'px';
+          b.style.paddingLeft = s.left + 'px';
+        }
+        s = window.localStorage.getItem('exoContentHeight');
+        if (s) {
+          b = document.getElementById("exo-content");
+          b.style.minHeight = s + 'px';
+        }
+      }
+    //-->
+  </script>
+{% endif %}

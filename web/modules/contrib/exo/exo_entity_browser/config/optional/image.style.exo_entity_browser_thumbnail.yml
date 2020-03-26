@@ -1,0 +1,14 @@
+uuid: a7b12504-0e84-4f1a-b01e-c0d89881544c
+langcode: en
+status: true
+dependencies: {  }
+name: exo_entity_browser_thumbnail
+label: 'eXo Entity Browser Thumbnail'
+effects:
+  96c1ea97-971f-4d72-9aa0-83da7ff04b60:
+    uuid: 96c1ea97-971f-4d72-9aa0-83da7ff04b60
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 350
+      height: 350

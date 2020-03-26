@@ -1,0 +1,12 @@
+
+################################################################################
+## eXo Theme Provider
+################################################################################
+
+theme:
+  version: VERSION
+  css:
+    component:
+      css/exo-paragraphs.css: { minified: true }
+  dependencies:
+    - exo/exo

@@ -1,0 +1,9 @@
+exo_aos.settings:
+  route_name: exo_aos.settings
+  base_route: exo_aos.settings
+  title: 'Settings'
+
+exo_aos.items:
+  route_name: exo_aos.demo
+  base_route: exo_aos.settings
+  title: 'Demo'

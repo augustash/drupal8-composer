@@ -1,0 +1,184 @@
+$curve: cubic-bezier(0.65, 0, 0.45, 1);
+
+.exo-entity-browser-view {
+  @include flex;
+  @include exo-flex-direction(column);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  height: 100vh;
+
+  // Due to AJAX adding in all sorts of empty divs, we need to be tricky.
+  .view,
+  div:not([class]) {
+    display: flex;
+    flex: 1;
+  }
+
+  .view,
+  > div:not([class]) {
+    overflow: auto;
+  }
+
+  .view {
+    @include flex;
+    @include exo-flex-direction(column);
+
+    div:not([class]) {
+      height: auto;
+    }
+  }
+
+  .view-filters {
+    height: auto;
+
+    .form--inline {
+      @include flex;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+  }
+
+  .view-content {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid grey(15);
+    padding: $global-padding;
+
+    thead {
+
+      > tr {
+        border-bottom: 1px solid grey(15);
+      }
+
+      th {
+        border: 0;
+      }
+    }
+
+    .disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+
+  .entities-list-actions {
+    @include flex;
+  }
+
+  .entity-browser-use-selected,
+  .entity-browser-show-selection {
+    display: block;
+    margin: 0;
+    width: 100%;
+  }
+}
+
+/**
+ * Checkmark
+ */
+
+ .exo-entity-browser-checkmark {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 2;
+  stroke: color(theme-white);
+  stroke-miterlimit: 10;
+  margin: 0 auto;
+  opacity: 0;
+
+  .checked & {
+    opacity: 1;
+    // transform: scale3d(1.1, 1.1, 1);
+    // box-shadow: inset 0 0 0 30px color(theme-success), 0 0 30px color(theme-black);
+    animation: fillIn 300ms ease-in-out forwards, scaleIn 300ms ease-in-out both;
+  }
+
+  .unchecked & {
+    opacity: 1;
+    animation: fillOut 300ms ease-in-out forwards, scaleOut 300ms ease-in-out both;
+  }
+}
+
+.exo-entity-browser-checkmark--circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  stroke-miterlimit: 10;
+  stroke: color(theme-success);
+  fill: none;
+
+  .checked & {
+    // stroke-dashoffset: 0;
+    animation: stroke 300ms $curve forwards;
+  }
+}
+
+.exo-entity-browser-checkmark--check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+
+  .checked & {
+    // stroke-dashoffset: 0;
+    animation: stroke 300ms $curve forwards;
+  }
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes scaleIn {
+  0%, 100% {
+    transform: none;
+  }
+
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
+  }
+}
+
+@keyframes scaleOut {
+  0%, 100% {
+    transform: none;
+  }
+
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
+  }
+}
+
+@keyframes fillIn {
+  0% {
+    opacity: 0;
+    box-shadow: inset 0 0 0 0 color(theme-success);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    box-shadow: inset 0 0 0 30px color(theme-success), 0 0 20px alpha(theme-black, .5);
+  }
+}
+
+@keyframes fillOut {
+  0% {
+    opacity: 1;
+    box-shadow: inset 0 0 0 30px color(theme-success);
+  }
+
+  100% {
+    opacity: 0;
+    box-shadow: inset 0 0 0 0 color(theme-success);
+  }
+}

@@ -1,0 +1,6 @@
+services:
+  exo_site_settings_domain_subscriber:
+    class: '\Drupal\exo_site_settings_domain\EventSubscriber\SiteSettingsDomainSubscriber'
+    arguments: ['@domain.negotiator']
+    tags:
+      - { name: 'event_subscriber' }

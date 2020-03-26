@@ -1,0 +1,28 @@
+.exo-fixed-region {
+  position: relative;
+  z-index: 500;
+  transform: translate3d(0, 0, 0);
+  will-change: scroll-position;
+  backface-visibility: hidden;
+  transition: transform 400ms;
+
+  &.exo-fixed-hide {
+    transform: translate3d(0, -100%, 0);
+  }
+
+  // .ux-blur & {
+  //   // When #ux-content is blurred fixed positioning fails.
+  //   position: static !important;
+  //   margin: 0 !important;
+  // }
+}
+
+.exo-fixed-no-animations {
+
+  &,
+  *,
+  *:before,
+  *:after {
+    transition: none !important;
+  }
+}

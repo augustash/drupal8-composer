@@ -1,0 +1,23 @@
+uuid: a9a4d7e0-c0a4-431a-b0c5-182a666d75d3
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_site_settings.exo_site_settings_type.social
+    - field.storage.exo_site_settings.field_instagram
+  module:
+    - link
+id: exo_site_settings.social.field_instagram
+field_name: field_instagram
+entity_type: exo_site_settings
+bundle: social
+label: Instagram
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 16
+  title: 0
+field_type: link

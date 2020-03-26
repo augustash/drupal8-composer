@@ -1,0 +1,7 @@
+name: 'eXo Icon: Admin'
+type: module
+description: 'Provides automatic icon placement within admin pages and lists.'
+core: 8.x
+package: 'eXo'
+dependencies:
+  - exo_icon:exo_icon

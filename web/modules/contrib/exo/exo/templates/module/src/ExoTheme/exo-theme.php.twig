@@ -1,0 +1,31 @@
+{% extends "base/class.php.twig" %}
+
+{% block file_path %}
+\Drupal\{{ module }}\ExoTheme\{{ plugin_id_camel }}\{{ class_name }}.
+{% endblock %}
+
+{% block namespace_class %}
+namespace Drupal\{{ module }}\ExoTheme\{{ plugin_id_camel }};
+{% endblock %}
+
+{% block use_class %}
+use Drupal\exo\ExoTheme\ExoThemeBase;
+{% endblock %}
+
+{% block class_declaration %}
+/**
+ * Plugin implementation of the '{{ plugin_id }}' eXo theme.
+ *
+ * @ExoTheme(
+ *   id = "{{ plugin_id }}",
+ *   label = @Translation("{{ label }}"),
+ *   colors = {
+{% for id, color in colors %}
+ *     "{{ id }}" = "{{ color }}",
+{% endfor %}
+ *   }
+ * )
+ */
+class {{ class_name }} extends ExoThemeBase {% endblock %}
+{% block class_methods %}
+{% endblock %}

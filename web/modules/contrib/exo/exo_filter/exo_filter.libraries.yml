@@ -1,0 +1,21 @@
+summary:
+  version: VERSION
+  js:
+    js/exo.filter.summary.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - exo_filter/theme
+
+################################################################################
+## eXo Theme Provider
+################################################################################
+
+theme:
+  version: VERSION
+  css:
+    component:
+      css/exo-filter.css: { minified: true }
+  dependencies:
+    - exo/exo

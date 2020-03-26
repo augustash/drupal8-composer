@@ -1,0 +1,15 @@
+description: 'Generate eXo settings service.'
+help: 'The <info>generate:exo:settings</info> command helps you generate a new eXo settings service.'
+welcome: 'Welcome to the eXo settings generator'
+options:
+  module: 'The Module name'
+  label: 'Settings label'
+  path: 'Enter the form path'
+  id: 'Settings ID'
+  class: 'Settings class name'
+questions:
+  module: 'Enter the module name'
+  label: 'Enter the label that will be used for menu links'
+  path: 'Enter the route path'
+  id: 'Enter the settings id'
+  class: 'Enter the settings class name'

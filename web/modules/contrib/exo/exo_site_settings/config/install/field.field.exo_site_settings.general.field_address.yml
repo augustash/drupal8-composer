@@ -1,0 +1,19 @@
+uuid: 0c0d884d-5d2c-40fd-8a93-19dbe99d9893
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_site_settings.exo_site_settings_type.general
+    - field.storage.exo_site_settings.field_address
+id: exo_site_settings.general.field_address
+field_name: field_address
+entity_type: exo_site_settings
+bundle: general
+label: Address
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

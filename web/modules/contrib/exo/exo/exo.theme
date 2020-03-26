@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * Contains exo.theme.
+ */
+
+use Drupal\Core\Template\Attribute;
+
+/**
+ * Prepares variables for exo template.
+ *
+ * Default template: exo.html.twig.
+ *
+ * @param array $variables
+ *   The template variables.
+ */
+function template_preprocess_exo(array &$variables) {
+  $variables['#attached']['library'][] = 'exo/exo';
+  $variables['attributes']['class'][] = 'exo-body';
+  // Support dialog off canvas.
+  // @see off-canvas-page-wrapper.html.twig.
+  $variables['attributes']['class'][] = 'dialog-off-canvas-main-canvas';
+  $variables['attributes']['data-off-canvas-main-canvas'] = '';
+}
+
+/**
+ * Prepares variables for exo-theme-option template.
+ *
+ * Default template: exo-theme-option.html.twig.
+ *
+ * @param array $variables
+ *   The template variables.
+ */
+function template_preprocess_exo_theme_option(array &$variables) {
+  $variables['#attached']['library'][] = 'exo/theme.option';
+  $variables['attributes'] = new Attribute($variables['attributes']);
+}

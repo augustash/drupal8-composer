@@ -1,0 +1,27 @@
+# Icon routing definition
+entity.exo_icon_package.canonical:
+  route_name: entity.exo_icon_package.canonical
+  base_route: entity.exo_icon_package.canonical
+  title: 'View'
+
+entity.exo_icon_package.edit_form:
+  route_name: entity.exo_icon_package.edit_form
+  base_route: entity.exo_icon_package.canonical
+  title: 'Edit'
+
+entity.exo_icon_package.delete_form:
+  route_name:  entity.exo_icon_package.delete_form
+  base_route:  entity.exo_icon_package.canonical
+  title: Delete
+  weight: 10
+
+entity.exo_icon_package.collection:
+  route_name: entity.exo_icon_package.collection
+  base_route: entity.exo_icon_package.collection
+  title: 'Packages'
+  weight: -10
+
+exo_icon.entity_type_form:
+  route_name: exo_icon.entity_type_form
+  base_route: entity.exo_icon_package.collection
+  title: 'Entity Types'

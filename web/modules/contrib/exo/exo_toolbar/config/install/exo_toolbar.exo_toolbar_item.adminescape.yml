@@ -1,0 +1,24 @@
+uuid: 6e854891-ef37-4eb8-92bf-c64dd78d8b49
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_toolbar.exo_toolbar.default
+_core:
+  default_config_hash: kRYXyz5O9LIjFUB7SZBxSaDp7X3QMuUxp1LOXvct3Lw
+id: adminescape
+toolbar: default
+region: top_alt
+section: left
+weight: 0
+plugin: admin_escape
+settings:
+  id: admin_escape
+  title: 'Return to Site'
+  provider: exo_toolbar
+  icon: regular-arrow-alt-circle-left
+  mark_only_horizontal: 0
+  badge_type: ''
+  badge_settings: {  }
+  toolbar_item_id: null
+visibility: {  }

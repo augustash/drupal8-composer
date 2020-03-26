@@ -1,0 +1,86 @@
+exo_modal.settings:
+  path: '/admin/config/exo/modal'
+  defaults:
+    _form: '\Drupal\exo_modal\Form\ExoModalSettingsForm'
+    _title: 'Modal Settings'
+  requirements:
+    _permission: 'administer exo modal'
+  options:
+    _admin_route: TRUE
+
+exo_modal.demo:
+  path: '/admin/config/exo/modal/demo'
+  defaults:
+    _controller: '\Drupal\exo_modal\Controller\ExoModalDemoController::demo'
+    _title: 'Modal Demo'
+  requirements:
+    _permission: 'administer exo modal'
+
+exo_modal.demo_form:
+  path: '/admin/config/exo/modal/demo-form'
+  defaults:
+    _form: '\Drupal\exo_modal\Form\ExoModalDemoForm'
+    _title: 'Modal Form Demo'
+  requirements:
+    _permission: 'administer exo modal'
+
+exo_modal.api.entity.view:
+  path: '/api/exo/entity/view/{entity_type}/{entity}/{display_id}'
+  defaults:
+    _controller: '\Drupal\exo_modal\Controller\ExoModalEntityController::view'
+    _title: 'View entity content'
+    display_id: 'default'
+  requirements:
+    _entity_access: 'entity.view'
+  options:
+    parameters:
+      entity:
+        type: entity:{entity_type}
+
+exo_modal.api.views.view:
+  path: '/api/exo/modal/view/{view}/{display_id}/{argument1}/{argument2}'
+  defaults:
+    _controller: '\Drupal\exo_modal\Controller\ExoModalViewsController::view'
+    _title: 'View views content'
+    display_id: 'default'
+    argument1: 'na'
+    argument2: 'na'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      entity:
+        type: entity:{entity_type}
+
+exo_modal.api.views.field:
+  path: '/api/exo/modal/view/{view}/{view_display_id}/{field}/{entity_type}/{entity}/{revision_id}'
+  defaults:
+    _controller: '\Drupal\exo_modal\Controller\ExoModalViewsController::viewField'
+    _title: 'View views field content'
+  requirements:
+    _entity_access: 'entity.view'
+  options:
+    parameters:
+      entity:
+        type: entity:{entity_type}
+
+exo_modal.api.block.view:
+  path: '/api/exo/modal/block/{block}'
+  defaults:
+    _controller: '\Drupal\exo_modal\Controller\ExoModalBlockController::view'
+    _title: 'View block content'
+  requirements:
+    _entity_access: 'block.view'
+
+exo_modal.api.field.view:
+  path: '/api/exo/modal/field/{entity_type}/{entity}/{revision_id}/{field_name}/{delta}/{display_id}/{langcode}/{display_settings}'
+  defaults:
+    _controller: '\Drupal\exo_modal\Controller\ExoModalFieldFormatterController::view'
+    _title: 'View field formatter content'
+    display_settings: null
+  requirements:
+    _entity_access: 'entity.view'
+  options:
+    parameters:
+      entity:
+        type: entity:{entity_type}

@@ -1,0 +1,31 @@
+label: 'Page Title'
+description: 'A component that displays the page title.'
+category: 'Site'
+version: 0.0.1
+fields:
+  tagline:
+    type: 'text'
+    label: 'Tagline'
+    description: 'Text appearing <em>above</em> the page title.'
+    preview: 'Tagline'
+  title:
+    type: 'page_title'
+    label: 'Page Title Override'
+    description: 'If left empty, component will use a dynamic page title.'
+  subtitle:
+    type: 'text'
+    label: 'Subtitle'
+    description: 'Text appearing <em>below</em> the page title.'
+    preview: 'Subtitle'
+modifier_globals:
+  status:
+    text_shadow: TRUE
+    containment_content: TRUE
+  defaults:
+    margin_v: '60'
+    containment_content: 'normal'
+  extend:
+    text_align:
+      type: text_align
+      label: 'Text Align'
+      default: left
