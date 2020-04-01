@@ -39,7 +39,7 @@ class HorizontalTabs extends ExoFormBase {
     if (!isset($element['#exo_form_attributes']['class'])) {
       $element['#exo_form_attributes']['class'] = [];
     }
-    $element['#exo_form_attributes']['class'] = array_merge($element['#exo_form_attributes']['class'], exo_form_classes());
+    $element['#exo_form_attributes']['class'] = array_merge($element['#exo_form_attributes']['class'], exo_form_classes(NULL, FALSE, FALSE));
     $element['group']['#exo_wrapper_supported'] = FALSE;
     $element['#prefix'] = '';
     $element['#suffix'] = '';

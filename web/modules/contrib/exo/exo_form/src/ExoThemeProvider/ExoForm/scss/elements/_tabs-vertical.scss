@@ -28,6 +28,8 @@
     width: $tab-menu-width;
     max-width: $tab-menu-width;
     min-width: $tab-menu-width;
+    list-style: none;
+    margin: 0;
 
     li {
       margin-bottom: rem-calc(1);

@@ -19,6 +19,7 @@ use Drupal\exo_form\Plugin\ExoFormBase;
  *     "search",
  *     "tel",
  *     "entity_autocomplete",
+ *     "exo_entity_autocomplete",
  *     "commerce_number",
  *     "search_api_autocomplete",
  *     "exo_number",

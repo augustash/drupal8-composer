@@ -116,8 +116,9 @@
   }
 
   label.form-required, // sass-lint:disable-line no-qualifying-elements
-  .required label,
-  .required .fieldset-legend {
+  .required > label,
+  .required > .fieldset-legend,
+  .fieldset-legend.form-required {
 
     &:after {
       content: '*';

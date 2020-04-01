@@ -22,18 +22,15 @@ services:
     volumes:
       - data-db:/var/lib/mysql
       - ./docker/mysql/mysqld.cnf:/etc/mysql/conf.d/mysqld.cnf:ro
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=drupal8
-      - MYSQL_USER=drupal
-      - MYSQL_PASSWORD=drupal
+    env_file:
+      - .env
 
   redis:
     image: redis:5.0.7-alpine
     networks:
       - private-net
     ports:
-      - "6380:6379"
+      - "6379:6379"
     volumes:
       - ./docker/redis/volatile.conf:/usr/local/etc/redis/redis.conf
     command:

@@ -126,15 +126,17 @@ function exo_form_process_form(&$element) {
 /**
  * Process element which is the form wrapper.
  */
-function exo_form_classes($theme = NULL, $include_wrap = FALSE) {
+function exo_form_classes($theme = NULL, $include_wrap = FALSE, $include_resets = TRUE) {
   $classes = &drupal_static(__FUNCTION__);
+  $resets = [
+    'exo-font',
+    'exo-reset',
+  ];
   if (!isset($classes[$theme])) {
     $classes[$theme] = [];
     if (exo_form_access()) {
       $settings = exo_form_get_settings();
       $classes[$theme][] = 'exo-form';
-      $classes[$theme][] = 'exo-font';
-      $classes[$theme][] = 'exo-reset';
       $classes[$theme][] = 'exo-form-theme-' . ($theme ? $theme : $settings['theme']);
       $classes[$theme][] = 'exo-form-style-' . $settings['style'];
       if (!empty($settings['wrap'])) {
@@ -147,6 +149,9 @@ function exo_form_classes($theme = NULL, $include_wrap = FALSE) {
     if (($key = array_search('exo-form-wrap', $cached_classes)) !== FALSE) {
       unset($cached_classes[$key]);
     }
+  }
+  if ($include_resets) {
+    $cached_classes = array_merge($resets, $cached_classes);
   }
   return $cached_classes;
 }

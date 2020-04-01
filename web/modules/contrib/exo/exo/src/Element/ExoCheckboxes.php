@@ -55,4 +55,16 @@ class ExoCheckboxes extends Checkboxes {
     return parent::processCheckboxes($element, $form_state, $complete_form);
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * If exo_clean is passed in this field will not be wrapped in a fieldset.
+   */
+  public static function preRenderCompositeFormElement($element) {
+    if (empty($element['#exo_clean'])) {
+      $element = parent::preRenderCompositeFormElement($element);
+    }
+    return $element;
+  }
+
 }
