@@ -427,7 +427,7 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         ),
         'Drush\\Commands\\aeon\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/web/themes/contrib/aeon/Commands/aeon',
+            0 => __DIR__ . '/../..' . '/web/themes/aeon/Commands/aeon',
         ),
         'Drush\\' => 
         array (
@@ -3484,7 +3484,7 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         'Drush\\Commands\\LegacyCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/LegacyCommands.php',
         'Drush\\Commands\\OptionsCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/OptionsCommands.php',
         'Drush\\Commands\\ValidatorsCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/ValidatorsCommands.php',
-        'Drush\\Commands\\aeon\\SubThemeCommands' => __DIR__ . '/../..' . '/web/themes/contrib/aeon/Commands/aeon/SubThemeCommands.php',
+        'Drush\\Commands\\aeon\\SubThemeCommands' => __DIR__ . '/../..' . '/web/themes/aeon/Commands/aeon/SubThemeCommands.php',
         'Drush\\Commands\\config\\ConfigPullCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/config/ConfigPullCommands.php',
         'Drush\\Commands\\core\\BrowseCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/core/BrowseCommands.php',
         'Drush\\Commands\\core\\CacheCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/core/CacheCommands.php',

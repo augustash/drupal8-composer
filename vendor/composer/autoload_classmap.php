@@ -2878,7 +2878,7 @@ return array(
     'Drush\\Commands\\LegacyCommands' => $vendorDir . '/drush/drush/src/Commands/LegacyCommands.php',
     'Drush\\Commands\\OptionsCommands' => $vendorDir . '/drush/drush/src/Commands/OptionsCommands.php',
     'Drush\\Commands\\ValidatorsCommands' => $vendorDir . '/drush/drush/src/Commands/ValidatorsCommands.php',
-    'Drush\\Commands\\aeon\\SubThemeCommands' => $baseDir . '/web/themes/contrib/aeon/Commands/aeon/SubThemeCommands.php',
+    'Drush\\Commands\\aeon\\SubThemeCommands' => $baseDir . '/web/themes/aeon/Commands/aeon/SubThemeCommands.php',
     'Drush\\Commands\\config\\ConfigPullCommands' => $vendorDir . '/drush/drush/src/Commands/config/ConfigPullCommands.php',
     'Drush\\Commands\\core\\BrowseCommands' => $vendorDir . '/drush/drush/src/Commands/core/BrowseCommands.php',
     'Drush\\Commands\\core\\CacheCommands' => $vendorDir . '/drush/drush/src/Commands/core/CacheCommands.php',
