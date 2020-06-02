@@ -13,4 +13,3 @@ use Dotenv\Exception\InvalidPathException;
  */
 $dotenv = Dotenv::createImmutable(realpath(__DIR__ . '/../../'));
 $dotenv->safeLoad();
-
