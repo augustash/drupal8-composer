@@ -12,6 +12,7 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         '023d27dca8066ef29e6739335ea73bad' => __DIR__ . '/..' . '/symfony/polyfill-php70/bootstrap.php',
         'bd9634f2d41831496de0d3dfe4c94881' => __DIR__ . '/..' . '/symfony/polyfill-php56/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
@@ -69,6 +70,7 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         'S' => 
         array (
             'Symfony\\Polyfill\\Util\\' => 22,
+            'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Php72\\' => 23,
             'Symfony\\Polyfill\\Php70\\' => 23,
             'Symfony\\Polyfill\\Php56\\' => 23,
@@ -119,11 +121,6 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         'L' => 
         array (
             'League\\Container\\' => 17,
-        ),
-        'J' => 
-        array (
-            'JakubOnderka\\PhpConsoleHighlighter\\' => 35,
-            'JakubOnderka\\PhpConsoleColor\\' => 29,
         ),
         'I' => 
         array (
@@ -232,6 +229,10 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         'Symfony\\Polyfill\\Util\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-util',
+        ),
+        'Symfony\\Polyfill\\Php80\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
         ),
         'Symfony\\Polyfill\\Php72\\' => 
         array (
@@ -384,14 +385,6 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         'League\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/container/src',
-        ),
-        'JakubOnderka\\PhpConsoleHighlighter\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/jakub-onderka/php-console-highlighter/src',
-        ),
-        'JakubOnderka\\PhpConsoleColor\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/jakub-onderka/php-console-color/src',
         ),
         'Interop\\Container\\' => 
         array (
@@ -566,14 +559,6 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         ),
         'D' => 
         array (
-            'Drupal\\Tests\\Driver' => 
-            array (
-                0 => __DIR__ . '/..' . '/drupal/drupal-driver/tests',
-            ),
-            'Drupal\\Driver' => 
-            array (
-                0 => __DIR__ . '/..' . '/drupal/drupal-driver/src',
-            ),
             'Doctrine\\Common\\Collections\\' => 
             array (
                 0 => __DIR__ . '/..' . '/doctrine/collections/lib',
@@ -1228,6 +1213,7 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         'DrupalCodeGenerator\\Command\\Drupal_8\\Module\\ConfigurationEntity' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Module/ConfigurationEntity.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Module\\ContentEntity' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Module/ContentEntity.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Module\\Standard' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Module/Standard.php',
+        'DrupalCodeGenerator\\Command\\Drupal_8\\PhpStormMetadata' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/PhpStormMetadata.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\PluginManager' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/PluginManager.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Plugin\\Action' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Plugin/Action.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Plugin\\Block' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Plugin/Block.php',
@@ -3366,6 +3352,7 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         'Drupal\\Core\\TypedData\\Validation\\RecursiveValidator' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/TypedData/Validation/RecursiveValidator.php',
         'Drupal\\Core\\TypedData\\Validation\\TypedDataAwareValidatorTrait' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/TypedData/Validation/TypedDataAwareValidatorTrait.php',
         'Drupal\\Core\\TypedData\\Validation\\TypedDataMetadata' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/TypedData/Validation/TypedDataMetadata.php',
+        'Drupal\\Core\\Update\\RemovedPostUpdateNameException' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Update/RemovedPostUpdateNameException.php',
         'Drupal\\Core\\Update\\UpdateBackend' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Update/UpdateBackend.php',
         'Drupal\\Core\\Update\\UpdateCacheBackendFactory' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Update/UpdateCacheBackendFactory.php',
         'Drupal\\Core\\Update\\UpdateCompilerPass' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Update/UpdateCompilerPass.php',
@@ -3414,50 +3401,6 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         'Drupal\\Core\\Validation\\Plugin\\Validation\\Constraint\\UniqueFieldValueValidator' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Validation/Plugin/Validation/Constraint/UniqueFieldValueValidator.php',
         'Drupal\\Core\\Validation\\Plugin\\Validation\\Constraint\\UuidConstraint' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Validation/Plugin/Validation/Constraint/UuidConstraint.php',
         'Drupal\\Core\\Validation\\TranslatorInterface' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Validation/TranslatorInterface.php',
-        'Drupal\\Driver\\BaseDriver' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/BaseDriver.php',
-        'Drupal\\Driver\\BlackboxDriver' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/BlackboxDriver.php',
-        'Drupal\\Driver\\Cores\\AbstractCore' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Cores/AbstractCore.php',
-        'Drupal\\Driver\\Cores\\CoreInterface' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Cores/CoreInterface.php',
-        'Drupal\\Driver\\Cores\\Drupal6' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Cores/Drupal6.php',
-        'Drupal\\Driver\\Cores\\Drupal7' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Cores/Drupal7.php',
-        'Drupal\\Driver\\Cores\\Drupal8' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Cores/Drupal8.php',
-        'Drupal\\Driver\\DriverInterface' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/DriverInterface.php',
-        'Drupal\\Driver\\DrupalDriver' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/DrupalDriver.php',
-        'Drupal\\Driver\\DrushDriver' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/DrushDriver.php',
-        'Drupal\\Driver\\Exception\\BootstrapException' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Exception/BootstrapException.php',
-        'Drupal\\Driver\\Exception\\Exception' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Exception/Exception.php',
-        'Drupal\\Driver\\Exception\\UnsupportedDriverActionException' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Exception/UnsupportedDriverActionException.php',
-        'Drupal\\Driver\\Fields\\Drupal6\\TaxonomyHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal6/TaxonomyHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal7\\AbstractHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal7/AbstractHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal7\\DatetimeHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal7/DatetimeHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal7\\DefaultHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal7/DefaultHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal7\\EntityreferenceHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal7/EntityreferenceHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal7\\FileHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal7/FileHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal7\\ImageHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal7/ImageHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal7\\LinkFieldHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal7/LinkFieldHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal7\\ListBooleanHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal7/ListBooleanHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal7\\ListTextHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal7/ListTextHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal7\\TaxonomyTermReferenceHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal7/TaxonomyTermReferenceHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal8\\AbstractHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal8/AbstractHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal8\\AddressHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal8/AddressHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal8\\DatetimeHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal8/DatetimeHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal8\\DefaultHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal8/DefaultHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal8\\EmbridgeAssetItemHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal8/EmbridgeAssetItemHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal8\\EntityReferenceHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal8/EntityReferenceHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal8\\FileHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal8/FileHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal8\\ImageHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal8/ImageHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal8\\LinkHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal8/LinkHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal8\\ListFloatHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal8/ListFloatHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal8\\ListHandlerBase' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal8/ListHandlerBase.php',
-        'Drupal\\Driver\\Fields\\Drupal8\\ListIntegerHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal8/ListIntegerHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal8\\ListStringHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal8/ListStringHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal8\\TaxonomyTermReferenceHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal8/TaxonomyTermReferenceHandler.php',
-        'Drupal\\Driver\\Fields\\Drupal8\\TextWithSummaryHandler' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/Drupal8/TextWithSummaryHandler.php',
-        'Drupal\\Driver\\Fields\\FieldHandlerInterface' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/Fields/FieldHandlerInterface.php',
-        'Drupal\\Driver\\SubDriverFinderInterface' => __DIR__ . '/..' . '/drupal/drupal-driver/src/Drupal/Driver/SubDriverFinderInterface.php',
-        'Drupal\\Tests\\Driver\\Drupal7FieldHandlerTest' => __DIR__ . '/..' . '/drupal/drupal-driver/tests/Drupal/Tests/Driver/Drupal7FieldHandlerTest.php',
-        'Drupal\\Tests\\Driver\\DrushDriverTest' => __DIR__ . '/..' . '/drupal/drupal-driver/tests/Drupal/Tests/Driver/DrushDriverTest.php',
-        'Drupal\\Tests\\Driver\\FieldHandlerAbstractTest' => __DIR__ . '/..' . '/drupal/drupal-driver/tests/Drupal/Tests/Driver/FieldHandlerAbstractTest.php',
         'Drush\\Application' => __DIR__ . '/..' . '/drush/drush/src/Application.php',
         'Drush\\Backend\\BackendPathEvaluator' => __DIR__ . '/..' . '/drush/drush/src/Backend/BackendPathEvaluator.php',
         'Drush\\Backend\\BackendResultSetter' => __DIR__ . '/..' . '/drush/drush/src/Backend/BackendResultSetter.php',
@@ -3813,9 +3756,6 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         'Interop\\Container\\ContainerInterface' => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container/ContainerInterface.php',
         'Interop\\Container\\Exception\\ContainerException' => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container/Exception/ContainerException.php',
         'Interop\\Container\\Exception\\NotFoundException' => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container/Exception/NotFoundException.php',
-        'JakubOnderka\\PhpConsoleColor\\ConsoleColor' => __DIR__ . '/..' . '/jakub-onderka/php-console-color/src/ConsoleColor.php',
-        'JakubOnderka\\PhpConsoleColor\\InvalidStyleException' => __DIR__ . '/..' . '/jakub-onderka/php-console-color/src/InvalidStyleException.php',
-        'JakubOnderka\\PhpConsoleHighlighter\\Highlighter' => __DIR__ . '/..' . '/jakub-onderka/php-console-highlighter/src/Highlighter.php',
         'League\\Container\\Argument\\ArgumentResolverInterface' => __DIR__ . '/..' . '/league/container/src/Argument/ArgumentResolverInterface.php',
         'League\\Container\\Argument\\ArgumentResolverTrait' => __DIR__ . '/..' . '/league/container/src/Argument/ArgumentResolverTrait.php',
         'League\\Container\\Argument\\RawArgument' => __DIR__ . '/..' . '/league/container/src/Argument/RawArgument.php',
@@ -4143,6 +4083,7 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         'Psy\\CodeCleaner\\NoReturnValue' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/NoReturnValue.php',
         'Psy\\CodeCleaner\\PassableByReferencePass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/PassableByReferencePass.php',
         'Psy\\CodeCleaner\\RequirePass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/RequirePass.php',
+        'Psy\\CodeCleaner\\ReturnTypePass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/ReturnTypePass.php',
         'Psy\\CodeCleaner\\StrictTypesPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/StrictTypesPass.php',
         'Psy\\CodeCleaner\\UseStatementPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/UseStatementPass.php',
         'Psy\\CodeCleaner\\ValidClassNamePass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/ValidClassNamePass.php',
@@ -4193,6 +4134,7 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         'Psy\\Exception\\RuntimeException' => __DIR__ . '/..' . '/psy/psysh/src/Exception/RuntimeException.php',
         'Psy\\Exception\\ThrowUpException' => __DIR__ . '/..' . '/psy/psysh/src/Exception/ThrowUpException.php',
         'Psy\\Exception\\TypeErrorException' => __DIR__ . '/..' . '/psy/psysh/src/Exception/TypeErrorException.php',
+        'Psy\\Exception\\UnexpectedTargetException' => __DIR__ . '/..' . '/psy/psysh/src/Exception/UnexpectedTargetException.php',
         'Psy\\ExecutionClosure' => __DIR__ . '/..' . '/psy/psysh/src/ExecutionClosure.php',
         'Psy\\ExecutionLoopClosure' => __DIR__ . '/..' . '/psy/psysh/src/ExecutionLoopClosure.php',
         'Psy\\ExecutionLoop\\AbstractListener' => __DIR__ . '/..' . '/psy/psysh/src/ExecutionLoop/AbstractListener.php',
@@ -4202,7 +4144,9 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         'Psy\\Formatter\\CodeFormatter' => __DIR__ . '/..' . '/psy/psysh/src/Formatter/CodeFormatter.php',
         'Psy\\Formatter\\DocblockFormatter' => __DIR__ . '/..' . '/psy/psysh/src/Formatter/DocblockFormatter.php',
         'Psy\\Formatter\\Formatter' => __DIR__ . '/..' . '/psy/psysh/src/Formatter/Formatter.php',
+        'Psy\\Formatter\\ReflectorFormatter' => __DIR__ . '/..' . '/psy/psysh/src/Formatter/ReflectorFormatter.php',
         'Psy\\Formatter\\SignatureFormatter' => __DIR__ . '/..' . '/psy/psysh/src/Formatter/SignatureFormatter.php',
+        'Psy\\Formatter\\TraceFormatter' => __DIR__ . '/..' . '/psy/psysh/src/Formatter/TraceFormatter.php',
         'Psy\\Input\\CodeArgument' => __DIR__ . '/..' . '/psy/psysh/src/Input/CodeArgument.php',
         'Psy\\Input\\FilterOptions' => __DIR__ . '/..' . '/psy/psysh/src/Input/FilterOptions.php',
         'Psy\\Input\\ShellInput' => __DIR__ . '/..' . '/psy/psysh/src/Input/ShellInput.php',
@@ -4222,6 +4166,7 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         'Psy\\Reflection\\ReflectionConstant_' => __DIR__ . '/..' . '/psy/psysh/src/Reflection/ReflectionConstant_.php',
         'Psy\\Reflection\\ReflectionLanguageConstruct' => __DIR__ . '/..' . '/psy/psysh/src/Reflection/ReflectionLanguageConstruct.php',
         'Psy\\Reflection\\ReflectionLanguageConstructParameter' => __DIR__ . '/..' . '/psy/psysh/src/Reflection/ReflectionLanguageConstructParameter.php',
+        'Psy\\Reflection\\ReflectionNamespace' => __DIR__ . '/..' . '/psy/psysh/src/Reflection/ReflectionNamespace.php',
         'Psy\\Shell' => __DIR__ . '/..' . '/psy/psysh/src/Shell.php',
         'Psy\\Sudo' => __DIR__ . '/..' . '/psy/psysh/src/Sudo.php',
         'Psy\\Sudo\\SudoVisitor' => __DIR__ . '/..' . '/psy/psysh/src/Sudo/SudoVisitor.php',
@@ -4441,6 +4386,7 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         'Stecman\\Component\\Symfony\\Console\\BashCompletion\\Completion\\ShellPathCompletion' => __DIR__ . '/..' . '/stecman/symfony-console-completion/src/Completion/ShellPathCompletion.php',
         'Stecman\\Component\\Symfony\\Console\\BashCompletion\\EnvironmentCompletionContext' => __DIR__ . '/..' . '/stecman/symfony-console-completion/src/EnvironmentCompletionContext.php',
         'Stecman\\Component\\Symfony\\Console\\BashCompletion\\HookFactory' => __DIR__ . '/..' . '/stecman/symfony-console-completion/src/HookFactory.php',
+        'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Factory\\DiactorosFactory' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/DiactorosFactory.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Factory\\HttpFoundationFactory' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/HttpFoundationFactory.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Factory\\PsrHttpFactory' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/PsrHttpFactory.php',
@@ -5597,6 +5543,7 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         'Symfony\\Polyfill\\Php56\\Php56' => __DIR__ . '/..' . '/symfony/polyfill-php56/Php56.php',
         'Symfony\\Polyfill\\Php70\\Php70' => __DIR__ . '/..' . '/symfony/polyfill-php70/Php70.php',
         'Symfony\\Polyfill\\Php72\\Php72' => __DIR__ . '/..' . '/symfony/polyfill-php72/Php72.php',
+        'Symfony\\Polyfill\\Php80\\Php80' => __DIR__ . '/..' . '/symfony/polyfill-php80/Php80.php',
         'Symfony\\Polyfill\\Util\\Binary' => __DIR__ . '/..' . '/symfony/polyfill-util/Binary.php',
         'Symfony\\Polyfill\\Util\\BinaryNoFuncOverload' => __DIR__ . '/..' . '/symfony/polyfill-util/BinaryNoFuncOverload.php',
         'Symfony\\Polyfill\\Util\\BinaryOnFuncOverload' => __DIR__ . '/..' . '/symfony/polyfill-util/BinaryOnFuncOverload.php',
@@ -6004,6 +5951,7 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         'Twig_Util_DeprecationCollector' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Util/DeprecationCollector.php',
         'Twig_Util_TemplateDirIterator' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Util/TemplateDirIterator.php',
         'TypeError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/TypeError.php',
+        'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
         'Webmozart\\Assert\\Assert' => __DIR__ . '/..' . '/webmozart/assert/src/Assert.php',
         'Webmozart\\PathUtil\\Path' => __DIR__ . '/..' . '/webmozart/path-util/src/Path.php',
         'Webmozart\\PathUtil\\Url' => __DIR__ . '/..' . '/webmozart/path-util/src/Url.php',

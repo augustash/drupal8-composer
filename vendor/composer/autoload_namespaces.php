@@ -10,8 +10,6 @@ return array(
     'Stack' => array($vendorDir . '/stack/builder/src'),
     'PEAR' => array($vendorDir . '/pear/pear_exception'),
     'EasyRdf_' => array($vendorDir . '/easyrdf/easyrdf/lib'),
-    'Drupal\\Tests\\Driver' => array($vendorDir . '/drupal/drupal-driver/tests'),
-    'Drupal\\Driver' => array($vendorDir . '/drupal/drupal-driver/src'),
     'Doctrine\\Common\\Collections\\' => array($vendorDir . '/doctrine/collections/lib'),
     'Dflydev\\PlaceholderResolver' => array($vendorDir . '/dflydev/placeholder-resolver/src'),
     'Dflydev\\DotAccessData' => array($vendorDir . '/dflydev/dot-access-data/src'),
