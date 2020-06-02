@@ -3352,7 +3352,7 @@
             "shasum": "",
             "mirrors": [
                 {
-                    "url": "https://packages.augustash.com/repo/private/dists/%package%/%version%/%reference%.%type%",
+                    "url": "https://augustash.repo.repman.io/dists/%package%/%version%/%reference%.%type%",
                     "preferred": true
                 }
             ]
@@ -3449,7 +3449,7 @@
             "shasum": "",
             "mirrors": [
                 {
-                    "url": "https://packages.augustash.com/repo/private/dists/%package%/%version%/%reference%.%type%",
+                    "url": "https://augustash.repo.repman.io/dists/%package%/%version%/%reference%.%type%",
                     "preferred": true
                 }
             ]
@@ -3490,7 +3490,7 @@
             "shasum": "",
             "mirrors": [
                 {
-                    "url": "https://packages.augustash.com/repo/private/dists/%package%/%version%/%reference%.%type%",
+                    "url": "https://augustash.repo.repman.io/dists/%package%/%version%/%reference%.%type%",
                     "preferred": true
                 }
             ]

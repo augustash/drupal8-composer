@@ -10,6 +10,10 @@
         },
         {
             "type": "composer",
+            "url": "https://augustash.repo.repman.io"
+        },
+        {
+            "type": "composer",
             "url": "https://packages.augustash.com/repo/private"
         }
     ],
@@ -110,8 +114,7 @@
             },
             "file-mapping": {
                 "[project-root]/.editorconfig": false
-            },
-            "source": "https://raw.githubusercontent.com/pantheon-systems/drops-8-scaffolding/{version}/{path}"
+            }
         }
     },
     "config": {

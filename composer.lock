@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f37574bd5ec259c57c16123bd3207abc",
+    "content-hash": "556487ad0a0abc7b51e5234c1b23298f",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -3267,7 +3267,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://packages.augustash.com/repo/private/dists/%package%/%version%/%reference%.%type%",
+                        "url": "https://augustash.repo.repman.io/dists/%package%/%version%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -3360,7 +3360,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://packages.augustash.com/repo/private/dists/%package%/%version%/%reference%.%type%",
+                        "url": "https://augustash.repo.repman.io/dists/%package%/%version%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -3399,7 +3399,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://packages.augustash.com/repo/private/dists/%package%/%version%/%reference%.%type%",
+                        "url": "https://augustash.repo.repman.io/dists/%package%/%version%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
