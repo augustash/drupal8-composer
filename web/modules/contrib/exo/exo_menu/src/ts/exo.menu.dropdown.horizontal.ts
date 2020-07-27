@@ -34,7 +34,7 @@
           let timeout = setTimeout(() => {
             Drupal.Exo.getBodyElement().addClass('exo-menu-expanded');
             this.show($(e.currentTarget));
-          }, 300);
+          }, 200);
           $target.data('timeout', timeout);
         }).on('mouseleave.exo.menu.style.dropdown', e => {
           const $target = $(e.currentTarget);
@@ -50,7 +50,7 @@
           let timeout = setTimeout(() => {
             Drupal.Exo.getBodyElement().addClass('exo-menu-expanded');
             this.show($(e.currentTarget));
-          }, 300);
+          }, 200);
           $target.data('timeout', timeout);
         }).on('mouseleave.exo.menu.style.dropdown', e => {
           const $target = $(e.currentTarget);

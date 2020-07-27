@@ -15,3 +15,18 @@ exo.theme.settings:
     _permission: 'administer exo themes'
   options:
     _admin_route: TRUE
+
+exo.autocomplete:
+  path: '/api/autocomplete/{target_type}/{selection_handler}/{selection_settings_key}'
+  defaults:
+    _controller: '\Drupal\exo\Controller\ExoAutocompleteController::handleAutocomplete'
+  requirements:
+    _access: 'TRUE'
+
+exo.loader.settings:
+  path: '/admin/config/exo/loader'
+  defaults:
+    _form: '\Drupal\exo\Form\ExoLoaderSettingsForm'
+    _title: 'Ajax Loader'
+  requirements:
+    _permission: 'administer ajax loader'

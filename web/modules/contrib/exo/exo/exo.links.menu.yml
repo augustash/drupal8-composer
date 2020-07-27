@@ -12,3 +12,10 @@ exo.theme.settings:
   description: 'Theme settings and configuration.'
   parent: system.admin_config_exo
   weight: 0
+
+exo.loader.settings:
+  title: 'Ajax Loader'
+  route_name: exo.loader.settings
+  description: 'Settings for ajax loader.'
+  parent: system.admin_config_exo
+  weight: 0

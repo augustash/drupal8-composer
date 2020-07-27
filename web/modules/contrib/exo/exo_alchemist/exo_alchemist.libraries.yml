@@ -12,6 +12,7 @@ admin:
     - core/drupal
     - core/drupalSettings
     - core/drupal.displace
+    - core/drupal.ajax
     - exo/jquery.imagesloaded
     - exo/jquery.overlap
     - exo_alchemist/theme
@@ -52,6 +53,27 @@ property:
       css/exo-alchemist.property.css: { minified: true }
   dependencies:
     - exo_alchemist/theme
+
+################################################################################
+## eXo Enhancements
+################################################################################
+enhancement.rotator:
+  version: VERSION
+  js:
+    js/exo.alchemist.enhancement.rotator.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+
+enhancement.accordion:
+  version: VERSION
+  js:
+    js/exo.alchemist.enhancement.accordion.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupalSettings
+
 
 ################################################################################
 ## eXo Theme Provider

@@ -1,0 +1,38 @@
+.exo-form-date-recur-sierra {
+
+  .date-recur-modular-sierra-widget-day,
+  .date-recur-modular-sierra-widget-recurrences {
+    @include flex;
+    @include flex-align(justify, middle);
+
+    > .exo-form-element {
+      margin: 0 $global-margin;
+      flex: 1 1 auto;
+
+      &:first-child {
+        margin-left: 0;
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    .button {
+      width: 100%;
+    }
+  }
+
+  .date-recur-modular-sierra-widget-recurrences {
+    margin-top: $global-margin;
+
+    > .exo-form-element-type-checkbox {
+      flex: 0 0 auto;
+    }
+  }
+}
+
+.date-recur-modular-sierra-occurrences-modal {
+  border: 0 !important;
+  padding: 0 !important;
+}

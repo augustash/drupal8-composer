@@ -208,7 +208,7 @@ class ExoLinkWidget extends LinkWidget {
       $element['options']['attributes']['target'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Open link in new window'),
-        '#description' => $this->t('If selected, the menu link will open in a new window/tab when clicked.'),
+        '#description' => $this->t('See WCAG guidance on <a href="https://www.w3.org/WAI/WCAG21/Techniques/general/G200" target="_blank">opening links in new windows/tabs</a>.'),
         '#default_value' => !empty($attributes['target']),
         '#return_value' => '_blank',
       ];

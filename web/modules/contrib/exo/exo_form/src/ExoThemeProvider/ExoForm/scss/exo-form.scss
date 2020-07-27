@@ -16,6 +16,7 @@
 @import 'elements/input';
 @import 'elements/pseudo';
 @import 'elements/radio';
+@import 'elements/radio-slider';
 @import 'elements/checkbox';
 @import 'elements/select';
 @import 'elements/datetime';
@@ -34,7 +35,10 @@
 @import 'components/layout';
 @import 'components/layout-builder';
 @import 'components/entity-meta';
+@import 'components/autocomplete';
 @import 'components/webform';
+@import 'components/date-recurr';
+@import 'components/office-hours';
 @import 'components/metatags';
 @import 'components/paragraphs';
 @import 'components/commerce';

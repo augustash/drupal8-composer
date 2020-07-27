@@ -1,13 +1,13 @@
 label: 'Page Title'
 description: 'A component that displays the page title.'
-category: 'Site'
+category: 'General'
 version: 0.0.1
 fields:
   tagline:
     type: 'text'
     label: 'Tagline'
     description: 'Text appearing <em>above</em> the page title.'
-    preview: 'Tagline'
+    default: 'Tagline'
   title:
     type: 'page_title'
     label: 'Page Title Override'
@@ -16,7 +16,7 @@ fields:
     type: 'text'
     label: 'Subtitle'
     description: 'Text appearing <em>below</em> the page title.'
-    preview: 'Subtitle'
+    default: 'Subtitle'
 modifier_globals:
   status:
     text_shadow: TRUE

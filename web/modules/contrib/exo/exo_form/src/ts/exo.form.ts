@@ -4,6 +4,7 @@
 
   let $scope:JQuery;
   let timeout:number;
+  let once:boolean;
 
   Drupal.behaviors.exoForm = {
     attach: function (context) {
@@ -36,12 +37,12 @@
         }
       });
 
-      $(context).find('.exo-form .exo-form-inline').each((index, element) => {
-        const $children = $(element).find('> .exo-form-element-js');
-        if ($children.length > 6) {
-          $(element).addClass('exo-form-inline-stack');
-        }
-      });
+      // $(context).find('.exo-form .exo-form-inline').each((index, element) => {
+      //   const $children = $(element).find('> .exo-form-element-js');
+      //   if ($children.length > 6) {
+      //     $(element).addClass('exo-form-inline-stack');
+      //   }
+      // });
 
       $scope.filter('.exo-form-wrap').each((index, element) => {
         if ($(element).html().trim()[0] !== '<') {
@@ -64,6 +65,9 @@
 
       $scope.once('exo.form.watch').on('click', e => {
         Drupal.behaviors.exoForm.processForm();
+        setTimeout(function () {
+          Drupal.behaviors.exoForm.processForm();
+        }, 2000);
       }).each((index, element) => {
         const $localscope = $(element);
         // Support utilization of a parent which defines an exo theme.
@@ -97,19 +101,27 @@
           }
         });
       }
+
+      if (!this.once) {
+        this.once = true;
+        function watchInline() {
+          $scope.find('.exo-form-inline').each((index, element) => {
+            const $element = $(element);
+            $element.removeClass('exo-form-inline-stack');
+            const elementWidth = $element.outerWidth();
+            if (elementWidth > Drupal.Exo.$window.width()) {
+              $element.addClass('exo-form-inline-stack');
+            }
+          });
+        }
+
+        Drupal.Exo.addOnResize('exo.form.core', watchInline);
+        watchInline();
+      }
     },
 
     processForm: function ($context:JQuery) {
       clearTimeout(timeout);
-      const isMobile = Drupal.Exo.isMobile();
-      if (isMobile) {
-        const viewport = $('meta[name="viewport"]');
-        if (viewport.length) {
-          const content = viewport.attr('content');
-          viewport.data('exo-viewport', content);
-          viewport.attr('content', content + ', maximum-scale=1');
-        }
-      }
       timeout = setTimeout(() => {
         $context = $context || $scope;
 
@@ -154,13 +166,6 @@
             $lastVisibleChild.last().addClass('exo-form-element-last');
           }
         });
-
-        if (isMobile) {
-          const viewport = $('meta[name="viewport"]');
-          if (viewport.length) {
-            viewport.attr('content', viewport.data('exo-viewport'));
-          }
-        }
       });
     },
   };

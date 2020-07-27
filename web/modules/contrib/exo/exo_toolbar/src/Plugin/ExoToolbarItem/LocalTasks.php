@@ -98,6 +98,7 @@ class LocalTasks extends ExoToolbarItemBase implements ContainerFactoryPluginInt
           'url' => $primary_tab['#link']['url'],
           'weight' => $primary_tab['#weight'],
           'access' => $primary_tab['#access'],
+          'attributes' => !empty($primary_tab['#link']['localized_options']['attributes']) ? $primary_tab['#link']['localized_options']['attributes'] : [],
         ])->addClass('as-pill')->setAsLink();
         if (is_a($elements[$primary_tab_id]->getTitle(), 'Drupal\exo_icon\ExoIconTranslatableMarkup')) {
           if ($icon = $elements[$primary_tab_id]->getTitle()->getIcon()) {

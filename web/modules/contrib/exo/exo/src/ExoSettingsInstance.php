@@ -233,18 +233,7 @@ class ExoSettingsInstance implements ExoSettingsInstanceInterface {
   }
 
   /**
-   * Return local settings not matching those in the site settings.
-   *
-   * @param bool $clean
-   *   Clean settings against default settings returning the values of only
-   *   those settings that exist as defaults.
-   * @param bool $prepare
-   *   Prepare for rendering will call alter hooks and allow the settings to be
-   *   prepared for use. Should not be used when saving items. Only when using
-   *   items.
-   *
-   * @return array
-   *   An array containing only settings different than the site settings.
+   * {@inheritdoc}
    */
   public function getLocalSettingsDiff($clean = TRUE, $prepare = TRUE) {
     if (!isset($this->localSettingsDiff)) {
@@ -358,7 +347,7 @@ class ExoSettingsInstance implements ExoSettingsInstanceInterface {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array $form, FormStateInterface $form_state) {
     $this->setState($form_state);
     $this->exoSettings->submitForm($form, $form_state);
     $this->unsetState($form_state);

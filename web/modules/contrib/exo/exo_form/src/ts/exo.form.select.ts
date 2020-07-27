@@ -456,6 +456,10 @@
           li.html('<span>' + option.text + '</span>');
         }
         else if (this.multiple) {
+          // Do not show empty value.
+          if (!this.isRequired() && option.value === '_none') {
+            continue
+          }
           li.addClass('selector exo-form-checkbox ready');
           li.html('<span><input id="' + checkboxId + '" type="checkbox" class="form-checkbox"><label for="' + checkboxId + '" class="option">' + option.text + '<div class="exo-ripple"></div></label></span>');
         }
@@ -590,6 +594,7 @@
 
     public changeSelected(option, action) {
       var found = false;
+      var notEmpty = false;
       for (var i = 0; i < this.selected.length; i++) {
         if (!this.multiple) {
           this.selected[i].selected = false;
@@ -601,6 +606,19 @@
           }
           else if (action === 'remove') {
             this.selected[i].selected = false;
+          }
+        }
+        if (this.multiple) {
+          if (this.selected[i].value !== '_none' && this.selected[i].selected) {
+            notEmpty = true;
+          }
+        }
+      }
+
+      if (this.multiple) {
+        for (var i = 0; i < this.selected.length; i++) {
+          if (this.selected[i].value === '_none') {
+            this.selected[i].selected = !notEmpty;
           }
         }
       }
@@ -686,12 +704,12 @@
           zIndex: 9999,
         });
 
-        const viewport = $('meta[name="viewport"]');
-        if (viewport.length) {
-          const content = viewport.attr('content');
-          viewport.data('exo-viewport', content);
-          viewport.attr('content', content + ', maximum-scale=1');
-        }
+        // const viewport = $('meta[name="viewport"]');
+        // if (viewport.length) {
+        //   const content = viewport.attr('content');
+        //   viewport.data('exo-viewport', content);
+        //   viewport.attr('content', content + ', maximum-scale=1');
+        // }
       }
       else {
         this.positionDropdown();
@@ -804,10 +822,10 @@
           if (this.isMobile === true) {
             this.$dropdown.removeAttr('style');
 
-            const viewport = $('meta[name="viewport"]');
-            if (viewport.length) {
-              viewport.attr('content', viewport.data('exo-viewport'));
-            }
+            // const viewport = $('meta[name="viewport"]');
+            // if (viewport.length) {
+            //   viewport.attr('content', viewport.data('exo-viewport'));
+            // }
           }
         }, 350);
         if (focus) {

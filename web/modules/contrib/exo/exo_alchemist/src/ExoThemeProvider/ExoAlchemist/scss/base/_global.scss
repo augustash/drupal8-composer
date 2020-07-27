@@ -18,3 +18,38 @@
 .component-passthrough {
   pointer-events: none;
 }
+
+.exo-alchemist-component-placeholder {
+  border: 1px solid gray(50);
+  background: alpha(gray(100), 0.8);
+  color: color(theme-white);
+  padding: $global-padding / 1.5;
+  border-radius: $global-radius;
+  text-shadow: 0 0 2px gray(90);
+
+  .exo-alchemist-component-description {
+    margin: rem-calc(5 0 0);
+  }
+
+  .exo-icon {
+    color: color(theme-warning);
+  }
+}
+
+.exo-alchemist-component-title {
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: rem-calc(12);
+  line-height: 1;
+}
+
+.exo-alchemist-component-description {
+  opacity: 0.7;
+  font-size: rem-calc(11);
+  line-height: 1;
+  display: block;
+
+  .exo-icon {
+    color: color(theme-warning);
+  }
+}

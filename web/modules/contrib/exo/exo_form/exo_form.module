@@ -138,7 +138,10 @@ function exo_form_classes($theme = NULL, $include_wrap = FALSE, $include_resets 
       $settings = exo_form_get_settings();
       $classes[$theme][] = 'exo-form';
       $classes[$theme][] = 'exo-form-theme-' . ($theme ? $theme : $settings['theme']);
-      $classes[$theme][] = 'exo-form-style-' . $settings['style'];
+
+      if (!empty($settings['style'])) {
+        $classes[$theme][] = 'exo-form-style-' . $settings['style'];
+      }
       if (!empty($settings['wrap'])) {
         $classes[$theme][] = 'exo-form-wrap';
       }
@@ -183,6 +186,10 @@ function exo_form_preprocess_exo_icon_browser(&$variables) {
  * our defaults are not loaded. As a result, they are added back here.
  */
 function exo_form_form_alter_process(&$element) {
+  if ($element['#type'] === 'form') {
+    // We do not need to process the actual form.
+    return;
+  }
   if (isset($element['#exo_theme'])) {
     $theme = !empty($element['#exo_theme']) ? $element['#exo_theme'] : NULL;
     $classes = exo_form_classes($theme);
@@ -218,7 +225,7 @@ function exo_form_element_info_alter(&$types) {
   foreach ($types as $type => $data) {
     if ($plugins = $exo_form_plugin_manager->getPluginsByType($type)) {
       $types[$type]['#process'][] = 'exo_form_element_process';
-      $types[$type]['#pre_render'][] = 'exo_form_element_pre_render';
+      $types[$type]['#pre_render'][] = ['Drupal\exo_form\ExoFormElementHandler', 'preRender'];
     }
   }
 }
@@ -229,19 +236,24 @@ function exo_form_element_info_alter(&$types) {
  * @return array
  *   An array of config options.
  */
-function exo_form_get_settings() {
+function exo_form_get_settings($page_settings = []) {
   $settings = &drupal_static(__FUNCTION__);
   $active_theme_id = \Drupal::theme()->getActiveTheme()->getName();
-  if (!isset($settings[$active_theme_id])) {
+  if (!isset($settings[$active_theme_id]) || !empty($page_settings)) {
     $theme_settings = [];
     $global_settings = \Drupal::service('exo_form.settings')->getSettings();
     $enabled = isset($global_settings['themes'][$active_theme_id]);
     if ($enabled) {
-      $theme_settings = !empty($global_settings['themes'][$active_theme_id]) ? $global_settings['themes'][$active_theme_id] : [];
+      $theme_settings = $page_settings;
+      $theme_settings += !empty($global_settings['themes'][$active_theme_id]) ? $global_settings['themes'][$active_theme_id] : [];
       $theme_settings += $global_settings;
       unset($theme_settings['themes'], $theme_settings['exo_default'], $theme_settings['exo_preset']);
       $settings[$active_theme_id] = $theme_settings;
     }
+    $context = [
+      'route_name' => \Drupal::routeMatch()->getRouteName(),
+    ];
+    \Drupal::moduleHandler()->alter('exo_form_settings', $settings[$active_theme_id], $context);
   }
   return $settings[$active_theme_id];
 }
@@ -284,34 +296,6 @@ function exo_form_element_process(&$element) {
     if ($instance->applies($element)) {
       $instance->process($element);
     }
-  }
-  return $element;
-}
-
-/**
- * Run an element through exo form processing.
- */
-function exo_form_element_pre_render($element) {
-  if (empty($element['#type']) || !exo_form_access()) {
-    return $element;
-  }
-  $is_admin = exo_is_admin();
-  $is_form = !empty($element['#parents']);
-  if ($is_form || $is_admin) {
-    $exo_form_plugin_manager = &drupal_static(__FUNCTION__);
-    if (!isset($exo_form_plugin_manager)) {
-      $exo_form_plugin_manager = \Drupal::service('plugin.manager.exo_form');
-    }
-    $type = $element['#type'];
-    foreach ($exo_form_plugin_manager->getPluginInstancesByType($type) as $id => $instance) {
-      if ($instance->applies($element)) {
-        $element = $instance->preRender($element);
-      }
-    }
-    if (!$is_form && !$is_admin) {
-      $element['#theme_wrappers'][] = 'exo_form_container';
-    }
-    $element['#attached']['library'][] = 'exo_form/base';
   }
   return $element;
 }
@@ -542,6 +526,8 @@ function template_preprocess_exo_form_element_container(array &$variables) {
   $variables['attributes'] = [
     'class' => ['exo-form-element', 'exo-form-element-js'],
   ];
+  $variables['wrapper_outer_prefix'] = isset($element['#wrapper_outer_prefix']) ? $element['#wrapper_outer_prefix'] : [];
+  $variables['wrapper_outer_suffix'] = isset($element['#wrapper_outer_suffix']) ? $element['#wrapper_outer_suffix'] : [];
   $variables['wrapper_prefix'] = isset($element['#wrapper_prefix']) ? $element['#wrapper_prefix'] : [];
   $variables['wrapper_suffix'] = isset($element['#wrapper_suffix']) ? $element['#wrapper_suffix'] : [];
 
@@ -696,6 +682,9 @@ function exo_form_library_info_alter(&$libraries, $extension) {
     $path = '/' . drupal_get_path('module', 'exo_form');
     $libraries['frontUi']['js'][$path . '/js/exo.form.views-bulk-operations.js'] = [];
   }
+  if ($extension == 'date_recur_modular') {
+    unset($libraries['date_recur_modular_sierra_widget']['css']);
+  }
   switch ($extension) {
     case 'adminimal_theme':
     case 'seven':
@@ -815,7 +804,17 @@ function exo_form_preprocess_views_ui_views_listing_table(&$variables) {
 }
 
 /**
- * Implements hook_FORM_ID_alter().
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function exo_form_field_widget_date_recur_modular_sierra_form_alter(&$element, FormStateInterface $form_state, $context) {
+  if (!isset($element['#type'])) {
+    $element['#type'] = 'fieldset';
+    $element['#attributes']['class'][] = 'exo-form-date-recur-sierra';
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
  */
 function exo_form_form_revision_overview_form_alter(&$form, FormStateInterface $form_state) {
   foreach (Element::children($form['node_revisions_table']) as $key) {

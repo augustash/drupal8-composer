@@ -1,6 +1,25 @@
 .exo-form {
   @include exo-progress-throbber;
 
+  @include breakpoint(small only) {
+
+    select,
+    textarea,
+    input[type='text'],
+    input[type='password'],
+    input[type='datetime'],
+    input[type='datetime-local'],
+    input[type='date'],
+    input[type='month'],
+    input[type='time'],
+    input[type='week'],
+    input[type='number'],
+    input[type='email'],
+    input[type='url'] {
+      font-size: 16px !important;
+    }
+  }
+
   .exo-form-hide {
     display: none;
   }
@@ -162,21 +181,21 @@
 }
 
 .exo-form-inline {
-  @include flex;
-  @include exo-flex-direction(column, row);
-
-  > label {
-    margin-left: $global-margin / 2 !important;
-    margin-right: $global-margin / 2 !important;
-  }
 
   @include breakpoint(medium) {
+    @include flex;
+    @include exo-flex-direction(column, row);
     flex-wrap: nowrap;
     align-items: flex-end;
     // min-width: 100%;
     box-sizing: border-box;
     margin-left: $global-margin / 2 * -1;
     margin-right: $global-margin / 2 * -1;
+
+    > label {
+      margin-left: $global-margin / 2 !important;
+      margin-right: $global-margin / 2 !important;
+    }
 
     > a {
       align-self: center;

@@ -9,6 +9,7 @@ use Drupal\block\BlockInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\exo_modal\Plugin\ExoModalBlockPluginInterface;
 use Drupal\Core\Ajax\AppendCommand;
+use Drupal\exo_modal\Ajax\ExoModalContentCommand;
 
 /**
  * Class ExoModalBlockController.
@@ -53,6 +54,16 @@ class ExoModalBlockController extends ControllerBase {
       $plugin = $block->getPlugin();
       if ($plugin instanceof ExoModalBlockPluginInterface) {
         $response->addCommand(new AppendCommand('body', $plugin->buildModal()));
+      }
+      else {
+        $build = [
+          'messages' => [
+            '#type' => 'status_messages',
+          ],
+          'block' => $this->entityTypeManager->getViewBuilder('block')->view($block),
+        ];
+
+        $response->addCommand(new ExoModalContentCommand($build));
       }
     }
     return $response;

@@ -3,11 +3,8 @@
 namespace Drupal\exo_alchemist\Plugin\ExoComponentField;
 
 use Drupal\Core\Controller\TitleResolverInterface;
-use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\exo_alchemist\Definition\ExoComponentDefinitionField;
-use Drupal\exo_alchemist\Plugin\ExoComponentFieldComputedBase;
 use Drupal\exo_icon\ExoIconTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,7 +43,7 @@ class PageTitle extends Text implements ContainerFactoryPluginInterface {
   protected $titleResolver;
 
   /**
-   * Creates a LocalTasksBlock instance.
+   * Creates a PageTitle instance.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -85,7 +82,7 @@ class PageTitle extends Text implements ContainerFactoryPluginInterface {
   /**
    * {@inheritdoc}
    */
-  public function componentPropertyInfo(ExoComponentDefinitionField $field) {
+  public function propertyInfo() {
     $properties = [
       'value' => $this->t('The page title renderable.'),
     ];
@@ -95,14 +92,30 @@ class PageTitle extends Text implements ContainerFactoryPluginInterface {
   /**
    * {@inheritdoc}
    */
-  public function componentViewEmptyValue(ExoComponentDefinitionField $field, $is_layout_builder) {
-    if ($is_layout_builder) {
+  public function getDefaultValue($delta = 0) {
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isHideable(array $contexts) {
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function viewEmptyValue(array $contexts) {
+    if ($this->isLayoutBuilder($contexts)) {
+      $entity = $contexts['layout_builder.entity']->getContextValue();
+      $title = $entity->isNew() ? $this->t('Dynamic Page Title') : $contexts['layout_builder.entity']->getContextValue()->label();
       $title = [
         '#type' => 'inline_template',
         '#template' => '{{ title }} <span class="exo-alchemist-component-description">{{ description }}</span>',
         '#context' => [
-          'title' => $this->t('Dynamic Page Title'),
-          'description' => $this->icon('This title will be automatically replaced with the actual page title. Edit to override.')->setIcon('regular-question-circle'),
+          'title' => $title,
+          'description' => $this->isEditable($contexts) ? $this->icon('This title will be automatically replaced with the actual page title. Edit to override.')->setIcon('regular-question-circle') : '',
         ],
       ];
     }

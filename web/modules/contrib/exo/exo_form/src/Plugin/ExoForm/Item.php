@@ -8,13 +8,18 @@ use Drupal\exo_form\Plugin\ExoFormBase;
  * Provides a plugin for element type(s).
  *
  * @ExoForm(
- *   id = "item",
+ *   id = "Item",
  *   label = @Translation("Item"),
  *   element_types = {
- *     "item",
+ *     "exo_radios_slider",
  *   }
  * )
  */
 class Item extends ExoFormBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $intersectSupported = TRUE;
 
 }

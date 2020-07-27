@@ -2,9 +2,12 @@
 
 namespace Drupal\exo_alchemist\Plugin;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\exo_alchemist\Definition\ExoComponentDefinitionField;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\exo_alchemist\ExoComponentValue;
+use Drupal\exo_alchemist\ExoComponentValues;
 
 /**
  * Defines an interface for Component Field plugins.
@@ -14,160 +17,220 @@ interface ExoComponentFieldFieldableInterface extends ExoComponentFieldInterface
   /**
    * Extending classes must use to return the storage values for the field.
    *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field
-   *   The eXo component field.
-   *
    * @return array
    *   An array of values to set to the FieldStorageConfig.
    */
-  public function componentStorage(ExoComponentDefinitionField $field);
+  public function getStorageConfig();
 
   /**
    * Extending classes must use to return the values for the field.
    *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field
-   *   The eXo component field.
-   *
    * @return array
    *   An array of values to set to the FieldConfig.
    */
-  public function componentField(ExoComponentDefinitionField $field);
+  public function getFieldConfig();
 
   /**
    * Extending classes should use to define the field widget config.
    *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field
-   *   The eXo component field.
-   *
    * @return array
    *   A field widget definition ['type' => string, 'settings' => []].
    */
-  public function componentWidget(ExoComponentDefinitionField $field);
+  public function getWidgetConfig();
 
   /**
    * Extending classes should use to define the field formatter config.
    *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field
-   *   The eXo component field.
-   *
    * @return array
    *   A field widget definition ['type' => string, 'settings' => []].
    */
-  public function componentFormatter(ExoComponentDefinitionField $field);
+  public function getFormatterConfig();
+
+  /**
+   * Acts on field as the default component is being removed.
+   *
+   * This method is called when a component default is being removed.
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
+   *   The field items for the default component entity.
+   * @param bool $update
+   *   If this is a field update.
+   */
+  public function onFieldClean(FieldItemListInterface $items, $update = TRUE);
 
   /**
    * Operations that can be run before update during layout building.
    *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field
-   *   The eXo component field.
    * @param \Drupal\Core\Field\FieldItemListInterface $items
    *   The field items.
    */
-  public function componentPreUpdate(ExoComponentDefinitionField $field, FieldItemListInterface $items);
+  public function onDraftUpdateLayoutBuilderEntity(FieldItemListInterface $items);
 
   /**
    * Return the default value of a field.
    *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field
-   *   The eXo component field.
+   * @param \Drupal\exo_alchemist\ExoComponentValues $values
+   *   The field values.
    * @param \Drupal\Core\Field\FieldItemListInterface $items
    *   The field items.
    *
    * @return array
    *   A value that will be set to the Drupal default entity field.
    */
-  public function componentValues(ExoComponentDefinitionField $field, FieldItemListInterface $items);
-
-  /**
-   * Acts on field before it is saved.
-   *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field
-   *   The eXo component field.
-   * @param \Drupal\Core\Field\FieldItemListInterface $items
-   *   The field items.
-   */
-  public function componentUpdate(ExoComponentDefinitionField $field, FieldItemListInterface $items);
-
-  /**
-   * Acts on field before it is deleted.
-   *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field
-   *   The eXo component field.
-   * @param \Drupal\Core\Field\FieldItemListInterface $items
-   *   The field items.
-   */
-  public function componentDelete(ExoComponentDefinitionField $field, FieldItemListInterface $items);
-
-  /**
-   * Acts on field before it is uninstalled.
-   *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field
-   *   The eXo component field.
-   * @param \Drupal\Core\Field\FieldItemListInterface $items
-   *   The field items.
-   */
-  public function componentUninstall(ExoComponentDefinitionField $field, FieldItemListInterface $items);
-
-  /**
-   * Acts on field before it is cloned.
-   *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field
-   *   The eXo component field.
-   * @param \Drupal\Core\Field\FieldItemListInterface $items
-   *   The field items.
-   */
-  public function componentClone(ExoComponentDefinitionField $field, FieldItemListInterface $items);
-
-  /**
-   * Acts on empty field to restore its values.
-   *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field
-   *   The eXo component field.
-   * @param \Drupal\Core\Field\FieldItemListInterface $items
-   *   The field items.
-   */
-  public function componentRestore(ExoComponentDefinitionField $field, FieldItemListInterface $items);
+  public function populateValues(ExoComponentValues $values, FieldItemListInterface $items);
 
   /**
    * Return the default value of a field.
    *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field
-   *   The eXo component field.
+   * @param string $delta
+   *   The field item delta.
+   *
+   * @return array
+   *   A value that will be set to the Drupal default entity field.
+   */
+  public function getDefaultValue($delta = 0);
+
+  /**
+   * Set component values on an entity.
+   *
+   * @param \Drupal\exo_alchemist\ExoComponentValues $values
+   *   The field values.
    * @param \Drupal\Core\Field\FieldItemListInterface $items
    *   The field items.
-   * @param string $is_layout_builder
-   *   TRUE if we are in layout builder mode.
+   */
+  public function getValues(ExoComponentValues $values, FieldItemListInterface $items);
+
+  /**
+   * Extending classes can use this method to validate the component value.
+   *
+   * @param \Drupal\exo_alchemist\ExoComponentValue $value
+   *   The field value.
+   */
+  public function validateValue(ExoComponentValue $value);
+
+  /**
+   * Acts on field before it is updated.
+   *
+   * This method is called when a field is being updated from within a
+   * layout-builder-enabled entity.
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
+   *   The field items.
+   * @param \Drupal\Core\Entity\EntityInterface $parent_entity
+   *   The layout-builder-enabled entity that contains this entity.
+   */
+  public function onPreSaveLayoutBuilderEntity(FieldItemListInterface $items, EntityInterface $parent_entity);
+
+  /**
+   * Acts on field after it is updated.
+   *
+   * This method is called when a field is being updated from within a
+   * layout-builder-enabled entity.
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
+   *   The field items.
+   * @param \Drupal\Core\Entity\EntityInterface $parent_entity
+   *   The layout-builder-enabled entity that contains this entity.
+   */
+  public function onPostSaveLayoutBuilderEntity(FieldItemListInterface $items, EntityInterface $parent_entity);
+
+  /**
+   * Acts on field after it is deleted.
+   *
+   * This method is called when a field is being removed from within a
+   * layout-builder-enabled entity.
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
+   *   The field items.
+   * @param \Drupal\Core\Entity\EntityInterface $parent_entity
+   *   The layout-builder-enabled entity that contains this entity.
+   */
+  public function onPostDeleteLayoutBuilderEntity(FieldItemListInterface $items, EntityInterface $parent_entity);
+
+  /**
+   * Acts on field before it is cloned.
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
+   *   The field items.
+   * @param bool $all
+   *   Flag that determines if this is a partial clone or full clone.
+   */
+  public function onClone(FieldItemListInterface $items, $all = FALSE);
+
+  /**
+   * Acts on empty field to restore its values.
+   *
+   * @param \Drupal\exo_alchemist\ExoComponentValues $values
+   *   The field values.
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
+   *   The field items.
+   */
+  public function onFieldRestore(ExoComponentValues $values, FieldItemListInterface $items);
+
+  /**
+   * Return the values that will be passed to the component for display.
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
+   *   The field items.
+   * @param \Drupal\Core\Plugin\Context\Context[] $contexts
+   *   An array of current contexts.
    *
    * @return array
    *   A value that will be sent to twig.
    */
-  public function componentView(ExoComponentDefinitionField $field, FieldItemListInterface $items, $is_layout_builder);
+  public function view(FieldItemListInterface $items, array $contexts);
 
   /**
-   * Return the default value of an item.
+   * Returns the value that will be passed to the component for display.
    *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field
-   *   The eXo component field.
    * @param \Drupal\Core\Field\FieldItemInterface $item
    *   The field item.
    * @param string $delta
    *   The field item delta.
-   * @param string $is_layout_builder
-   *   TRUE if we are in layout builder mode.
+   * @param \Drupal\Core\Plugin\Context\Context[] $contexts
+   *   An array of current contexts.
    *
    * @return array
    *   A value that will be sent to twig.
    */
-  public function componentViewValue(ExoComponentDefinitionField $field, FieldItemInterface $item, $delta, $is_layout_builder);
+  public function viewValue(FieldItemInterface $item, $delta, array $contexts);
 
   /**
    * Extending classes can use this method to return values for an empty item.
    *
-   * Should reflect properties reflected in componentPropertyInfo().
+   * Should reflect properties reflected in propertyInfo().
+   *
+   * @param \Drupal\Core\Plugin\Context\Context[] $contexts
+   *   An array of current contexts.
    *
    * @return array
    *   An array of key => value that will be passed as Twig variables.
    */
-  public function componentViewEmptyValue(ExoComponentDefinitionField $field, $is_layout_builder);
+  public function viewEmptyValue(array $contexts);
+
+  /**
+   * Return a list of paths that require configuration before being added.
+   *
+   * @return string[]
+   *   An array of field paths.
+   */
+  public function getRequiredPaths();
+
+  /**
+   * Return the default value of an item.
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
+   *   The field items.
+   * @param \Drupal\Core\Plugin\Context\Context[] $contexts
+   *   An array of current contexts.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The user session for which to check access.
+   * @param bool $return_as_object
+   *   If TRUE, will return access as object.
+   *
+   * @return bool|\Drupal\Core\Access\AccessResultInterface
+   *   The access result.
+   */
+  public function access(FieldItemListInterface $items, array $contexts, AccountInterface $account = NULL, $return_as_object = FALSE);
 
 }

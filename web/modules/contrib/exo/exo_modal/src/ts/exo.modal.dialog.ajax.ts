@@ -39,7 +39,10 @@
     if (Drupal.ExoModal) {
       var modals = Drupal.ExoModal.getVisible();
       if (modals.count()) {
-        modals.getLast().close();
+        const modal = modals.getLast();
+        $(window).trigger('dialog:beforeclose', [modal, modal.getElement()]);
+        modal.close();
+        $(window).trigger('dialog:afterclose', [modal, modal.getElement()]);
       }
     }
   }

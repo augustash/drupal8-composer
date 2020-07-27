@@ -20,7 +20,7 @@ class ExoLinkMenuStaticMenuLinkOverrides extends StaticMenuLinkOverrides {
       'weight' => 0,
       'expanded' => FALSE,
       'enabled' => FALSE,
-      // Micon: options are allowed.
+      // eXo Icon: options are allowed.
       'options' => [],
     ];
     // Filter the overrides to only those that are expected.
@@ -34,7 +34,7 @@ class ExoLinkMenuStaticMenuLinkOverrides extends StaticMenuLinkOverrides {
       $definition['weight'] = (int) $definition['weight'];
       $definition['expanded'] = (bool) $definition['expanded'];
       $definition['enabled'] = (bool) $definition['enabled'];
-      // Micon: options are allowed.
+      // eXo Icon: options are allowed.
       $definition['options'] = $definition['options'];
 
       $id = static::encodeId($id);

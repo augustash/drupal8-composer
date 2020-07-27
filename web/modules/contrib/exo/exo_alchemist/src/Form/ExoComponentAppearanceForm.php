@@ -57,7 +57,7 @@ class ExoComponentAppearanceForm extends FormBase {
   protected $region;
 
   /**
-   * The UUID of the block being removed.
+   * The UUID of the block being acted on.
    *
    * @var string
    */
@@ -90,6 +90,13 @@ class ExoComponentAppearanceForm extends FormBase {
    * @var \Drupal\exo_alchemist\ExoComponentPropertyManager
    */
   protected $exoComponentPropertyManager;
+
+  /**
+   * Preview contexts.
+   *
+   * @var \Drupal\Core\Plugin\Context\Context[]
+   */
+  protected $contexts;
 
   /**
    * Constructs a new ExoComponentAppearanceForm object.
@@ -130,14 +137,18 @@ class ExoComponentAppearanceForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, SectionStorageInterface $section_storage = NULL, $delta = NULL, $region = NULL, $uuid = NULL) {
     $this->sectionStorage = $section_storage;
+    $this->contexts = $section_storage->getContexts();
     $this->delta = $delta;
     $this->region = $region;
     $this->uuid = $uuid;
 
     $component = $this->sectionStorage->getSection($this->delta)->getComponent($this->uuid);
-    /** @var Drupal\layout_builder\Plugin\Block\InlineBlock $this->block */
+    /** @var \Drupal\layout_builder\Plugin\Block\InlineBlock $this->block */
     $this->block = $component->getPlugin();
     $this->entity = $this->extractBlockEntity($this->block);
+    // Set Alchemist is preview so that the property manager knows when
+    // refreshing modifiers.
+    $this->entity->exoAlchemistPreview = TRUE;
     $definition = $this->exoComponentManager->getEntityBundleComponentDefinition($this->entity->type->entity);
 
     if ($this->isAjax()) {
@@ -240,7 +251,7 @@ class ExoComponentAppearanceForm extends FormBase {
     $entity = $form_state->getTemporaryValue('appearanceEntity') ?: $this->entity;
 
     $definition = $this->exoComponentManager->getEntityBundleComponentDefinition($entity->type->entity);
-    $attributes = $this->exoComponentPropertyManager->getModifierAttributes($definition, $entity, TRUE);
+    $attributes = $this->exoComponentPropertyManager->getModifierAttributes($definition, $entity, $this->contexts);
     if (!empty($trigger['#do_submit'])) {
       return $this->rebuildAndClose($this->sectionStorage);
     }

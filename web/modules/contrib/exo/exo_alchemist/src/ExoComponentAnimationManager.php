@@ -117,10 +117,10 @@ class ExoComponentAnimationManager {
    *   The values array.
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The content entity.
-   * @param string $is_layout_builder
-   *   TRUE if we are in layout builder mode.
+   * @param \Drupal\Core\Plugin\Context\Context[] $contexts
+   *   An array of current contexts.
    */
-  public function viewEntityValues(ExoComponentDefinition $definition, array &$values, ContentEntityInterface $entity, $is_layout_builder) {
+  public function viewEntityValues(ExoComponentDefinition $definition, array &$values, ContentEntityInterface $entity, array $contexts) {
     if ($this->moduleHandler->moduleExists('exo_aos')) {
       foreach ($definition->getAnimations() as $animation_name => $animation) {
         $aos = $this->animationGenerator()->generate($animation->toAnimationSettings());

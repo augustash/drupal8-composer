@@ -5,6 +5,7 @@ namespace Drupal\exo_modal\Render;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Controller\TitleResolverInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Render\MainContent\MainContentRendererInterface;
@@ -23,13 +24,23 @@ class ExoModalRenderer implements MainContentRendererInterface {
   protected $titleResolver;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * Constructs a new DialogRenderer.
    *
    * @param \Drupal\Core\Controller\TitleResolverInterface $title_resolver
    *   The title resolver.
+   * @param Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
-  public function __construct(TitleResolverInterface $title_resolver) {
+  public function __construct(TitleResolverInterface $title_resolver, ModuleHandlerInterface $module_handler) {
     $this->titleResolver = $title_resolver;
+    $this->moduleHandler = $module_handler;
   }
 
   /**

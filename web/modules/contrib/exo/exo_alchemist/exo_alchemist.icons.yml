@@ -2,3 +2,47 @@ exo_alchemist.alchemist:
   text: alchemist
   icon: regular-flask
   prefix: admin
+exo_alchemist.elements:
+  text: elements
+  icon: regular-list-alt
+  prefix: exo_alchemist
+exo_alchemist.move:
+  text: move
+  icon: regular-arrows-alt
+  prefix: exo_alchemist
+exo_alchemist.up:
+  text: up
+  icon: regular-arrow-alt-up
+  prefix: exo_alchemist
+exo_alchemist.down:
+  text: down
+  icon: regular-arrow-alt-down
+  prefix: exo_alchemist
+exo_alchemist.prev:
+  text: prev
+  icon: regular-arrow-alt-left
+  prefix: exo_alchemist
+exo_alchemist.next:
+  text: next
+  icon: regular-arrow-alt-right
+  prefix: exo_alchemist
+exo_alchemist.restore:
+  text: restore
+  icon: regular-undo
+  prefix: exo_alchemist
+exo_alchemist.remove:
+  text: remove
+  icon: regular-trash
+  prefix: exo_alchemist
+exo_alchemist.hide:
+  text: hide
+  icon: regular-low-vision
+  prefix: exo_alchemist
+exo_alchemist.locked:
+  text: locked
+  icon: regular-lock
+  prefix: exo_alchemist
+exo_alchemist.permission:
+  text: permission
+  icon: regular-user-lock
+  prefix: exo_alchemist

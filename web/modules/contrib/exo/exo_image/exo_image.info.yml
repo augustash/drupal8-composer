@@ -1,4 +1,4 @@
-name: 'eXo Image'
+name: 'eXo Image (deprecated)'
 type: module
 description: 'Provides image handling improvements.'
 core: 8.x

@@ -110,7 +110,7 @@ class ExoSettingsPluginSelectInstance extends ExoSettingsInstance implements Exo
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array $form, FormStateInterface $form_state) {
     $plugin_instance = $this->getPluginInstance($form, $form_state);
     if ($plugin_instance) {
       $subform_state = SubformState::createForSubform($form['plugin_settings'], $form, $form_state);

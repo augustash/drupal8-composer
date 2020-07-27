@@ -3,17 +3,12 @@
 namespace Drupal\exo_alchemist\Plugin\ExoComponentField;
 
 use Drupal\Component\Plugin\Exception\PluginException;
-use Drupal\Core\Config\Entity\ConfigEntityInterface;
-use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\RevisionableInterface;
-use Drupal\Core\Field\EntityReferenceFieldItemList;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\exo_alchemist\Definition\ExoComponentDefinition;
-use Drupal\exo_alchemist\Definition\ExoComponentDefinitionField;
-use Drupal\exo_alchemist\Definition\ExoComponentDefinitionFieldPreview;
 use Drupal\exo_alchemist\ExoComponentManager;
-use Drupal\layout_builder\InlineBlockEntityOperations;
+use Drupal\exo_alchemist\ExoComponentValue;
+use Drupal\exo_alchemist\ExoComponentValues;
 use Drupal\layout_builder\LayoutEntityHelperTrait;
 
 /**
@@ -37,10 +32,10 @@ class Sequence extends EntityReferenceBase {
   /**
    * Component definition.
    *
-   * @var \Drupal\exo_alchemist\Definition\ExoComponentDefinition[]
+   * @var \Drupal\exo_alchemist\Definition\ExoComponentDefinition
    *   The component definition.
    */
-  protected $componentDefinitions = [];
+  protected $componentDefinition;
 
   /**
    * The parent component's modifier attributes.
@@ -53,51 +48,62 @@ class Sequence extends EntityReferenceBase {
   /**
    * {@inheritdoc}
    */
-  public function componentProcessDefinition(ExoComponentDefinitionField $field) {
-    parent::componentProcessDefinition($field);
+  public function processDefinition() {
+    parent::processDefinition();
+    $field = $this->getFieldDefinition();
     if (!$field->hasAdditionalValue('sequence_fields')) {
       throw new PluginException(sprintf('eXo Component Field plugin (%s) requires [fields] be set.', $field->getType()));
     }
 
-    $definition = $this->getComponentDefinition($field)->toArray();
+    // Merge in base defaults.
+    foreach ($field->getDefaults() as $default) {
+      foreach ($field->getAdditionalValue('sequence_fields') as $sequence_field_name => $sequence_field) {
+        if (!empty($sequence_field['default']) && empty($default->getValue($sequence_field_name))) {
+          $default->setValue($sequence_field_name, $sequence_field['default']);
+        }
+      }
+    }
+
+    $definition = $this->getComponentDefinition()->toArray();
     $this->exoComponentManager()->processDefinition($definition, $definition['id']);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentInstallEntityType(ExoComponentDefinitionField $field, ConfigEntityInterface $entity) {
-    parent::componentInstallEntityType($field, $entity);
-    $component = $this->getComponentDefinition($field);
+  public function onFieldInstall() {
+    parent::onFieldInstall();
+    $component = $this->getComponentDefinition();
     $this->exoComponentManager()->installEntityType($component);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentUpdateEntityType(ExoComponentDefinitionField $field, ConfigEntityInterface $entity) {
-    parent::componentUpdateEntityType($field, $entity);
-    $component = $this->getComponentDefinition($field);
-    if (!$this->exoComponentManager()->updateEntityType($component)) {
-      // When a sequence field is added post-install, it may need to be
-      // installed.
-      $this->exoComponentManager()->installEntityType($component);
+  public function onFieldUpdate() {
+    parent::onFieldUpdate();
+    $component = $this->getComponentDefinition();
+    $this->exoComponentManager()->updateEntityType($component);
+    // On update, we need to make sure we build the entity.
+    $values = ExoComponentValues::fromFieldDefaults($this->getFieldDefinition());
+    foreach ($values as $value) {
+      $this->exoComponentManager()->buildEntity($this->getComponentDefinitionWithValue($value));
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentUninstallEntityType(ExoComponentDefinitionField $field, ConfigEntityInterface $entity) {
-    parent::componentUninstallEntityType($field, $entity);
-    $component = $this->getComponentDefinition($field);
+  public function onFieldUninstall() {
+    parent::onFieldUninstall();
+    $component = $this->getComponentDefinition();
     $this->exoComponentManager()->uninstallEntityType($component);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentPreUpdate(ExoComponentDefinitionField $field, FieldItemListInterface $items) {
+  public function onDraftUpdateLayoutBuilderEntity(FieldItemListInterface $items) {
     if ($items->count()) {
       $this->deepSerializeEntity($items);
     }
@@ -107,10 +113,11 @@ class Sequence extends EntityReferenceBase {
    * Workaround for deep serialization.
    *
    * @param \Drupal\Core\Field\FieldItemListInterface $items
+   *   The field items.
    */
   protected function deepSerializeEntity(FieldItemListInterface $items) {
     // This is an ugly workaround of the lack of deep serialization. Entities
-    // nested more than 1 level are never serialized and we therefore we set
+    // nested more than 1 level are never serialized and we therefore set
     // these entities as "new" so that they are serialized and then we set
     // them back here.
     // @see exo_alchemist_block_content_presave().
@@ -132,137 +139,115 @@ class Sequence extends EntityReferenceBase {
   /**
    * {@inheritdoc}
    */
-  public function componentView(ExoComponentDefinitionField $field, FieldItemListInterface $items, $is_layout_builder) {
-    $output = [];
-    if ($items->count()) {
-      foreach ($items as $delta => $item) {
-        $output[$delta] = $this->componentViewValue($field, $item, $delta, $is_layout_builder);
-      }
+  public function getDefaultValue($delta = 0) {
+    $field = $this->getFieldDefinition();
+    $value = new ExoComponentValue($field, [
+      '_delta' => $delta,
+    ]);
+    if ($entity = $this->getValueEntity($value)) {
+      return [
+        'target_id' => $entity->id(),
+      ];
     }
-    elseif ($value = $this->componentViewEmptyValue($field, $is_layout_builder)) {
-      $output[0] = $value;
-    }
-    return $output;
+    return NULL;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentViewValue(ExoComponentDefinitionField $field, FieldItemInterface $item, $delta, $is_layout_builder) {
+  public function viewValue(FieldItemInterface $item, $delta, array $contexts) {
     $output = [];
     if ($item->entity) {
-      $component = $this->getComponentDefinition($field);
-      // Perserve path.
-      $component->setParents(array_merge($field->getComponent()->getParents(), [
-        $field->safeId(),
-        $delta,
-      ]));
-      $output = $this->exoComponentManager()->viewEntityValues($component, $item->entity, $is_layout_builder);
+      $field = $this->getFieldDefinition();
+      $component = $this->getComponentDefinition();
+      $component->addParentFieldDelta($field, $delta);
+      $output = $this->exoComponentManager()->viewEntityValues($component, $item->entity, $contexts);
     }
     return $output;
   }
 
   /**
-   * Get parent modifier attributes.
-   *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinition $definition
-   *   The component definition.
-   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
-   *   The content entity.
-   * @param string $is_layout_builder
-   *   TRUE if we are in layout builder mode.
-   *
-   * @return array
-   *   An array of attributes.
-   */
-  protected function componentParentModifierAttributes(ExoComponentDefinition $definition, ContentEntityInterface $entity, $is_layout_builder) {
-    if (!isset($this->parentModifierAttributes)) {
-      $this->parentModifierAttributes = $this->exoComponentManager()->getExoComponentPropertyManager()->getModifierAttributes($definition, $entity, $is_layout_builder);
-    }
-    return $this->parentModifierAttributes;
-  }
-
-  /**
    * {@inheritdoc}
    */
-  protected function componentCloneValue(ExoComponentDefinitionField $field, FieldItemInterface $item) {
-    $component = $this->getComponentDefinition($field);
+  protected function onCloneValue(FieldItemInterface $item, $all) {
+    $component = $this->getComponentDefinition();
     return $this->exoComponentManager()->cloneEntity($component, $item->entity);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentRestore(ExoComponentDefinitionField $field, FieldItemListInterface $items) {
-    $values = [];
+  public function onFieldRestore(ExoComponentValues $values, FieldItemListInterface $items) {
+    $field_values = [];
     if ($items->isEmpty()) {
-      $values = parent::componentRestore($field, $items);
+      $field_values = parent::onFieldRestore($values, $items);
     }
     else {
-      $component = $this->getComponentDefinition($field);
-      foreach ($items as $item) {
-        $values[] = $this->exoComponentManager()->restoreEntity($component, $item->entity);
+      $component = $this->getComponentDefinition();
+      foreach ($items as $delta => $item) {
+        $component->addParentFieldDelta($this->getFieldDefinition(), $delta);
+        $field_values[] = $this->exoComponentManager()->restoreEntity($component, $item->entity);
       }
     }
-    return $values;
+    return $field_values;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentUpdate(ExoComponentDefinitionField $field, FieldItemListInterface $items) {
-    parent::componentUpdate($field, $items);
-    $parent_entity = $items->getEntity();
-    $component = $this->getComponentDefinition($field);
-    foreach ($items as $item) {
+  public function onPostSaveLayoutBuilderEntity(FieldItemListInterface $items, EntityInterface $parent_entity) {
+    parent::onPostSaveLayoutBuilderEntity($items, $parent_entity);
+    $sequence_entity = $items->getEntity();
+    $component = $this->getComponentDefinition();
+    foreach ($items as $delta => $item) {
+      $component->addParentFieldDelta($this->getFieldDefinition(), $delta);
       $entity = $item->entity;
-      $this->exoComponentManager()->getExoComponentFieldManager()->updateEntityFields($component, $entity);
-      // We need to save usage.
-      \Drupal::service('inline_block.usage')->addUsage($entity->id(), $parent_entity);
+      if ($entity) {
+        $this->exoComponentManager()->getExoComponentFieldManager()->onPostSaveLayoutBuilderEntity($component, $entity, $parent_entity);
+        // We need to save usage.
+        \Drupal::service('inline_block.usage')->addUsage($entity->id(), $sequence_entity);
+      }
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentDelete(ExoComponentDefinitionField $field, FieldItemListInterface $items) {
-    parent::componentDelete($field, $items);
-    $component = $this->getComponentDefinition($field);
-    foreach ($items as $item) {
+  public function onPostDeleteLayoutBuilderEntity(FieldItemListInterface $items, EntityInterface $parent_entity) {
+    parent::onPostDeleteLayoutBuilderEntity($items, $parent_entity);
+    $sequence_entity = $items->getEntity();
+    $component = $this->getComponentDefinition();
+    foreach ($items as $delta => $item) {
+      $component->addParentFieldDelta($this->getFieldDefinition(), $delta);
       $entity = $item->entity;
-      // $entity->exoComponentRoot = $parent_entity;
-      $this->exoComponentManager()->getExoComponentFieldManager()->updateEntityFields($component, $entity);
-      // We need to save usage.
-      \Drupal::service('inline_block.usage')->deleteUsage([$entity->id()]);
+      if ($entity) {
+        $this->exoComponentManager()->getExoComponentFieldManager()->onPostDeleteLayoutBuilderEntity($component, $entity, $parent_entity);
+        // We need to remove usage.
+        \Drupal::service('inline_block.usage')->removeByLayoutEntity($sequence_entity);
+      }
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function componentEntity(ExoComponentDefinitionFieldPreview $preview, FieldItemInterface $item = NULL) {
-    $component = $this->getComponentDefinition($preview->getField());
-    $entity = $this->exoComponentManager()->loadEntity($component, FALSE, $preview->getDelta());
-    // When a sequence field is installed via a config import, the default
-    // entity has not yet been created. We create it at this point.
-    if (!$entity && $preview->getDelta() === 0) {
+  protected function getValueEntity(ExoComponentValue $value, FieldItemInterface $item = NULL) {
+    $component = $this->getComponentDefinitionWithValue($value);
+    $entity = $this->exoComponentManager()->loadEntity($component);
+    if (!$entity) {
       $entity = $this->exoComponentManager()->buildEntity($component);
     }
-    // We have a base entity but have not yet created an entity for the provided
-    // delta.
-    elseif (!$entity) {
-      $base_entity = $this->exoComponentManager()->loadEntity($component);
-      $entity = $base_entity->createDuplicate();
+    else {
+      $this->exoComponentManager()->populateEntity($component, $entity);
     }
-    $this->exoComponentManager()->populateEntity($component, $entity);
     return $entity;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentPropertyInfo(ExoComponentDefinitionField $field) {
-    $component = $this->getComponentDefinition($field);
+  public function propertyInfo() {
+    $component = $this->getComponentDefinition();
     $info = $this->exoComponentManager()->getPropertyInfo($component);
     $properties = [];
     foreach ($info as $key => $data) {
@@ -274,13 +259,29 @@ class Sequence extends EntityReferenceBase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function getRequiredPaths() {
+    $paths = [];
+    $field = $this->getFieldDefinition();
+    $component = $this->getComponentDefinition();
+    $count = $field->getCardinality() > 1 ? $field->getCardinality() : 1;
+    for ($delta = 0; $delta < $count; $delta++) {
+      $component->addParentFieldDelta($field, $delta);
+      $paths = array_merge($paths, $this->exoComponentManager()->getExoComponentFieldManager()->getRequiredPaths($component));
+    }
+    return $paths;
+  }
+
+  /**
    * Get the component definition.
    *
    * @return \Drupal\exo_alchemist\Definition\ExoComponentDefinition
    *   The component definition.
    */
-  protected function getComponentDefinition(ExoComponentDefinitionField $field, $rebuild = FALSE) {
-    if (!isset($this->componentDefinitions[$field->id()])) {
+  protected function getComponentDefinition() {
+    if (!isset($this->componentDefinition)) {
+      $field = $this->getFieldDefinition();
       $definition = [
         'id' => $field->id(),
         'label' => $field->getComponent()->getLabel() . ': ' . $field->getLabel(),
@@ -289,15 +290,43 @@ class Sequence extends EntityReferenceBase {
         'modifier' => $field->getAdditionalValue('sequence_modifier'),
         'modifiers' => [],
         'modifier_globals' => FALSE,
-        'hidden' => TRUE,
+        'computed' => TRUE,
       ] + $field->toArray() + $field->getComponent()->toArray();
       // Sequence fields do not need to be inherited.
       unset($definition['additional']['sequence_fields']);
       unset($definition['additional']['sequence_modifier']);
       $this->exoComponentManager()->processDefinition($definition, $this->getPluginId());
-      $this->componentDefinitions[$field->id()] = $definition;
+      /** @var \Drupal\exo_alchemist\Definition\ExoComponentDefinition $definition */
+      $definition->addParentField($field);
+      $this->componentDefinition = $definition;
     }
-    return $this->componentDefinitions[$field->id()];
+    return $this->componentDefinition;
+  }
+
+  /**
+   * Get the component definition with set values.
+   *
+   * @param \Drupal\exo_alchemist\ExoComponentValue $value
+   *   The component value.
+   *
+   * @return \Drupal\exo_alchemist\Definition\ExoComponentDefinition
+   *   The component definition.
+   */
+  protected function getComponentDefinitionWithValue(ExoComponentValue $value) {
+    $field = $this->getFieldDefinition();
+    $definition = clone $this->getComponentDefinition();
+    $definition->addParentFieldDelta($field, $value->getDelta());
+    // When passed with a value, we want to make sure the defaults are set
+    // correctly.
+    $definition->setAdditionalValue('_delta', $value->getDelta());
+    foreach ($definition->getFields() as $subfield) {
+      $subfield->setDefaults($value->get($subfield->getName()));
+      $subfield->setComponent($definition);
+    }
+    // Because we are dynamically settings the default values, we need to let
+    // the field manager process these values to make sure they are correct.
+    $this->exoComponentManager()->getExoComponentFieldManager()->processComponentDefinition($definition);
+    return $definition;
   }
 
   /**
@@ -316,8 +345,8 @@ class Sequence extends EntityReferenceBase {
   /**
    * Get the entity type.
    */
-  protected function getEntityTypeBundles(ExoComponentDefinitionField $field) {
-    return [$field->safeId()];
+  protected function getEntityTypeBundles() {
+    return [$this->getFieldDefinition()->safeId()];
   }
 
 }

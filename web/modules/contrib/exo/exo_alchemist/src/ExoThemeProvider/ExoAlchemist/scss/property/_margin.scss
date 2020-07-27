@@ -15,12 +15,12 @@ $sizes: 10, 20, 30, 60, 90, 120;
   }
 
   .exo-modifier--margin-v-#{$size} {
-    margin-top: $global-margin;
-    margin-bottom: $global-margin;
+    margin-top: max($global-margin, rem-calc($size * 0.6));
+    margin-bottom: max($global-margin, rem-calc($size * 0.6));
 
     @include breakpoint(medium) {
-      margin-top: max($global-margin, rem-calc($size));
-      margin-bottom: max($global-margin, rem-calc($size));
+      margin-top: max($global-margin, rem-calc($size * 0.8));
+      margin-bottom: max($global-margin, rem-calc($size * 0.8));
     }
 
     @include breakpoint(large) {

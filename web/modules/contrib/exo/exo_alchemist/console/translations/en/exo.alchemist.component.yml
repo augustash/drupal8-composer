@@ -1,0 +1,35 @@
+description: 'Drupal Console generated command.'
+help: 'The <info>generate:exo:alchemist:component</info> command helps you generate a new eXo Alchemist component.'
+welcome: 'Welcome to the eXo Alchemist component generator'
+options:
+  theme: 'Theme'
+  id: 'ID'
+  label: 'Label'
+  description: 'Description'
+  category: 'Category'
+  resturct_access: 'Restrict Access'
+  fields: 'Fields'
+  modifiers: 'Modifiers'
+questions:
+  id: 'Enter the unique id for this component'
+  label: 'Enter the human-readable name for this component'
+  description: 'Enter the human-readable description for this component'
+  category: 'Enter a category for this component'
+  restrict_access: 'Restrict access (requires "add restricted exo components" permission to add to layout)'
+  fields: 'Would you like to set fields for this component'
+  field:
+    field: 'The entity type:bundle[:field]'
+    label: 'Field label'
+    id: 'Field machine name'
+    description: 'Field description'
+    default: 'Field default'
+    sample: 'Field sample'
+  modifiers: 'Would you like to set default modifiers for this component'
+  modifier:
+    enable: 'Enable: <comment>%s</comment>'
+    options: 'Available modifier values: <comment>%s</comment>'
+    default: 'Default value (leave blank to not set a default)'
+    default_bool: 'Default to enabled'
+arguments: {}
+messages:
+  success: 'I am a new generated command.'

@@ -8,6 +8,14 @@ namespace Drupal\exo_icon;
 interface ExoIconInterface {
 
   /**
+   * Get the icon id.
+   *
+   * @return string
+   *   The icon id.
+   */
+  public function getId();
+
+  /**
    * Get icon as render array.
    *
    * @return array

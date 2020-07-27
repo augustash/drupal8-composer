@@ -10,34 +10,41 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Extension\ThemeHandlerInterface;
+use Drupal\Core\File\Exception\FileException;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\PhpStorage\PhpStorageFactory;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Plugin\Discovery\ContainerDerivativeDiscoveryDecorator;
 use Drupal\exo_alchemist\Plugin\Discovery\ExoComponentDiscovery;
 use Drupal\Core\Plugin\CategorizingPluginManagerTrait;
+use Drupal\Core\Plugin\Context\ContextAwarePluginManagerInterface;
+use Drupal\Core\Plugin\FilteredPluginManagerTrait;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\exo_alchemist\Definition\ExoComponentDefinition;
 use Drupal\exo_alchemist\Plugin\Discovery\ExoComponentInstalledDiscovery;
-use Drupal\layout_builder\Entity\LayoutBuilderEntityViewDisplay;
+use Drupal\exo_icon\ExoIconTranslationTrait;
 use Drupal\layout_builder\LayoutEntityHelperTrait;
+use Drupal\layout_builder\SectionComponent;
+use Drupal\Core\Plugin\Context\ContextDefinition;
+use Drupal\exo_alchemist\ExoComponentEnhancementManager;
 
 /**
  * Provides the default exo_component manager.
  */
-class ExoComponentManager extends DefaultPluginManager {
-  use LayoutEntityHelperTrait;
+class ExoComponentManager extends DefaultPluginManager implements ContextAwarePluginManagerInterface, ExoComponentContextInterface {
 
-  use CategorizingPluginManagerTrait {
-    getSortedDefinitions as traitGetSortedDefinitions;
-  }
+  use CategorizingPluginManagerTrait;
+  use ExoIconTranslationTrait;
+  use FilteredPluginManagerTrait;
+  use LayoutEntityHelperTrait;
+  use ExoComponentContextTrait;
 
   /**
    * The entity bundle type to use as component entities.
@@ -55,6 +62,13 @@ class ExoComponentManager extends DefaultPluginManager {
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   public $entityTypeManager;
+
+  /**
+   * The entity repository service.
+   *
+   * @var \Drupal\Core\Entity\EntityRepositoryInterface
+   */
+  protected $entityRepository;
 
   /**
    * The theme handler service.
@@ -78,11 +92,25 @@ class ExoComponentManager extends DefaultPluginManager {
   protected $exoComponentPropertyManager;
 
   /**
+   * The eXo component enhancement manager.
+   *
+   * @var \Drupal\exo_alchemist\ExoComponentEnhancementManager
+   */
+  protected $exoComponentEnhancementManager;
+
+  /**
    * The eXo component animation manager.
    *
    * @var \Drupal\exo_alchemist\ExoComponentAnimationManager
    */
   protected $exoComponentAnimationManager;
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
 
   /**
    * Cached definitions array.
@@ -92,10 +120,19 @@ class ExoComponentManager extends DefaultPluginManager {
   protected $definitionsInstalled;
 
   /**
+   * An array of ops urls.
+   *
+   * @var string[]
+   */
+  protected $ops;
+
+  /**
    * Constructs a new ExoComponentManager object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository service.
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache
    *   Cache backend instance to use.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
@@ -106,18 +143,80 @@ class ExoComponentManager extends DefaultPluginManager {
    *   The eXo component field manager.
    * @param \Drupal\exo_alchemist\ExoComponentPropertyManager $exo_component_property_manager
    *   The eXo component property manager.
+   * @param \Drupal\exo_alchemist\ExoComponentEnhancementManager $exo_component_enhancement_manager
+   *   The eXo component enhancement manager.
    * @param \Drupal\exo_alchemist\ExoComponentAnimationManager $exo_component_animation_manager
    *   The eXo component animation manager.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
    */
-  public function __construct(EntityTypeManagerInterface $entity_manager, CacheBackendInterface $cache, ModuleHandlerInterface $module_handler, ThemeHandlerInterface $theme_handler, ExoComponentFieldManager $exo_component_field_manager, ExoComponentPropertyManager $exo_component_property_manager, ExoComponentAnimationManager $exo_component_animation_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_manager, EntityRepositoryInterface $entity_repository, CacheBackendInterface $cache, ModuleHandlerInterface $module_handler, ThemeHandlerInterface $theme_handler, ExoComponentFieldManager $exo_component_field_manager, ExoComponentPropertyManager $exo_component_property_manager, ExoComponentEnhancementManager $exo_component_enhancement_manager, ExoComponentAnimationManager $exo_component_animation_manager, AccountInterface $current_user) {
     $this->entityTypeManager = $entity_manager;
+    $this->entityRepository = $entity_repository;
     $this->moduleHandler = $module_handler;
     $this->themeHandler = $theme_handler;
     $this->exoComponentFieldManager = $exo_component_field_manager;
     $this->exoComponentPropertyManager = $exo_component_property_manager;
+    $this->exoComponentEnhancementManager = $exo_component_enhancement_manager;
     $this->exoComponentAnimationManager = $exo_component_animation_manager;
+    $this->currentUser = $current_user;
     $this->setCacheBackend($cache, 'exo_component_info', ['exo_component_info']);
     $this->alterInfo('exo_component_info');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getType() {
+    return 'exo_component';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFilteredDefinitions($consumer, $contexts = NULL, array $extra = []) {
+    if (!is_null($contexts)) {
+      $definitions = $this->getDefinitionsForContexts($contexts);
+    }
+    else {
+      $definitions = $this->getInstalledDefinitions();
+    }
+
+    // Check permissions.
+    foreach ($definitions as $key => $definition) {
+      $permission = $definition->getPermission();
+      if ($permission && !$this->currentUser->hasPermission($permission)) {
+        unset($definitions[$key]);
+      }
+    }
+
+    $type = $this->getType();
+    $hooks = [];
+    $hooks[] = "plugin_filter_{$type}";
+    $hooks[] = "plugin_filter_{$type}__{$consumer}";
+    $this->moduleHandler()->alter($hooks, $definitions, $extra, $consumer);
+    $this->themeManager()->alter($hooks, $definitions, $extra, $consumer);
+    return $definitions;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAlphabeticalDefinitions(array $definitions = NULL, $label_key = 'label') {
+    // Sort the plugins by label.
+    /** @var \Drupal\Core\Plugin\CategorizingPluginManagerTrait|\Drupal\Component\Plugin\PluginManagerInterface $this */
+    $definitions = isset($definitions) ? $definitions : $this->getDefinitions();
+    uasort($definitions, function ($a, $b) use ($label_key) {
+      return strnatcasecmp($a[$label_key], $b[$label_key]);
+    });
+    return $definitions;
+  }
+
+  /**
+   * See \Drupal\Core\Plugin\Context\ContextAwarePluginManagerInterface::getDefinitionsForContexts().
+   */
+  public function getDefinitionsForContexts(array $contexts = []) {
+    return $this->contextHandler()->filterPluginDefinitionsByContexts($contexts, $this->getInstalledDefinitions());
   }
 
   /**
@@ -151,6 +250,16 @@ class ExoComponentManager extends DefaultPluginManager {
   }
 
   /**
+   * Get the eXo component enhancement manager.
+   *
+   * @return \Drupal\exo_alchemist\ExoComponentEnhancementManager
+   *   The eXo component enhancement manager.
+   */
+  public function getExoComponentEnhancementManager() {
+    return $this->exoComponentEnhancementManager;
+  }
+
+  /**
    * Get the eXo component animation manager.
    *
    * @return \Drupal\exo_alchemist\ExoComponentAnimationManager
@@ -169,6 +278,9 @@ class ExoComponentManager extends DefaultPluginManager {
 
   /**
    * Gets installed definitions.
+   *
+   * @return \Drupal\exo_alchemist\Definition\ExoComponentDefinition[]
+   *   The eXo component definition.
    */
   public function getInstalledDefinitions() {
     $definitions = $this->getCachedInstalledDefinitions();
@@ -198,13 +310,49 @@ class ExoComponentManager extends DefaultPluginManager {
    */
   protected function findInstalledDefinitions() {
     $definitions = $this->getInstalledDiscovery()->getDefinitions();
+    $state = \Drupal::state();
+    $rebuild = $state->get('exo_alchemist.component_rebuild', []);
     foreach ($definitions as $plugin_id => &$definition) {
       $this->processInstalledDefinition($definition, $plugin_id);
-      if (!$this->loadEntity($definition)) {
+      // When a config import contains an update to a component, we need to
+      // check if the default entity needs to be built.
+      // @see \Drupal\exo_alchemist\EventSubscriber::onSave()
+      if (isset($rebuild[$definition->safeId()])) {
         $this->buildEntity($definition);
       }
     }
+    if (!empty($rebuild)) {
+      $state->delete('exo_alchemist.component_rebuild');
+    }
     return $definitions;
+  }
+
+  /**
+   * Check if installed definition is different than code definition.
+   *
+   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinition $to_definition
+   *   The component definition.
+   *
+   * @return bool
+   *   TRUE if installed definition is different than code definition.
+   */
+  public function installedDefinitionHasChanges(ExoComponentDefinition $to_definition) {
+    $from_definition = $this->getDefinition($to_definition->id());
+    $has_field_changes = $this->exoComponentFieldManager->installedDefinitionHasChanges($to_definition, $from_definition);
+    return $to_definition->toArray() !== $from_definition->toArray() || $has_field_changes;
+  }
+
+  /**
+   * Update installed definition to the code definition.
+   *
+   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinition $definition
+   *   The component definition.
+   *
+   * @return \Drupal\Core\Config\Entity\ConfigEntityInterface|null
+   *   The config entity.
+   */
+  public function updateInstalledDefinition(ExoComponentDefinition $definition) {
+    return $this->updateEntityType($this->getDefinition($definition->id()));
   }
 
   /**
@@ -268,15 +416,51 @@ class ExoComponentManager extends DefaultPluginManager {
     $definition = new ExoComponentDefinition($definition);
     $this->exoComponentFieldManager->processComponentDefinition($definition);
     $this->exoComponentPropertyManager->processComponentDefinition($definition);
+    $this->exoComponentEnhancementManager->processComponentDefinition($definition);
   }
 
   /**
    * {@inheritdoc}
    */
   public function processInstalledDefinition(&$definition, $plugin_id) {
+    /** @var \Drupal\exo_alchemist\Definition\ExoComponentDefinition $definition */
+    $definition['installed'] = TRUE;
     $this->processDefinition($definition, $plugin_id);
-    $definition->setInstalled();
     $definition->setMissing(!$this->hasDefinition($definition->id()));
+    $definition->addContextDefinition('tags', $this->getTagConstraint($definition));
+    foreach ($definition->getFields() as $field) {
+      $component_field = $this->exoComponentFieldManager->createFieldInstance($field);
+      foreach ($component_field->getContextDefinitions() as $name => $context) {
+        $definition->addContextDefinition($name, $context);
+      }
+    }
+  }
+
+  /**
+   * Get tag constraint.
+   *
+   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinition $definition
+   *   The component definition.
+   *
+   * @return \Drupal\Core\Plugin\Context\ContextDefinition
+   *   The definition.
+   */
+  protected function getTagConstraint(ExoComponentDefinition $definition) {
+    $region_size = new ContextDefinition('map');
+    $tags = $definition->getTags();
+    $size_tags = [
+      'all',
+      'full',
+      'large',
+      'medium',
+      'small',
+    ];
+    if (!array_intersect($tags, $size_tags)) {
+      // The default size tag is full.
+      $tags[] = 'full';
+    }
+    $region_size->addConstraint('ExoComponentTag', $tags);
+    return $region_size;
   }
 
   /**
@@ -285,7 +469,7 @@ class ExoComponentManager extends DefaultPluginManager {
    * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinition $definition
    *   The component definition.
    * @param string $operation
-   *   The operation. Can be 'create', 'update', 'delete', 'view'.
+   *   The operation. Can be 'create', 'update', 'delete', 'view', field:name.
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The currently logged in account.
    *
@@ -300,6 +484,13 @@ class ExoComponentManager extends DefaultPluginManager {
       return AccessResult::allowedIf($operation == 'delete')
         ->andIf(AccessResult::allowedIfHasPermission($account, 'administer exo alchemist'));
     }
+    if (substr($operation, 0, 6) === 'field.') {
+      list($operation, $field_name) = explode('.', $operation);
+      $field = $definition->getFieldBySafeId($field_name);
+      if (!$field) {
+        return AccessResult::forbidden('The definition does not contain a field with the safe id of ' . $field_name . '.');
+      }
+    }
     switch ($operation) {
       case 'create':
         return AccessResult::allowedIf(!$definition->isInstalled())
@@ -309,7 +500,7 @@ class ExoComponentManager extends DefaultPluginManager {
         if (!$this->loadEntity($definition)) {
           return AccessResult::allowed();
         }
-        return AccessResult::allowedIf($definition->isInstalled() && $definition->toArray() !== $this->getDefinition($definition->id())->toArray())
+        return AccessResult::allowedIf($definition->isInstalled() && $this->installedDefinitionHasChanges($definition))
           ->andIf(AccessResult::allowedIfHasPermission($account, 'administer exo alchemist'));
     }
     return AccessResult::allowedIf($definition->isInstalled())
@@ -374,7 +565,7 @@ class ExoComponentManager extends DefaultPluginManager {
    * Extract component definition from a content entity.
    *
    * @param \Drupal\Core\Config\Entity\ContentEntityInterface $entity
-   *   The entity bundle to load the definition from.
+   *   The entity to load the definition from.
    *
    * @return \Drupal\exo_alchemist\Definition\ExoComponentDefinition
    *   The component definition.
@@ -395,13 +586,19 @@ class ExoComponentManager extends DefaultPluginManager {
       '_global' => [
         'label' => $this->t('Component'),
         'properties' => [
+          'instance_id' => $this->t('Component instance id. Will be different per implementation.'),
+          'user' => $this->t('The current user account.'),
+          'logged_in' => $this->t('Flag for authenticated user status. Will be true when the current user is a logged-in member.'),
+          'is_admin' => $this->t('Flag for admin user status. Will be true when the current user is an administrator.'),
           'attributes' => $this->t('Component attributes.'),
           'content_attributes' => $this->t('Component content attributes.'),
+          'preview' => $this->t('Will be TRUE when in layout mode.'),
         ],
       ],
     ];
     $info += $this->exoComponentFieldManager->getPropertyInfo($definition);
     $info += $this->exoComponentPropertyManager->getPropertyInfo($definition);
+    $info += $this->exoComponentEnhancementManager->getPropertyInfo($definition);
     $info += $this->exoComponentAnimationManager->getPropertyInfo($definition);
     return $info;
   }
@@ -431,7 +628,7 @@ class ExoComponentManager extends DefaultPluginManager {
    */
   public function installEntityType(ExoComponentDefinition $definition) {
     $entity = $this->loadEntityType($definition);
-    // That can be called even when an entity type is already installed. It can
+    // This can be called even when an entity type is already installed. It can
     // be called over and over and will only run if entity has not yet been
     // created.
     if (!$entity) {
@@ -441,8 +638,15 @@ class ExoComponentManager extends DefaultPluginManager {
         'label' => $definition->getLabel(),
         'description' => $definition->getDescription(),
       ]);
+      // We do not want ExoComponentGenerator building our entity too soon.
+      $entity->exoComponentInstalling = TRUE;
+      // We allow fields to act on install AFTER the entity type has been saved.
+      // This is intentional and should not be changed.
       $this->exoComponentFieldManager->installEntityType($definition, $entity);
-      $this->saveEntityType($definition, $entity);
+      $this->saveEntityType($definition, $entity, NULL);
+      // Save again now that everything is built and ready to roll.
+      $entity->exoComponentInstalling = FALSE;
+      $entity->save();
     }
     return $entity;
   }
@@ -461,6 +665,9 @@ class ExoComponentManager extends DefaultPluginManager {
       // Clean up all dependents as they are rebuilt each time.
       $this->cleanEntityTypeDependents($entity);
       $this->exoComponentFieldManager->updateEntityType($definition, $entity);
+      // Flag this entity for rebuild.
+      // @see \Drupal\exo_alchemist\ExoComponentGenerator::handleComponentTypeEntityPostSave()
+      $entity->exoComponentRebuilding = TRUE;
       $this->saveEntityType($definition, $entity, $this->getEntityBundleComponentDefinition($entity));
       return $entity;
     }
@@ -487,7 +694,6 @@ class ExoComponentManager extends DefaultPluginManager {
     }
     $entity->save();
     $this->buildEntityType($definition, $original_definition);
-    $this->buildEntity($definition);
   }
 
   /**
@@ -510,7 +716,9 @@ class ExoComponentManager extends DefaultPluginManager {
       // Delete entity type.
       $entity->delete();
       $this->clearCachedDefinitions();
+      return TRUE;
     }
+    return FALSE;
   }
 
   /**
@@ -522,12 +730,30 @@ class ExoComponentManager extends DefaultPluginManager {
   public function installThumbnail(ExoComponentDefinition $definition) {
     // Clean up existing thumbnail first.
     $this->uninstallThumbnail($definition);
-    $file_system = \Drupal::service('file_system');
-    $directory = $definition->getThumbnailDirectory();
-    if ($thumbnail = $definition->getThumbnailSource()) {
-      $path = Url::fromUri('base://' . ltrim($thumbnail, '/'));
-      $file_system->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY);
-      $file_system->copy(\Drupal::service('app.root') . $path->toString(), $definition->getThumbnailUri());
+    if (!$definition->isComputed()) {
+      /** @var \Drupal\Core\File\FileSystemInterface $file_system */
+      $file_system = \Drupal::service('file_system');
+      $directory = $definition->getThumbnailDirectory();
+      if ($thumbnail = $definition->getThumbnailSource()) {
+        $path = Url::fromUri('base://' . ltrim($thumbnail, '/'));
+        $file_system->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+        $is_writable = is_writable($directory);
+        $is_directory = is_dir($directory);
+        if (!$is_writable || !$is_directory) {
+          if (!$is_directory) {
+            $error = t('The directory %directory does not exist.', ['%directory' => $directory]);
+          }
+          else {
+            $error = t('The directory %directory is not writable.', ['%directory' => $directory]);
+          }
+          $description = t('An automated attempt to create this directory failed, possibly due to a permissions problem. To proceed with the installation, either create the directory and modify its permissions manually or ensure that the installer has the permissions to create it automatically. For more information, see INSTALL.txt or the <a href=":handbook_url">online handbook</a>.', [':handbook_url' => 'https://www.drupal.org/server-permissions']);
+          $description = $error . ' ' . $description;
+          \Drupal::messenger()->addError($description);
+        }
+        else {
+          $file_system->copy(\Drupal::service('app.root') . $path->toString(), $definition->getThumbnailUri());
+        }
+      }
     }
   }
 
@@ -538,9 +764,17 @@ class ExoComponentManager extends DefaultPluginManager {
    *   The component definition.
    */
   public function uninstallThumbnail(ExoComponentDefinition $definition) {
+    /** @var \Drupal\Core\File\FileSystemInterface $file_system */
     $file_system = \Drupal::service('file_system');
     $directory = $definition->getThumbnailDirectory();
-    $file_system->deleteRecursive($directory);
+    try {
+      if (file_exists($directory)) {
+        $file_system->deleteRecursive($directory);
+      }
+    }
+    catch (FileException $e) {
+      // Fail silently.
+    }
     if ($image_style = $this->entityTypeManager->getStorage('image_style')->load('exo_alchemist_preview')) {
       /** @var \Drupal\Image\Entity\ImageStyle $image_style */
       $image_style->flush($definition->getThumbnailUri());
@@ -576,7 +810,7 @@ class ExoComponentManager extends DefaultPluginManager {
 
             case 'content':
               list($entity_id,, $uuid) = explode(':', $name);
-              $entity = \Drupal::service('entity.repository')->loadEntityByConfigTarget($entity_id, $uuid);
+              $entity = $this->entityRepository->loadEntityByConfigTarget($entity_id, $uuid);
               if ($entity) {
                 $entity->delete();
               }
@@ -599,10 +833,30 @@ class ExoComponentManager extends DefaultPluginManager {
    *   The current component definition.
    */
   public function buildEntityType(ExoComponentDefinition $definition, ExoComponentDefinition $original_definition = NULL) {
+    $form_display = $this->getEntityTypeFormDisplay($definition);
+    $view_display = $this->getEntityTypeViewDisplay($definition);
+    $this->exoComponentFieldManager->buildEntityType($definition, $form_display, $view_display, $original_definition);
+    $this->exoComponentPropertyManager->buildEntityType($definition, $form_display, $view_display, $original_definition);
+    if (count($form_display->getComponents())) {
+      $form_display->save();
+    }
+    if (count($view_display->getComponents())) {
+      $view_display->save();
+    }
+  }
+
+  /**
+   * Get the entity form display.
+   *
+   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinition $definition
+   *   The component definition.
+   *
+   * @return \Drupal\Core\Entity\Display\EntityFormDisplayInterface
+   *   The form display.
+   */
+  public function getEntityTypeFormDisplay(ExoComponentDefinition $definition) {
     $entity_type = ExoComponentManager::ENTITY_TYPE;
     $bundle = $definition->safeId();
-
-    // Form display.
     $storage = $this->entityTypeManager->getStorage('entity_form_display');
     $form_display = $storage->load($entity_type . '.' . $bundle . '.default');
     if (!$form_display) {
@@ -613,7 +867,21 @@ class ExoComponentManager extends DefaultPluginManager {
         'status' => TRUE,
       ]);
     }
-    // View display.
+    return $form_display;
+  }
+
+  /**
+   * Get the entity view display.
+   *
+   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinition $definition
+   *   The component definition.
+   *
+   * @return \Drupal\Core\Entity\Display\EntityViewDisplayInterface
+   *   The view display.
+   */
+  public function getEntityTypeViewDisplay(ExoComponentDefinition $definition) {
+    $entity_type = ExoComponentManager::ENTITY_TYPE;
+    $bundle = $definition->safeId();
     $storage = $this->entityTypeManager->getStorage('entity_view_display');
     $view_display = $storage->load($entity_type . '.' . $bundle . '.default');
     if (!$view_display) {
@@ -624,18 +892,7 @@ class ExoComponentManager extends DefaultPluginManager {
         'status' => TRUE,
       ]);
     }
-
-    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display */
-    /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $view_display */
-    $this->exoComponentFieldManager->buildEntityType($definition, $form_display, $view_display, $original_definition);
-    $this->exoComponentPropertyManager->buildEntityType($definition, $form_display, $view_display, $original_definition);
-
-    if (count($form_display->getComponents())) {
-      $form_display->save();
-    }
-    if (count($view_display->getComponents())) {
-      $view_display->save();
-    }
+    return $view_display;
   }
 
   /**
@@ -660,30 +917,52 @@ class ExoComponentManager extends DefaultPluginManager {
    *   The component definition.
    * @param bool $no_cache
    *   Flag indicating if entity should be cached.
-   * @param int $delta
-   *   The delta of the entity to load. This is useful for sequence fields
-   *   where multiple defaults are created.
    *
    * @return \Drupal\Core\Entity\ContentEntityInterface
    *   The content entity.
    */
-  public function loadEntity(ExoComponentDefinition $definition, $no_cache = FALSE, $delta = 0) {
+  public function loadEntity(ExoComponentDefinition $definition, $no_cache = FALSE) {
     $entity = NULL;
     $storage = $this->entityTypeManager->getStorage(self::ENTITY_TYPE);
-    $entities = $storage->loadByProperties([
+    $properties = [
       'type' => $definition->safeId(),
       'alchemist_default' => TRUE,
-    ]);
+    ];
+    if ($path = $definition->getParentsAsPath()) {
+      $properties['alchemist_path'] = $path;
+    }
+    $entities = $storage->loadByProperties($properties);
     if (!empty($entities)) {
-      $entities = array_values($entities);
-      if (!empty($entities[$delta])) {
-        $entity = $entities[$delta];
-        if ($no_cache) {
-          $storage->resetCache([$entity->id()]);
-        }
+      $entity = reset($entities);
+      if ($no_cache) {
+        $storage->resetCache([$entity->id()]);
       }
     }
     return $entity;
+  }
+
+  /**
+   * Load default content for definition.
+   *
+   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinition $definition
+   *   The component definition.
+   * @param bool $no_cache
+   *   Flag indicating if entity should be cached.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   The content entity.
+   */
+  public function loadEntityMultiple(ExoComponentDefinition $definition, $no_cache = FALSE) {
+    $storage = $this->entityTypeManager->getStorage(self::ENTITY_TYPE);
+    $properties = [
+      'type' => $definition->safeId(),
+      'alchemist_default' => TRUE,
+    ];
+    $entities = $storage->loadByProperties($properties);
+    if ($no_cache) {
+      $storage->resetCache(array_keys($entities));
+    }
+    return $entities;
   }
 
   /**
@@ -704,6 +983,7 @@ class ExoComponentManager extends DefaultPluginManager {
         'info' => 'Preview for ' . $definition->getLabel(),
         'reusable' => FALSE,
         'alchemist_default' => TRUE,
+        'alchemist_path' => $definition->getParentsAsPath(),
       ]);
     }
     /** @var \Drupal\core\Entity\ContentEntityInterface $entity */
@@ -735,8 +1015,8 @@ class ExoComponentManager extends DefaultPluginManager {
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The content entity to populate.
    */
-  public function onUpdateEntity(ExoComponentDefinition $definition, ContentEntityInterface $entity) {
-    $this->exoComponentFieldManager->onUpdateEntity($definition, $entity);
+  public function onDraftUpdateLayoutBuilderEntity(ExoComponentDefinition $definition, ContentEntityInterface $entity) {
+    $this->exoComponentFieldManager->onDraftUpdateLayoutBuilderEntity($definition, $entity);
   }
 
   /**
@@ -746,16 +1026,21 @@ class ExoComponentManager extends DefaultPluginManager {
    *   The component definition.
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   Optional entity. If not supplied, default will be used.
+   * @param bool $all
+   *   Flag that determines if this is a partial clone or full clone. For
+   *   example, existing media will be reused if set to FALSE. New media will
+   *   be created if set to TRUE.
    *
    * @return \Drupal\Core\Entity\ContentEntityInterface
    *   The content entity.
    */
-  public function cloneEntity(ExoComponentDefinition $definition, ContentEntityInterface $entity = NULL) {
+  public function cloneEntity(ExoComponentDefinition $definition, ContentEntityInterface $entity = NULL, $all = FALSE) {
     $entity = $entity ? $entity : $this->loadEntity($definition);
     if ($entity) {
       $entity = $entity->createDuplicate();
+      $entity->set('info', 'Instance of ' . $definition->getLabel());
       $entity->set('alchemist_default', FALSE);
-      $this->exoComponentFieldManager->cloneEntityFields($definition, $entity);
+      $this->exoComponentFieldManager->cloneEntityFields($definition, $entity, $all);
     }
     return $entity;
   }
@@ -777,80 +1062,48 @@ class ExoComponentManager extends DefaultPluginManager {
   }
 
   /**
-   * On post-save root content entity.
+   * Event handler for entities containing components.
    *
-   * The root content entity is the entity where layout builder is enabled.
+   * @param string $op
+   *   The operation to perform.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity.
+   */
+  public function handleEntityEvent($op, EntityInterface $entity) {
+    $this->handleEntityCallback($entity, 'on' . ucfirst($op) . 'LayoutBuilderEntity');
+  }
+
+  /**
+   * Callback handler for entities containing components.
+   *
+   * The entity is the entity where layout builder is enabled.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity.
    * @param string $callback
    *   The callback to fire on the component field manager.
    */
-  protected function handleRootEntityCallback(EntityInterface $entity, $callback) {
+  protected function handleEntityCallback(EntityInterface $entity, $callback) {
     if (!$this->isLayoutCompatibleEntity($entity)) {
       return;
     }
     if ($sections = $this->getEntitySections($entity)) {
-      $block_storage = $this->entityTypeManager->getStorage('block_content');
       foreach ($this->getInlineBlockComponents($sections) as $component) {
-        /** @var \Drupal\layout_builder\Plugin\Block\InlineBlock $plugin */
-        $plugin = $component->getPlugin();
-        $configuration = $plugin->getConfiguration();
-        $child_entity = NULL;
-        if (!empty($configuration['block_revision_id'])) {
-          $child_entity = $block_storage->loadByProperties([
-            'revision_id' => $configuration['block_revision_id'],
-          ]);
-          $child_entity = array_pop($child_entity);
-          /** @var \Drupal\Core\Entity\EntityInterface $child_entity */
-          if ($child_entity) {
-            $plugin_id = $this->getPluginIdFromSafeId($child_entity->bundle());
-            if ($definition = $this->getInstalledDefinition($plugin_id, FALSE)) {
-              $child_entity->exoComponentRoot = $entity;
-              if (method_exists($this->exoComponentFieldManager, $callback)) {
-                $this->exoComponentFieldManager->{$callback}($definition, $child_entity);
-              }
+        $component_entity = $this->entityLoadFromComponent($component);
+        /** @var \Drupal\Core\Entity\EntityInterface $component_entity */
+        if ($component_entity) {
+          $plugin_id = $this->getPluginIdFromSafeId($component_entity->bundle());
+          if ($definition = $this->getInstalledDefinition($plugin_id, FALSE)) {
+            if (method_exists($this->exoComponentFieldManager, $callback)) {
+              $this->exoComponentFieldManager->{$callback}($definition, $component_entity, $entity);
             }
           }
+          // If the component entity has been changed we want to store those
+          // changes so that they are saved.
+          $this->entitySetToComponent($component, $component_entity);
         }
       }
     }
-  }
-
-  /**
-   * On post-save root content entity.
-   *
-   * The root content entity is the entity where layout builder is enabled.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity.
-   */
-  public function handleRootEntityUpdate(EntityInterface $entity) {
-    $this->handleRootEntityCallback($entity, 'updateEntityFields');
-  }
-
-  /**
-   * On delete root content entity.
-   *
-   * The root content entity is the entity where layout builder is enabled.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity.
-   */
-  public function handleRootEntityDelete(EntityInterface $entity) {
-    $this->handleRootEntityCallback($entity, 'deleteEntityFields');
-  }
-
-  /**
-   * Update content entity for definition.
-   *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinition $definition
-   *   The component definition.
-   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
-   *   The content entity.
-   */
-  public function updateEntity(ExoComponentDefinition $definition, ContentEntityInterface $entity) {
-    $this->exoComponentFieldManager->updateEntityFields($definition, $entity);
   }
 
   /**
@@ -860,9 +1113,11 @@ class ExoComponentManager extends DefaultPluginManager {
    *   The component definition.
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The content entity.
+   * @param bool $update
+   *   If this is a field update.
    */
-  public function uninstallEntity(ExoComponentDefinition $definition, ContentEntityInterface $entity) {
-    $this->exoComponentFieldManager->uninstallEntityFields($definition, $entity);
+  public function cleanEntity(ExoComponentDefinition $definition, ContentEntityInterface $entity, $update = TRUE) {
+    $this->exoComponentFieldManager->cleanEntityFields($definition, $entity, $update);
   }
 
   /**
@@ -874,45 +1129,71 @@ class ExoComponentManager extends DefaultPluginManager {
    *   The build array.
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The content entity.
-   * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
-   *   The entity display.
-   * @param string $view_mode
-   *   The view mode.
+   * @param \Drupal\Core\Plugin\Context\Context[] $contexts
+   *   An array of current contexts.
    */
-  public function viewEntity(ExoComponentDefinition $definition, array &$build, ContentEntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
-    $route_match = \Drupal::routeMatch();
-    $route_name = $route_match->getRouteName();
-    $is_layout_builder = $display instanceof LayoutBuilderEntityViewDisplay && strpos($route_name, 'layout_builder.') === 0;
+  public function viewEntity(ExoComponentDefinition $definition, array &$build, ContentEntityInterface $entity, array $contexts) {
+    $is_layout_builder = $this->isLayoutBuilder($contexts);
+    $is_preview = $this->isPreview($contexts);
     $build += ['#attached' => []];
     $build['#theme'] = $definition->getThemeHook();
     $build['#theme_wrappers'][] = 'exo_component_wrapper';
 
-    $build['#exo_component'] = $definition->id();
-    $build['#is_layout_builder'] = $is_layout_builder;
+    $build['#exo_component'] = $definition;
+    $build['#instance_id'] = $entity->uuid();
     $build['#wrapper_attributes']['class'][] = 'exo-component-wrapper';
     $build['#attributes']['class'][] = 'exo-component';
     $build['#attributes']['class'][] = Html::getClass('exo-component-' . $definition->getName());
     $build['#content_attributes']['class'][] = 'exo-component-content';
+    $build['#preview'] = $is_layout_builder || $is_preview;
     if ($definition->hasLibrary()) {
       $build['#attached']['library'][] = 'exo_alchemist/' . $definition->getLibraryId();
     }
-    if ($is_layout_builder) {
-      $section_storage = \Drupal::routeMatch()->getParameter('section_storage');
-      $build['#wrapper_attributes']['class'][] = 'exo-component-edit';
-      $build['#attached']['drupalSettings']['exoAlchemist']['entityType'] = self::ENTITY_TYPE;
-      $build['#attached']['drupalSettings']['exoAlchemist']['storageType'] = $section_storage->getStorageType();
-      $build['#attached']['drupalSettings']['exoAlchemist']['storageId'] = $section_storage->getStorageId();
-      $build['#attached']['drupalSettings']['exoAlchemist']['sectionDelta'] = '0';
-      $build['#attached']['drupalSettings']['exoAlchemist']['sectionRegion'] = 'content';
-    }
-    $values = $this->viewEntityValues($definition, $entity, $is_layout_builder);
+    $values = $this->viewEntityValues($definition, $entity, $contexts);
     foreach ($values as $key => $value) {
       if (Element::property($key)) {
-        $build[$key] = NestedArray::mergeDeep($build[$key], $value);
+        if (!isset($build[$key])) {
+          $build[$key] = $value;
+        }
+        elseif (is_array($build[$key])) {
+          $build[$key] = NestedArray::mergeDeep($build[$key], $value);
+        }
         continue;
       }
       $build['#' . $key] = $value;
     }
+    if ($is_layout_builder) {
+      $ops = $this->getOperations();
+      $build['#exo_component_ops'] = array_keys($ops);
+      $build['#attached']['drupalSettings']['exoAlchemist']['componentOps'] = $ops;
+      $build['#attached']['drupalSettings']['exoAlchemist']['isLayoutBuilder'] = TRUE;
+    }
+  }
+
+  /**
+   * Check if entity should be displayed.
+   *
+   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinition $definition
+   *   The component definition.
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The content entity.
+   * @param \Drupal\Core\Plugin\Context\Context[] $contexts
+   *   An array of current contexts.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The user session for which to check access.
+   * @param bool $return_as_object
+   *   If TRUE, will return access as object.
+   *
+   * @return bool|\Drupal\Core\Access\AccessResultInterface
+   *   The access result.
+   */
+  public function accessEntity(ExoComponentDefinition $definition, ContentEntityInterface $entity, array $contexts, AccountInterface $account = NULL, $return_as_object = FALSE) {
+    $account = $account ?: \Drupal::currentUser();
+    $access = AccessResult::allowed();
+    if ($definition->hasFields()) {
+      $access = $this->exoComponentFieldManager->accessEntity($definition, $entity, $contexts, $account, TRUE);
+    }
+    return $return_as_object ? $access : $access->isAllowed();
   }
 
   /**
@@ -925,20 +1206,208 @@ class ExoComponentManager extends DefaultPluginManager {
    *   The component definition.
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The content entity.
-   * @param string $is_layout_builder
-   *   TRUE if we are in layout builder mode.
+   * @param \Drupal\Core\Plugin\Context\Context[] $contexts
+   *   An array of current contexts.
    */
-  public function viewEntityValues(ExoComponentDefinition $definition, ContentEntityInterface $entity, $is_layout_builder) {
+  public function viewEntityValues(ExoComponentDefinition $definition, ContentEntityInterface $entity, array $contexts) {
     $values = [
       '#attached' => [],
       '#wrapper_attributes' => [],
       '#attributes' => [],
       '#content_attributes' => [],
     ];
-    $this->exoComponentFieldManager->viewEntityValues($definition, $values, $entity, $is_layout_builder);
-    $this->exoComponentPropertyManager->viewEntityValues($definition, $values, $entity, $is_layout_builder);
-    $this->exoComponentAnimationManager->viewEntityValues($definition, $values, $entity, $is_layout_builder);
+    $this->exoComponentFieldManager->viewEntityValues($definition, $values, $entity, $contexts);
+    $this->exoComponentPropertyManager->viewEntityValues($definition, $values, $entity, $contexts);
+    $this->exoComponentEnhancementManager->viewEntityValues($definition, $values, $entity, $contexts);
+    $this->exoComponentAnimationManager->viewEntityValues($definition, $values, $entity, $contexts);
     return $values;
+  }
+
+  /**
+   * Check if entity allows components to be removed.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The content entity.
+   *
+   * @return bool
+   *   TRUE if entity allows cleanup.
+   */
+  public function entityAllowCleanup(ContentEntityInterface $entity) {
+    if (!$entity->getEntityType()->isRevisionable()) {
+      return TRUE;
+    }
+    $storage = $this->entityTypeManager->getStorage($entity->getEntityTypeId());
+    $vid_count = $storage->getQuery()->allRevisions()->condition($entity->getEntityType()->getKey('id'), $entity->id())->count()->execute();
+    if ($vid_count == 1) {
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+  /**
+   * Get ops url placeholders.
+   *
+   * @return array
+   *   An array of tokenized urls.
+   */
+  public function getOperations() {
+    if (!isset($this->ops)) {
+      $this->ops = [];
+      $ops = [
+        'appearance' => [
+          'label' => $this->t('Appearance'),
+          'route' => 'layout_builder.component.appearance',
+          'description' => $this->t('Configure component appearance.'),
+        ],
+        'elements' => [
+          'label' => $this->t('Elements'),
+          'route' => 'layout_builder.component.fields',
+          'description' => $this->t('Configure component elements.'),
+        ],
+        'move' => [
+          'label' => $this->t('Move'),
+          'route' => 'layout_builder.component.move',
+          'description' => $this->t('Reorder components.'),
+        ],
+        // 'up' => [
+        //   'label' => $this->t('Up'),
+        //   'route' => 'layout_builder.move_block',
+        // ],
+        // 'down' => [
+        //   'label' => $this->t('Down'),
+        //   'route' => 'layout_builder.move_block',
+        // ],
+        'restore' => [
+          'label' => $this->t('Restore'),
+          'route' => 'layout_builder.component.restore',
+          'description' => $this->t('Are you sure you want to proceed?'),
+        ],
+        'remove' => [
+          'label' => $this->t('Remove'),
+          'route' => 'layout_builder.component.remove',
+          'description' => $this->t('Are you sure you want to proceed?'),
+        ],
+      ];
+      $this->moduleHandler->alter('exo_component_component_ops', $ops);
+      foreach ($ops as $key => $data) {
+        $icon = $this->icon($data['label'])->match([
+          'exo_alchemist',
+          'local_task',
+          'admin',
+        ], $key);
+        $this->ops[$key] = [
+          'label' => $data['label'],
+          'description' => !empty($data['description']) ? $data['description'] : '',
+          'url' => explode('?', Url::fromRoute($data['route'], [
+            'section_storage_type' => '-section_storage_type-',
+            'section_storage' => '-section_storage-',
+            'delta' => '-delta-',
+            'region' => '-region-',
+            'uuid' => '-uuid-',
+            'block_uuid' => '-uuid-',
+            'preceding_block_uuid' => '-next_uuid-',
+            'delta_from' => '-delta-',
+            'delta_to' => '-delta-',
+            'region_to' => '-region-',
+          ])->toString())[0],
+          'title' => $icon->toString(),
+          'icon' => $icon->getIcon() ? $icon->getIcon()->getId() : '',
+        ];
+      }
+    }
+    return $this->ops;
+  }
+
+  /**
+   * Load a component entity by revision id.
+   *
+   * @param string $revision_id
+   *   The revision id.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   The component entity.
+   */
+  public function entityLoadByRevisionId($revision_id) {
+    return $this->entityTypeManager->getStorage(self::ENTITY_TYPE)->loadRevision($revision_id);
+  }
+
+  /**
+   * Load a component entity by uuid.
+   *
+   * @param string $uuid
+   *   The uuid.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   The component entity.
+   */
+  public function entityLoadByUuid($uuid) {
+    return $this->entityRepository->loadEntityByUuid('block_content', $uuid);
+  }
+
+  /**
+   * Load a component entity from a component.
+   *
+   * @param \Drupal\layout_builder\SectionComponent $component
+   *   The section component.
+   * @param bool $allow_revision
+   *   If true, revision id will be used.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   The component entity.
+   */
+  public function entityLoadFromComponent(SectionComponent $component, $allow_revision = TRUE) {
+    $entity = NULL;
+    $configuration = $component->get('configuration');
+    if (!empty($configuration['block_serialized'])) {
+      $entity = unserialize($configuration['block_serialized']);
+    }
+    elseif (!empty($configuration['block_uuid'])) {
+      $entity = $this->entityLoadByUuid($configuration['block_uuid']);
+    }
+    elseif (!empty($configuration['block_revision_id']) && $allow_revision) {
+      $entity = $this->entityLoadByRevisionId($configuration['block_revision_id']);
+    }
+    return $entity;
+  }
+
+  /**
+   * Set a component entity to a component.
+   *
+   * @param \Drupal\layout_builder\SectionComponent $component
+   *   The section component.
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The component entity.
+   *
+   * @return \Drupal\layout_builder\SectionComponent
+   *   The section component.
+   */
+  public function entitySetToComponent(SectionComponent $component, ContentEntityInterface $entity) {
+    $configuration = $component->get('configuration');
+    if (!empty($configuration['block_serialized'])) {
+      // We only act on components that have a serialized version of the entity.
+      // Other entities are static and should be able to be changed without
+      // storing in the component.
+      $configuration['block_serialized'] = serialize($entity);
+      unset($configuration['block_uuid']);
+      unset($configuration['block_revision_id']);
+      $component->setConfiguration($configuration);
+    }
+    return $component;
+  }
+
+  /**
+   * Check if component is a exo component section.
+   *
+   * @param \Drupal\layout_builder\SectionComponent $component
+   *   The section component.
+   *
+   * @return bool
+   *   TRUE if this is an exo component section.
+   */
+  public static function isExoComponentSection(SectionComponent $component) {
+    $configuration = $component->get('configuration');
+    $id_parts = explode(':', $configuration['id']);
+    return isset($id_parts[1]) && substr($id_parts[1], 0, 4) == 'exo_';
   }
 
   /**
@@ -957,6 +1426,38 @@ class ExoComponentManager extends DefaultPluginManager {
       }
     }
     return NULL;
+  }
+
+  /**
+   * Get component data.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The component entity.
+   *
+   * @return array
+   *   An array of field names.
+   */
+  public static function getFieldData(ContentEntityInterface $entity) {
+    return $entity->hasField('alchemist_data') && !$entity->get('alchemist_data')->isEmpty() ? $entity->get('alchemist_data')->first()->getValue() : [];
+  }
+
+  /**
+   * Set component data.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The component entity.
+   * @param array $data
+   *   An array of values.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface|false
+   *   Will return the entity if value successfully set.
+   */
+  public static function setFieldData(ContentEntityInterface $entity, array $data) {
+    if ($entity->hasField('alchemist_data')) {
+      $entity->get('alchemist_data')->setValue([$data]);
+      return $entity;
+    }
+    return FALSE;
   }
 
 }

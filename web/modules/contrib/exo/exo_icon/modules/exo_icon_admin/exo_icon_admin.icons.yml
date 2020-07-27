@@ -2,6 +2,10 @@ admin.exo:
   text: exo
   icon: regular-robot
   prefix: admin
+admin.ajax_loader:
+  text: ajax loader
+  icon: regular-comment-alt-dots
+  prefix: admin
 admin.administration:
   text: administration
   icon: regular-tachometer-alt

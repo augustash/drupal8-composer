@@ -20,7 +20,7 @@ class ExoRadios extends Radios {
    */
   public function getInfo() {
     return parent::getInfo() + [
-       // inline, grid, stacked.
+       // inline, grid, grid-compact, stacked.
       '#exo_style' => 'stacked',
     ];
   }

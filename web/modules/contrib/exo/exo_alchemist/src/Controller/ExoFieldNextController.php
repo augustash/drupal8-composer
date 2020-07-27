@@ -3,7 +3,9 @@
 namespace Drupal\exo_alchemist\Controller;
 
 use Drupal\Core\Ajax\AjaxHelperTrait;
+use Drupal\Core\Ajax\CloseDialogCommand;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\exo_alchemist\Ajax\ExoComponentFieldFocus;
 use Drupal\exo_alchemist\ExoComponentManager;
 use Drupal\layout_builder\Controller\LayoutRebuildTrait;
 use Drupal\layout_builder\LayoutTempstoreRepositoryInterface;
@@ -36,6 +38,13 @@ class ExoFieldNextController implements ContainerInjectionInterface {
    * @var \Drupal\exo_alchemist\ExoComponentManager
    */
   protected $exoComponentManager;
+
+  /**
+   * The parent component entity.
+   *
+   * @var \Drupal\Core\Entity\ContentEntityInterface
+   */
+  protected $component;
 
   /**
    * Constructs a new block form.
@@ -80,14 +89,16 @@ class ExoFieldNextController implements ContainerInjectionInterface {
   public function build(SectionStorageInterface $section_storage = NULL, $delta = NULL, $region = NULL, $uuid = NULL, $path = NULL) {
 
     $component = $section_storage->getSection($delta)->getComponent($uuid);
-    /** @var Drupal\layout_builder\Plugin\Block\InlineBlock $this->block */
+    /** @var \Drupal\layout_builder\Plugin\Block\InlineBlock $block */
     $block = $component->getPlugin();
+    $updated_path = $path;
+    $this->component = $this->extractBlockEntity($block);
 
-    if ($parent_entity = $this->extractBlockEntity($block)) {
+    if ($this->component) {
       $parents = explode('.', $path);
       $field_delta = (int) end($parents);
       if (is_numeric($field_delta)) {
-        $items = $this->getTargetField($parent_entity, $parents);
+        $items = $this->getTargetItems($this->component, $parents);
         if ($items && $items->count() === $field_delta + 1) {
           \Drupal::messenger()->addError(t('This item cannot be moved forward as it is already the last item.'));
         }
@@ -95,6 +106,12 @@ class ExoFieldNextController implements ContainerInjectionInterface {
           $values = [];
           foreach ($items->getValue() as $item_delta => $item) {
             if ($field_delta === $item_delta) {
+              // Set new path.
+              $updated_path = explode('.', $updated_path);
+              array_pop($updated_path);
+              array_push($updated_path, $item_delta + 1);
+              $updated_path = implode('.', $updated_path);
+              // Set new delta.
               $values[$item_delta + 1] = $item;
             }
             elseif ($field_delta + 1 === $item_delta) {
@@ -108,7 +125,7 @@ class ExoFieldNextController implements ContainerInjectionInterface {
           $items->setValue($values);
 
           $configuration = $block->getConfiguration();
-          $configuration['block_serialized'] = serialize($parent_entity);
+          $configuration['block_serialized'] = serialize($this->component);
           $component->setConfiguration($configuration);
           $this->layoutTempstoreRepository->set($section_storage);
         }
@@ -116,12 +133,22 @@ class ExoFieldNextController implements ContainerInjectionInterface {
     }
 
     if ($this->isAjax()) {
-      return $this->rebuildAndClose($section_storage);
+      return $this->rebuildAndClose($section_storage, $updated_path . $this->component->uuid());
     }
     else {
       $url = $section_storage->getLayoutBuilderUrl();
       return new RedirectResponse($url->setAbsolute()->toString());
     }
+  }
+
+  /**
+   * Rebuilds the layout.
+   */
+  protected function rebuildAndClose(SectionStorageInterface $section_storage, $path) {
+    $response = $this->rebuildLayout($section_storage);
+    $response->addCommand(new CloseDialogCommand('#drupal-off-canvas'));
+    $response->addCommand(new ExoComponentFieldFocus($path));
+    return $response;
   }
 
 }

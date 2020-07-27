@@ -22,7 +22,7 @@ class ExoLinkMenuLinkManager extends MenuLinkManager {
    *   The ID of the plugin this definition is being used for.
    */
   protected function processDefinition(array &$definition, $plugin_id) {
-    // Use the micon link class override.
+    // Use the eXo icon link class override.
     $this->defaults['class'] = 'Drupal\exo_link_menu\ExoLinkMenuLinkDefault';
     parent::processDefinition($definition, $plugin_id);
   }

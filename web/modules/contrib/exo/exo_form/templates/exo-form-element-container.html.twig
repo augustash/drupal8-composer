@@ -9,10 +9,12 @@
  */
 #}
 <div{{ attributes }}>
+  {{ wrapper_outer_prefix }}
   {# <-- container --> #}
   <div{{ inner_attributes.addClass('exo-form-element-inner') }}>
     {{ wrapper_prefix }}
     {{ children }}
     {{ wrapper_suffix }}
   </div>
+  {{ wrapper_outer_suffix }}
 </div>

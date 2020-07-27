@@ -4,10 +4,12 @@ namespace Drupal\exo_alchemist\Controller;
 
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Ajax\AjaxHelperTrait;
+use Drupal\Core\Ajax\CloseDialogCommand;
 use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\exo_alchemist\Ajax\ExoComponentFocus;
 use Drupal\exo_alchemist\ExoComponentManager;
 use Drupal\layout_builder\Controller\LayoutRebuildTrait;
 use Drupal\layout_builder\LayoutTempstoreRepositoryInterface;
@@ -116,32 +118,34 @@ class ExoComponentAddController implements ContainerInjectionInterface {
    *   The section storage.
    * @param int $delta
    *   The delta of the section to splice.
+   * @param string $region
+   *   The region of the block.
    * @param string $plugin_id
    *   The plugin ID of the layout to add.
    *
    * @return \Symfony\Component\HttpFoundation\Response
    *   The controller response.
    */
-  public function build(SectionStorageInterface $section_storage, $delta, $plugin_id) {
-    $layout_plugin_id = 'layout_onecol';
-    $delta = 0;
+  public function build(SectionStorageInterface $section_storage, $delta, $region, $plugin_id) {
+    $default_layout_plugin_id = 'layout_onecol';
+    // $delta = 0;
     $definition = $this->exoComponentManager->getInstalledDefinition($plugin_id);
 
     $block_plugin_id = 'inline_block:' . $definition->safeId();
     if ($this->blockManager->hasDefinition($block_plugin_id)) {
-      $region = 'content';
       $entity = $this->exoComponentManager->cloneEntity($definition);
       if ($entity) {
 
-        if (empty($section_storage->getSections()) || $section_storage->getSection($delta)->getLayoutId() !== $layout_plugin_id) {
-          $section_storage->insertSection($delta, new Section($layout_plugin_id));
+        if (empty($section_storage->getSections())) {
+          $section_storage->insertSection($delta, new Section($default_layout_plugin_id));
           $section = $section_storage->getSection($delta);
         }
         else {
           $section = $section_storage->getSection($delta);
         }
 
-        $component = new SectionComponent($this->uuidGenerator->generate(), $region, [
+        $this->uuid = $this->uuidGenerator->generate();
+        $component = new SectionComponent($this->uuid, $region, [
           'id' => $block_plugin_id,
           'label_display' => FALSE,
           'block_serialized' => serialize($entity),
@@ -159,6 +163,16 @@ class ExoComponentAddController implements ContainerInjectionInterface {
       $url = $section_storage->getLayoutBuilderUrl();
       return new RedirectResponse($url->setAbsolute()->toString());
     }
+  }
+
+  /**
+   * Rebuilds the layout.
+   */
+  protected function rebuildAndClose(SectionStorageInterface $section_storage) {
+    $response = $this->rebuildLayout($section_storage);
+    $response->addCommand(new CloseDialogCommand('#drupal-off-canvas'));
+    $response->addCommand(new ExoComponentFocus($this->uuid));
+    return $response;
   }
 
 }

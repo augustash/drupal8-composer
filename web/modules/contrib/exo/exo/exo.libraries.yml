@@ -56,6 +56,22 @@ radios.slider:
     - core/jquery.once
     - exo/nouislider
 
+autocomplete:
+  version: VERSION
+  js:
+    js/exo.autocomplete.js: {}
+  css:
+    theme:
+      css/exo.autocomplete.css: {}
+  dependencies:
+    - core/drupal
+    - core/drupalSettings
+    - core/jquery
+    - core/jquery.once
+    - core/jquery.ui.autocomplete
+    - core/jquery.ui.button
+    - core/jquery.ui.sortable
+
 ajax:
   version: VERSION
   js:
@@ -71,6 +87,31 @@ auto_submit:
     - core/jquery
     - core/jquery.once
     - core/drupal
+
+################################################################################
+## Ajax Loader
+################################################################################
+
+throbber_admin:
+  version: VERSION
+  css:
+    base:
+      css/exo.throbber.general.css: {}
+    theme:
+      css/exo.throbber.admin.css: {}
+
+throbber:
+  version: VERSION
+  css:
+    base:
+      css/exo.throbber.general.css: {}
+  js:
+    js/exo.throbber.js: {}
+  dependencies:
+      - core/jquery
+      - core/drupal
+      - core/drupalSettings
+      - core/drupal.ajax
 
 ################################################################################
 ## Libraries

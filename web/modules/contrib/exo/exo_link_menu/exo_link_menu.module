@@ -11,18 +11,20 @@ use Drupal\node\NodeInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\exo_icon\ExoIconIconize;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Render\Element;
 
 /**
  * Implements hook_entity_base_field_info_alter().
  */
 function exo_link_menu_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
   if ($entity_type->id() === 'menu_link_content') {
+    $config = \Drupal::config('exo_link_menu.config');
     $fields['link']->setDisplayOptions('form', [
       'type' => 'exo_link_menu',
       'weight' => -2,
       'settings' => [
-        'target' => TRUE,
-        'class' => TRUE,
+        'target' => !empty($config->get('target')),
+        'class' => !empty($config->get('class')),
       ],
     ]);
   }
@@ -181,12 +183,26 @@ function _exo_link_menu_preprocess_menu_items($items) {
     if (!empty($options['attributes']['data-icon']) && !empty($item['title'])) {
       $position = isset($options['attributes']['data-icon-position']) ? $options['attributes']['data-icon-position'] : 'before';
       $item['title'] = ExoIconIconize::iconize($item['title'])->setIcon($options['attributes']['data-icon'])->setIconPosition($position)->render();
-      unset($options['attributes']['data-icon']);
       $item['url']->setOptions($options);
     }
+    unset($options['attributes']['data-icon']);
+    if (!empty($options['attributes']['data-class'])) {
+      $options['attributes'] += ['class' => []];
+      $classes = explode(' ', $options['attributes']['data-class']);
+      $options['attributes']['class'] = array_merge($options['attributes']['class'], $classes);
+      foreach ($classes as $class) {
+        $item['attributes']->addClass($class . '-wrapper');
+      }
+    }
+    unset($options['attributes']['data-class']);
+    if (!empty($options['attributes']['data-target'])) {
+      $options['attributes']['target'] = $options['attributes']['data-target'];
+    }
+    unset($options['attributes']['data-target']);
     if (!empty($item['below'])) {
       $item['below'] = _exo_link_menu_preprocess_menu_items($item['below']);
     }
+    $item['url']->setOptions($options);
   }
   return $items;
 }
@@ -204,6 +220,24 @@ function exo_link_menu_form_menu_link_edit_alter(&$form, FormStateInterface $for
     '#packages' => $config->get('packages'),
     '#access' => \Drupal::currentUser()->hasPermission('use exo link menu'),
   ];
+  if (!empty($config->get('target'))) {
+    $form['path']['link']['data-target'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Open link in new window'),
+      '#description' => t('If selected, the menu link will open in a new window/tab when clicked.'),
+      '#default_value' => isset($options['attributes']['data-target']) ? $options['attributes']['data-target'] : NULL,
+      '#return_value' => '_blank',
+    ];
+  }
+  if (!empty($config->get('class'))) {
+    $form['path']['link']['data-class'] = [
+      '#type' => 'textfield',
+      '#title' => t('CSS classes'),
+      '#description' => t('Enter space-separated CSS class names that will be added to the link.'),
+      '#default_value' => isset($options['attributes']['data-class']) ? $options['attributes']['data-class'] : NULL,
+      '#return_value' => '_blank',
+    ];
+  }
   $form['#submit'][] = '_exo_link_menu_form_menu_link_edit_alter_submit';
 }
 
@@ -216,12 +250,14 @@ function exo_link_menu_form_menu_link_edit_alter(&$form, FormStateInterface $for
  *   The current state of the form.
  */
 function _exo_link_menu_form_menu_link_edit_alter_submit(array $form, FormStateInterface $form_state) {
-  $options = $form_state->getBuildInfo()['args'][0]->getOptions();
   $menu_link_id = $form_state->getValue('menu_link_id');
   if (!empty($menu_link_id)) {
     $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
-    $icon = $form_state->getValue('data-icon');
-    $menu_link_manager->updateDefinition($menu_link_id, ['options' => ['attributes' => ['data-icon' => $icon]]]);
+    $options = $form_state->getBuildInfo()['args'][0]->getOptions();
+    foreach (['icon', 'target', 'class'] as $key) {
+      $options['attributes']['data-' . $key] = $form_state->getValue('data-' . $key);
+    }
+    $menu_link_manager->updateDefinition($menu_link_id, ['options' => $options]);
   }
 }
 
@@ -229,41 +265,62 @@ function _exo_link_menu_form_menu_link_edit_alter_submit(array $form, FormStateI
  * Implements hook_form_BASE_FORM_ID_alter().
  */
 function exo_link_menu_form_menu_link_content_menu_link_content_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $entity = $form_state->getFormObject()->getEntity();
+  /** @var \Drupal\menu_link_content\Form\MenuLinkContentForm $form_object */
+  $form_object = $form_state->getFormObject();
+  /** @var \Drupal\menu_link_content\MenuLinkContentInterface $entity */
+  $entity = $form_object->getEntity();
+  $account = \Drupal::currentUser();
+  $config = \Drupal::config('exo_link_menu.config');
 
-  // Set fields as non-required. We will check them in validation. We do this
-  // because when spacer is enabled we set these dynamically but FormValidator
-  // already checked #required and returns an error at this stage.
-  $form['title']['widget'][0]['value']['#required'] = FALSE;
-  $form['link']['widget'][0]['uri']['#required'] = FALSE;
-  $spacer_enabled = FALSE;
-  if (!$entity->isNew()) {
-    $options = $entity->getUrlObject()->getOptions();
-    $spacer_enabled = !empty($options['spacer']);
-  }
-  $html_id = Html::getUniqueId('exo-link-spacer');
-  $form['spacer'] = [
-    '#type' => 'checkbox',
-    '#title' => t('Show as spacer'),
-    '#description' => t('If selected and this menu link will be used as a spacer between other links.'),
-    '#default_value' => $spacer_enabled,
-    '#id' => $html_id,
-    '#weight' => -10,
-  ];
-  $form['spacer']['widget']['value']['#id'] = $html_id;
-  foreach ([
-    'title',
-    'link',
-    'expanded',
-    'description',
-  ] as $key) {
-    $form[$key]['#states'] = [
-      'invisible' => [
-        '#' . $html_id => ['checked' => TRUE],
-      ],
+  if ($config->get('spacers')) {
+    // Set fields as non-required. We will check them in validation. We do this
+    // because when spacer is enabled we set these dynamically but FormValidator
+    // already checked #required and returns an error at this stage.
+    $form['title']['widget'][0]['value']['#required'] = FALSE;
+    $form['link']['widget'][0]['uri']['#required'] = FALSE;
+    $spacer_enabled = FALSE;
+    if (!$entity->isNew()) {
+      $options = $entity->getUrlObject()->getOptions();
+      $spacer_enabled = !empty($options['spacer']);
+    }
+    $html_id = Html::getUniqueId('exo-link-spacer');
+    $form['spacer'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Show as spacer'),
+      '#description' => t('If selected and this menu link will be used as a spacer between other links.'),
+      '#default_value' => $spacer_enabled,
+      '#id' => $html_id,
+      '#weight' => -10,
     ];
+    $form['spacer']['widget']['value']['#id'] = $html_id;
+    foreach ([
+      'title',
+      'link',
+      'expanded',
+      'description',
+    ] as $key) {
+      $form[$key]['#states'] = [
+        'invisible' => [
+          '#' . $html_id => ['checked' => TRUE],
+        ],
+      ];
+    }
+    array_unshift($form['#validate'], 'exo_link_menu_form_menu_link_content_menu_link_content_form_validate');
   }
-  array_unshift($form['#validate'], 'exo_link_menu_form_menu_link_content_menu_link_content_form_validate');
+
+  if (isset($form['link']['widget'][0]['options']['attributes']) && $account->id() != 1) {
+    foreach ([
+      'data-icon' => 'icon',
+      'data-icon-position' => 'icon',
+      'target' => 'target',
+      'class' => 'class',
+    ] as $key => $permission) {
+      if (isset($form['link']['widget'][0]['options']['attributes'][$key])) {
+        $form['link']['widget'][0]['options']['attributes'][$key]['#access'] = $account->hasPermission('add exo link menu ' . $permission);
+      }
+    }
+    $form['link']['widget'][0]['options']['#access'] = !empty(Element::getVisibleChildren($form['link']['widget'][0]['options']['attributes']));
+  }
 }
 
 /**

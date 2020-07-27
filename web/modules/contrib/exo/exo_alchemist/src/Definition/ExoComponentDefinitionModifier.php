@@ -36,7 +36,8 @@ class ExoComponentDefinitionModifier implements \ArrayAccess {
   /**
    * ExoComponentDefinitionModifierProperty constructor.
    */
-  public function __construct($name, $values) {
+  public function __construct($name, $values, $component) {
+    $this->component = $component;
     $this->definition['name'] = !isset($values['name']) ? $name : $values['name'];
     $this->definition['label'] = $values['label'];
     $this->definition['description'] = !isset($values['description']) ? NULL : $values['description'];

@@ -143,7 +143,7 @@ class ExoFilterEntityReference extends ManyToOne {
       $fields = [];
       if ($entityType->entityClassImplements(FieldableEntityInterface::class)) {
         foreach (array_keys($bundle_options) as $bundle) {
-          $bundle_fields = array_filter($this->entityManager->getFieldDefinitions($entityType->id(), $bundle), function ($field_definition) {
+          $bundle_fields = array_filter($this->entityFieldManager->getFieldDefinitions($entityType->id(), $bundle), function ($field_definition) {
             return !$field_definition->isComputed();
           });
           foreach ($bundle_fields as $field_name => $field_definition) {
@@ -167,6 +167,7 @@ class ExoFilterEntityReference extends ManyToOne {
       $form['target_bundles'] = [
         '#type' => 'checkboxes',
         '#title' => $this->t('@bundle targets', ['@bundle' => $this->entityTypeManger->getDefinition($bundleType)->getLabel()]),
+        '#options' => $bundle_options,
         '#default_value' => $this->options['target_bundles'],
         '#access' => $entityType instanceof ContentEntityType,
       ];
@@ -389,11 +390,7 @@ class ExoFilterEntityReference extends ManyToOne {
    *   The options.
    */
   protected function buildReferenceEntityOptions() {
-    $entityType = $this->getEntityType();
     $options = $this->getHandlerOptions();
-    if (!$entityType instanceof ContentEntityType) {
-      unset($options['handler_settings']['target_bundles']);
-    }
     $entities = $this->selectionPluginManager->getInstance($options)->getReferenceableEntities();
     $options = [];
 

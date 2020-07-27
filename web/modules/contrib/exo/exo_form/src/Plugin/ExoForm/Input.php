@@ -24,6 +24,7 @@ use Drupal\exo_form\Plugin\ExoFormBase;
  *     "search_api_autocomplete",
  *     "exo_number",
  *     "exo_icon",
+ *     "linkit",
  *   }
  * )
  */

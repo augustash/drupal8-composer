@@ -4,7 +4,6 @@ namespace Drupal\exo_alchemist\EventSubscriber;
 
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Database\Connection;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\exo_alchemist\ExoComponentManager;
 use Drupal\layout_builder\EventSubscriber\SetInlineBlockDependency;
@@ -72,9 +71,9 @@ class ExoComponentSetInlineBlockDependency extends SetInlineBlockDependency {
     $layout_entity_storage = $this->entityTypeManager->getStorage($layout_entity_info->layout_entity_type);
     $layout_entity = $layout_entity_storage->load($layout_entity_info->layout_entity_id);
     if ($definition = $this->exoComponentManager->getEntityComponentDefinition($block_content)) {
-      // We use hidden definitions because these are definitions that are always
-      // managed programmatically.
-      if ($definition->isHidden()) {
+      // We use computed definitions because these are definitions that are
+      // always managed programmatically.
+      if ($definition->isComputed()) {
         return $layout_entity;
       }
     }

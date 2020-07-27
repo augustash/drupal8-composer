@@ -10,11 +10,15 @@
  */
 function exo_menu_theme($existing, $type, $theme, $path) {
   return [
-    'ux_menu' => [
+    'exo_menu' => [
       'base hook' => 'menu',
     ],
-    'ux_menu_levels' => [
-      'variables' => ['menu_name' => NULL, 'levels' => [], 'attributes' => []],
+    'exo_menu_levels' => [
+      'variables' => [
+        'menu_name' => NULL,
+        'levels' => [],
+        'attributes' => [],
+      ],
     ],
   ];
 }

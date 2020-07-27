@@ -7,12 +7,30 @@ use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\exo_alchemist\Definition\ExoComponentDefinition;
+use Drupal\exo_alchemist\ExoComponentManager;
 use Symfony\Component\Routing\Route;
 
 /**
  * Provides a generic access checker for entities.
  */
 class ExoComponentAccessCheck implements AccessInterface {
+
+  /**
+   * The eXo component manager.
+   *
+   * @var \Drupal\exo_alchemist\ExoComponentManager
+   */
+  protected $exoComponentManager;
+
+  /**
+   * Constructs a RouteSubscriber object.
+   *
+   * @param \Drupal\exo_alchemist\ExoComponentManager $exo_component_manager
+   *   The layout manager.
+   */
+  public function __construct(ExoComponentManager $exo_component_manager) {
+    $this->exoComponentManager = $exo_component_manager;
+  }
 
   /**
    * Checks access to the entity operation on the given route.
@@ -57,13 +75,18 @@ class ExoComponentAccessCheck implements AccessInterface {
   public function access(Route $route, RouteMatchInterface $route_match, AccountInterface $account) {
     // Split the entity type and the operation.
     $requirement = $route->getRequirement('_exo_component');
-    list($parameter, $operation) = explode('.', $requirement);
+    $parts = explode('.', $requirement);
+    list($parameter, $operation) = $parts;
+    if ($operation === 'field') {
+      array_shift($parts);
+      $operation = implode('.', $parts);
+    }
     // If $parameter parameter is a valid entity, call its own access check.
     $parameters = $route_match->getParameters();
     if ($parameters->has($parameter)) {
       $definition = $parameters->get($parameter);
       if ($definition instanceof ExoComponentDefinition) {
-        return \Drupal::service('plugin.manager.exo_component')->accessDefinition($definition, $operation, $account);
+        return $this->exoComponentManager->accessDefinition($definition, $operation, $account);
       }
     }
     return AccessResult::neutral();

@@ -3,7 +3,6 @@
 namespace Drupal\exo_alchemist\Plugin\ExoComponentField;
 
 use Drupal\Core\Field\FieldItemInterface;
-use Drupal\exo_alchemist\Definition\ExoComponentDefinitionField;
 use Drupal\exo_alchemist\Plugin\ExoComponentFieldFieldableBase;
 use Drupal\exo_icon\ExoIconTranslationTrait;
 
@@ -21,7 +20,7 @@ class Icon extends ExoComponentFieldFieldableBase {
   /**
    * {@inheritdoc}
    */
-  public function componentStorage(ExoComponentDefinitionField $field) {
+  public function getStorageConfig() {
     return [
       'type' => 'icon',
     ];
@@ -30,7 +29,7 @@ class Icon extends ExoComponentFieldFieldableBase {
   /**
    * {@inheritdoc}
    */
-  public function componentWidget(ExoComponentDefinitionField $field) {
+  public function getWidgetConfig() {
     return [
       'type' => 'icon',
     ];
@@ -39,20 +38,29 @@ class Icon extends ExoComponentFieldFieldableBase {
   /**
    * {@inheritdoc}
    */
-  public function componentPropertyInfo(ExoComponentDefinitionField $field) {
+  public function propertyInfo() {
     return [
       'value' => $this->t('The raw icon value.'),
-      'formatted' => $this->t('The formatted icon.'),
+      'render' => $this->t('The formatted icon.'),
     ];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentViewValue(ExoComponentDefinitionField $field, FieldItemInterface $item, $delta, $is_layout_builder) {
+  public function getDefaultValue($delta = 0) {
+    return [
+      'value' => 'regular-smile',
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function viewValue(FieldItemInterface $item, $delta, array $contexts) {
     return [
       'value' => $item->value,
-      'formatted' => $this->icon()->setIcon($item->value)->toRenderable(),
+      'render' => $this->icon()->setIcon($item->value)->toRenderable(),
     ];
   }
 

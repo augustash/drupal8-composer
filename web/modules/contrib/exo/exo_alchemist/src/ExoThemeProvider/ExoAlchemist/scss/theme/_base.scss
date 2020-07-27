@@ -25,27 +25,73 @@ $palette: map-merge($global-colors, $colors);
   a {
     color: color(theme-primary);
   }
+
+  // Can be assigned to children elements.
+  .exo-modifier--color-bg {
+    background-color: color(theme-white);
+  }
+
+  .exo-modifier--color-bg-invert {
+    background-color: color(theme-black);
+  }
+
+  .exo-modifier--color {
+    color: color(theme-black);
+  }
+
+  .exo-modifier--color-invert {
+    color: color(theme-white);
+  }
+
+  .exo-modifier--border-color {
+    color: color(theme-black);
+  }
+
+  .exo-modifier--border-color-invert {
+    color: color(theme-white);
+  }
 }
 
 @each $name, $color in $palette {
-  .exo-modifier--color-bg-#{$name} {
+  .exo-modifier--color-bg-#{$name},
+  // Nested modifiers should take priority.
+  .exo-component-wrapper .exo-modifier--color-bg-#{$name},
+  .exo-modifier--color-bg-content-#{$name} .exo-component-content {
     $base: theme-white;
     $offset: theme-black;
-    @if lightness(color($name)) < 60% {
+    $dark: lightness(color($name)) < 60%;
+    @if $dark {
       $base: theme-black;
       $offset: theme-white;
     }
 
-    background-color: color($name);
-    color: color($offset);
+    &,
+    &.exo-component-wrapper {
+      background-color: color($name);
+      color: color($offset);
+    }
 
     a {
-      @if $name == theme-primary {
-        color: color($offset);
-        font-weight: 700;
-        text-decoration: underline;
+      transition: color $global-speed, background-color $global-speed;
+      $contrast: color-contrast(color($name), color($offset));
+      color: color(theme-primary);
+
+      &:hover {
+        color: darken(color(theme-primary), 10%);
       }
-      // color: color-fix($name, theme-primary, 3%, 40%, 2);
+
+      @if $contrast < 10 {
+        color: color($offset);
+
+        &:hover {
+          @if $dark {
+            color: darken(color($offset), 10%);
+          }
+          @else {
+            color: lighten(color($offset), 10%);
+          }
+        }
+      }
     }
 
     &.exo-modifier--text-shadow {
@@ -75,6 +121,36 @@ $palette: map-merge($global-colors, $colors);
         }
       }
     }
+
+    // Can be assigned to children elements.
+    .exo-modifier--color-bg {
+      background-color: color($name);
+    }
+
+    .exo-modifier--color-bg-invert {
+      background-color: color($offset);
+    }
+
+    // Can be assigned to children elements.
+    .exo-modifier--color {
+      color: color($offset);
+    }
+
+    .exo-modifier--color-invert {
+      color: color($name);
+    }
+
+    .exo-modifier--color-border {
+      border-color: color($name);
+    }
+
+    .exo-modifier--color-border-invert {
+      border-color: color($name);
+    }
+  }
+
+  .exo-modifier--color-border-#{$name} {
+    border-color: color($name);
   }
 }
 

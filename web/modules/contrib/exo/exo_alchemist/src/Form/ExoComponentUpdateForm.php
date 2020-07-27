@@ -38,6 +38,20 @@ class ExoComponentUpdateForm extends ConfirmFormBase {
   protected $definitionTo;
 
   /**
+   * The changes being processed.
+   *
+   * @var array
+   */
+  protected $changes;
+
+  /**
+   * TRUE if component has changes.
+   *
+   * @var bool
+   */
+  protected $hasFieldChanges = FALSE;
+
+  /**
    * Constructs a new DeleteMultiple object.
    *
    * @param \Drupal\exo_alchemist\ExoComponentManager $exo_component_manager
@@ -69,6 +83,7 @@ class ExoComponentUpdateForm extends ConfirmFormBase {
   public function buildForm(array $form, FormStateInterface $form_state, ExoComponentDefinition $definition = NULL) {
     $this->definitionFrom = $definition;
     $this->definitionTo = $this->exoComponentManager->getDefinition($definition->id());
+    $this->changes = $this->exoComponentManager->getEntityBundleFieldChanges($this->definitionTo, $this->definitionFrom);
     $form = parent::buildForm($form, $form_state);
     $form['description'] = $form['description']['#markup'];
     return $form;
@@ -82,14 +97,17 @@ class ExoComponentUpdateForm extends ConfirmFormBase {
     $build['title']['#markup'] = $this->t('The component %title will be updated.', [
       '%title' => $this->definitionFrom->getLabel(),
     ]);
-    foreach ($this->exoComponentManager->getEntityBundleFieldChanges($this->definitionTo, $this->definitionFrom) as $type => $fields) {
-      $build[$type] = [
-        '#theme' => 'item_list',
-        '#title' => $this->t('@operation Field(s)', ['@operation' => ucfirst($type)]),
-        '#items' => array_map(function ($field) {
-          return $field->getLabel() . ' (' . $field->getName() . ')';
-        }, $fields),
-      ];
+    foreach ($this->changes as $type => $fields) {
+      if (!empty($fields)) {
+        $this->hasFieldChanges = TRUE;
+        $build[$type] = [
+          '#theme' => 'item_list',
+          '#title' => $this->t('@operation Field(s)', ['@operation' => ucfirst($type)]),
+          '#items' => array_map(function ($field) {
+            return $field->getLabel() . ' (' . $field->getName() . ')';
+          }, $fields),
+        ];
+      }
     }
     return $build;
   }
@@ -121,7 +139,7 @@ class ExoComponentUpdateForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $this->exoComponentManager->updateEntityType($this->definitionTo);
+    $this->exoComponentManager->updateInstalledDefinition($this->definitionFrom);
     $this->messenger()->addStatus($this->t('The component %title has been updated.', [
       '%title' => $this->definitionTo->getLabel(),
     ]));

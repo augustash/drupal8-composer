@@ -1,56 +1,172 @@
-$ops-size: rem-calc(40);
-$ops-color: color(theme-white);
+.exo-layout-builder {
 
-$component-ops-size: rem-calc(40);
+  .exo-section {
+    border: 1px solid gray(10);
+    margin: $global-margin / 2 !important;
+    padding: $global-padding / 2;
 
-$field-ops-arrow-size: rem-calc(6);
-$field-ops-bg: color(theme-black);
+    &.exo-section-edit {
+      border: 1px dashed gray(20);
 
-.exo-alchemist-component-edit {
-  @include clearfix;
-  position: relative;
-  // padding: 0 !important;
-  cursor: default !important;
-  user-select: none;
-  outline-offset: 0;
-  transition: box-shadow $global-speed, outline-offset $global-speed;
+      a {
+        pointer-events: auto;
+      }
+    }
 
-  &.focus {
-    outline: 1px dashed alpha(color(theme-black), 0.3);
-    outline-offset: 4px;
-    box-shadow: 0 0 25px alpha(color(theme-black), 0.2);
-    z-index: 10;
+    .exo-section {
+
+      &.exo-section-edit {
+
+        a {
+          pointer-events: none;
+        }
+      }
+    }
+  }
+
+  .exo-component-wrapper {
+
+    [tabindex="-1"] {
+      pointer-events: none;
+    }
+  }
+
+  .layout-builder--content-preview-disabled {
+
+    .exo-component-wrapper {
+      padding: 0 !important;
+      background: transparent !important;
+      margin: -($global-margin / 2) 0 !important;
+      min-height: 0 !important;
+    }
+
+    .exo-component {
+      display: none;
+    }
+
+    .layout-builder-block__content-preview-placeholder-label {
+      display: block;
+      background: gray(80) !important;
+      color: gray(0) !important;
+      font-size: rem-calc(16) !important;
+      flex: 1 1 auto;
+      padding: $global-padding;
+      margin: $global-margin / 2 0;
+      box-sizing: border-box;
+    }
   }
 }
 
-.exo-alchemist-component-placeholder {
-  border: 2px solid color(theme-gray);
-  background: color(theme-black);
-  color: color(theme-white);
-  padding: $global-padding;
-}
+.exo-component-hide {
+  transition: opacity $global-speed !important;
+  transition-delay: 0 !important;
 
-.exo-alchemist-component-title {
-  text-transform: uppercase;
-  font-weight: 700;
-  font-size: rem-calc(12);
-}
-
-.exo-alchemist-component-description {
-  opacity: 0.7;
-  font-size: rem-calc(11);
-  display: block;
-  margin: rem-calc(2 0);
-
-  .exo-icon {
-    color: color(theme-warning);
+  &.exo-component-hide-active {
+    // visibility: hidden !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
   }
 }
 
-.exo-alchemist-mask {
+.exo-component-edit,
+.exo-component-edit-active .exo-component-edit {
+  cursor: pointer;
+
+  * {
+    pointer-events: none;
+  }
+
+  &.exo-component-edit-active {
+    cursor: auto;
+
+    .exo-component-edit {
+      pointer-events: auto;
+    }
+
+    .exo-component-field-edit {
+      pointer-events: auto;
+
+      > * {
+        pointer-events: auto;
+      }
+
+      [tabindex="-1"] {
+        pointer-events: none;
+      }
+      // a,
+      // iframe {
+      //   pointer-events: none;
+      // }
+    }
+
+    .exo-component-event-allow {
+      pointer-events: auto !important;
+    }
+  }
+
+  &.exo-component-blocked {
+    cursor: not-allowed;
+
+    > .exo-component {
+      pointer-events: none;
+      // cursor: not-allowed;
+    }
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}
+
+/**
+ * Nested Sections
+ */
+ .exo-component-edit {
+
+  .layout-builder__add-block a {
+    opacity: 0.5;
+    margin: 0;
+  }
+
+  .exo-component-edit:not(.exo-component-edit-active) {
+    // pointer-events: auto;
+
+    * {
+      pointer-events: none;
+    }
+  }
+
+  &.exo-component-edit-active {
+
+    .layout-builder__add-block a {
+      pointer-events: auto !important;
+      opacity: 1;
+    }
+  }
+}
+
+.exo-component-field-edit {
+  cursor: pointer;
+}
+
+.exo-alchemist-shade {
   position: absolute;
-  z-index: 99;
+  z-index: 898;
   background: alpha(color(theme-black), 0.8);
+  transition: all $global-speed;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+
+  &.restrict {
+    pointer-events: auto;
+  }
+}
+
+.exo-alchemist-highlight {
+  position: absolute;
+  z-index: 897;
+  background: alpha(color(theme-white), 0.9);
   transition: all $global-speed;
   visibility: hidden;
   opacity: 0;
@@ -63,210 +179,294 @@ $field-ops-bg: color(theme-black);
 
 .exo-alchemist-overlay {
   position: absolute;
-  z-index: 100;
+  z-index: 899;
   transition: all $global-speed;
   outline: 1px dashed color(theme-warning);
   outline-offset: 4px;
   visibility: hidden;
   opacity: 0;
   box-shadow: 0 0 25px alpha(color(theme-black), 0.8);
-  // border: 1px solid color(theme-warning);
+  pointer-events: none;
 }
 
-// Component Ops
-
-.exo-alchemist-component-panel {
+.exo-alchemist-overlay-header {
+  @include flex;
+  @include flex-align(left, bottom);
   position: absolute;
-  top: -$component-ops-size;
   left: 0;
-  z-index: 105;
-  width: $component-ops-size;
-  height: $component-ops-size;
-  border-radius: 50% 0 0 50%;
-  background: color(theme-black);
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity $global-speed;
-  border-right: 0;
-  box-sizing: content-box;
-
-  &.animate {
-    transition: all $global-speed;
-  }
-
-  > a {
-    display: block;
-    width: $component-ops-size;
-  }
-}
-
-.exo-alchemist-component-panel-toggle {
-  @include exo-icon(regular, f013);
-}
-
-.exo-alchemist-component-ops {
-  position: absolute;
-  top: 0;
   right: 0;
-  background: $field-ops-bg;
-  height: $ops-size;
-  border-radius: $ops-size / 2 0 0 $ops-size / 2;
-  white-space: nowrap;
-  padding: 0 $ops-size / 4;
-  transform-origin: top right;
-  transition: opacity $global-speed, transform $global-speed;
-  opacity: 0;
-  transform: scaleX(0);
-
-  .focus & {
-    opacity: 1;
-    transform: scaleX(1);
-    transition: transform $global-speed;
-    // transition-delay: $global-speed;
-    // border-radius: 0;
-  }
+  bottom: 100%;
 }
 
-// Field Ops
-.exo-component-field-edit {
-  cursor: pointer;
-  outline: 1px dashed alpha(color(theme-black), 0);
-  outline-offset: 4px;
-  transition: outline $global-speed;
-  pointer-events: auto !important;
-
-  &:hover {
-
-    .focus & {
-      outline: 1px dashed alpha(color(theme-black), 0.5);
-    }
-  }
-}
-
-.exo-alchemist-field-ops {
-  position: absolute;
-  top: -($ops-size + ($field-ops-arrow-size / 2));
-  left: 0;
-  background: $field-ops-bg;
-  height: $ops-size;
-  border-radius: $ops-size / 2;
-  white-space: nowrap;
-  padding: 0 $ops-size / 4;
-  transform-origin: bottom left;
-  transition: opacity $global-speed, transform $global-speed;
-  opacity: 0;
-  transform: scale(0.1);
-
-  .exo-overlay-op-field & {
-    opacity: 1;
-    transform: scale(1);
-    transition-delay: $global-speed;
-
-    &.hide {
-      opacity: 0;
-      transform: scale(0.1);
-    }
-  }
-
-  &:before {
-    @include exo-triangle(bottom, $field-ops-arrow-size, $field-ops-arrow-size, $field-ops-bg);
-    position: absolute;
-    top: 100%;
-    left: $ops-size / 2;
-  }
-}
-
-a.exo-alchemist-op {
-  display: inline-block;
-  height: $ops-size;
-  line-height: $ops-size;
-  min-width: rem-calc(30);
-  overflow: hidden;
-  color: $ops-color;
-  text-align: center;
-  opacity: 0.7;
-  transition: min-width $global-speed, opacity $global-speed, color $global-speed;
-  font-size: rem-calc(11);
-  text-transform: uppercase;
-  vertical-align: middle;
+.exo-alchemist-ops {
+  @include flex;
+  @include flex-align(left, bottom);
+  flex-wrap: wrap;
+  // @include exo-progress-throbber();
+  pointer-events: auto;
+  flex: 1 1 auto;
 
   > span {
-    padding-left: rem-calc(2);
-    padding-right: rem-calc(10);
-  }
+    @include flex;
+    @include flex-align(center, bottom);
+    flex-wrap: wrap;
+    // flex-wrap: nowrap;
+    line-height: 1.2;
+    font-size: rem-calc(13);
+    box-shadow: 0 -5px 10px -5px alpha(color(theme-black), 0.4);
+    border-radius: $global-radius $global-radius 0 0;
+    overflow: hidden;
+    transform: scaleY(0);
+    transform-origin: center bottom;
+    transition: color $global-speed, background-color $global-speed, transform $global-speed;
+    background: gray(85);
 
-  &:last-child {
-
-    > span {
-      padding-right: 0;
+    &.active {
+      transform: scaleY(1);
     }
   }
 
-  &,
-  &:focus,
-  &:active,
-  &:hover {
-    color: $ops-color;
+  .exo-description {
+    display: block;
+    background: gray(80);
+    color: gray(0);
+    padding: rem-calc(5 10);
+    white-space: nowrap;
+    // border-radius: $global-radius $global-radius 0 0;
+    margin-right: 2px;
+    font-style: normal;
   }
 
-  &:hover {
-    opacity: 1;
+  a {
+    @include flex;
+    @include flex-align(center, middle);
+    padding: rem-calc(5 10);
+    white-space: nowrap;
+    background: gray(85);
+    color: gray(0);
+    transition: color $global-speed, background-color $global-speed;
+
+    > * {
+      margin: 0 1.5px;
+    }
+
+    // &:first-child {
+    //   border-radius: $global-radius 0 0 0;
+    // }
+
+    // &:last-child {
+    //   border-radius: 0 $global-radius 0 0;
+    // }
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: gray(0);
+      background: gray(75);
+    }
+
+  }
+}
+
+.exo-alchemist-op-badge {
+  display: inline-block;
+  background: gray(70);
+  border-radius: $global-radius;
+  font-size: rem-calc(9);
+  line-height: rem-calc(9);
+  padding: rem-calc(2 4);
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.exo-alchemist-overlay-close {
+  z-index: 10;
+  pointer-events: auto;
+  box-shadow: 0 -5px 10px -5px alpha(color(theme-black), 0.4);
+  transform: scaleY(0);
+  transform-origin: center bottom;
+  transition: color $global-speed, background-color $global-speed, transform $global-speed;
+  margin-left: rem-calc(2);
+
+  a {
+    display: block;
+    padding: rem-calc(5 10);
+    white-space: nowrap;
+    line-height: 1.2;
+    font-size: rem-calc(13);
+    background: alpha(gray(0), 0.7);
+    color: color(theme-alert);
+    transition: color $global-speed, background-color $global-speed;
+    border-radius: $global-radius $global-radius 0 0;
+
+    &:hover,
+    &:focus,
+    &:active {
+      background: color(theme-alert);
+      color: gray(0);
+    }
+
+    .exo-icon-label {
+      display: none;
+    }
   }
 
-  &:before {
-    display: inline-block;
-    height: $ops-size;
-    line-height: $ops-size;
-    width: rem-calc(20);
-    box-sizing: content-box;
-    text-align: center;
-    font-size: rem-calc(16);
-  }
-
-  &.hide {
-    // transform: scaleX(0);
-    min-width: rem-calc(0);
-    width: 0;
-    opacity: 0;
+  &.active {
+    transform: scaleY(1);
   }
 }
 
-.exo-alchemist-component-op-up {
-  @include exo-icon(regular, f176);
+.exo-alchemist-target {
+  position: absolute;
+  z-index: 900;
+  transition: all $global-speed;
+  outline: 1px dashed color(theme-warning);
+  outline-offset: 4px;
+  visibility: hidden;
+  opacity: 0;
+  box-shadow: 0 0 25px alpha(color(theme-black), 0.3);
+  pointer-events: none;
+
+  &.restrict {
+    pointer-events: auto;
+  }
 }
 
-.exo-alchemist-component-op-down {
-  @include exo-icon(regular, f175);
+.exo-alchemist-target-header {
+  @include flex;
+  @include flex-align(left, bottom);
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+
+  [data-align="right"] & {
+    @include flex-align(right, bottom);
+  }
 }
 
-.exo-alchemist-component-op-appearance {
-  @include exo-icon(regular, f618);
+.exo-alchemist-target-title {
+  @include flex;
+  @include flex-align(center, bottom);
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  transform: scaleY(0);
+  transform-origin: center bottom;
+  transition: color $global-speed, background-color $global-speed, transform $global-speed;
+  white-space: nowrap;
+
+  &.active {
+    transform: scaleY(1);
+  }
+
+  > span {
+    display: block;
+    line-height: 1.2;
+    padding: rem-calc(5 8);
+    background: gray(80);
+    color: gray(0);
+    // font-weight: 700;
+    font-size: rem-calc(11);
+    border-radius: $global-radius $global-radius 0 0;
+  }
 }
 
-.exo-alchemist-component-op-restore {
-  @include exo-icon(regular, f2ea);
+.exo-alchemist-target-ops {
+
+  > span {
+    font-size: rem-calc(12);
+  }
 }
 
-.exo-alchemist-component-op-remove {
-  @include exo-icon(regular, f1f8);
+.exo-alchemist-target-close {
+  z-index: 10;
+  box-shadow: 0 -5px 15px -5px alpha(color(theme-black), 0.3);
+  transform: scaleY(0);
+  transform-origin: center bottom;
+  transition: color $global-speed, background-color $global-speed, transform $global-speed;
+  margin-left: rem-calc(2);
+
+  a {
+    display: block;
+    padding: rem-calc(5 10);
+    line-height: 1.2;
+    font-size: rem-calc(12);
+    white-space: nowrap;
+    background: alpha(gray(0), 0.7);
+    color: color(theme-alert);
+    transition: color $global-speed, background-color $global-speed;
+    border-radius: $global-radius $global-radius 0 0;
+
+    &:hover,
+    &:focus,
+    &:active {
+      background: color(theme-alert);
+      color: gray(0);
+    }
+
+    .exo-icon-label {
+      display: none;
+    }
+  }
+
+  &.active {
+    transform: scaleY(1);
+  }
 }
 
-.exo-alchemist-field-op-update {
-  @include exo-icon(regular, f044);
-}
+.exo-alchemist-overlay .exo-alchemist-breadcrumbs {
+  @include flex-align(left, middle);
+  // display: none;
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: color(theme-black);
+  margin: 0;
+  padding: 0 rem-calc(5);
+  box-shadow: 0 0 25px alpha(color(theme-black), 0.8);
+  pointer-events: auto;
 
-.exo-alchemist-field-op-delete {
-  @include exo-icon(regular, f1f8);
-}
+  li {
+    list-style: none;
+    padding: rem-calc(5);
 
-.exo-alchemist-field-op-clone {
-  @include exo-icon(regular, f24d);
-}
+    &:last-child {
 
-.exo-alchemist-field-op-prev {
-  @include exo-icon(regular, f177);
-}
+      a {
 
-.exo-alchemist-field-op-next {
-  @include exo-icon(regular, f178);
+        &:after {
+          display: none;
+        }
+      }
+    }
+  }
+
+  a {
+    color: color(theme-white);
+    font-size: rem-calc(12);
+    // text-transform: uppercase;
+  }
+
+  .exo-alchemist-breadcrumb-label {
+    color: color(theme-white);
+    font-size: rem-calc(10);
+    font-weight: 300;
+    opacity: 0.5;
+    text-transform: uppercase;
+  }
+
+  .exo-alchemist-breadcrumb-field {
+
+    a {
+      @include exo-icon(regular, f105, after) {
+        padding-left: rem-calc(10);
+        color: color(theme-white);
+        pointer-events: none;
+      }
+    }
+  }
 }

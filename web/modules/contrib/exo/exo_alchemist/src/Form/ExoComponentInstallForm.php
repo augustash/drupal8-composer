@@ -26,7 +26,7 @@ class ExoComponentInstallForm extends ConfirmFormBase {
   /**
    * The eXo component manager.
    *
-   * @var \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField
+   * @var \Drupal\exo_alchemist\Definition\ExoComponentDefinition
    */
   protected $definition;
 

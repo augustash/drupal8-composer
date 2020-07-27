@@ -20,6 +20,16 @@ class Column extends ClassAttribute {
     '6' => '2',
     '4' => '3',
     '3' => '4',
+    '5' => '5',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function asAttributeArray() {
+    $attributes = parent::asAttributeArray();
+    $attributes['class'][] = 'exo-modifier--column';
+    return $attributes;
+  }
 
 }

@@ -1,0 +1,9 @@
+exo_imagine.settings:
+  path: '/admin/config/exo/image'
+  defaults:
+    _form: '\Drupal\exo_imagine\Form\ExoImagineSettingsForm'
+    _title: 'Image Settings'
+  requirements:
+    _permission: 'administer exo image'
+  options:
+    _admin_route: TRUE

@@ -41,7 +41,8 @@ class ExoComponentDefinitionAnimation implements \ArrayAccess {
   /**
    * ExoComponentDefinitionAnimationProperty constructor.
    */
-  public function __construct($name, array $values) {
+  public function __construct($name, array $values, $component) {
+    $this->component = $component;
     foreach ($values as $key => $value) {
       if (array_key_exists($key, $this->definition)) {
         $this->definition[$key] = $value;

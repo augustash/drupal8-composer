@@ -7,6 +7,6 @@ services:
     arguments: ['@exo_modal.settings']
   main_content_renderer.exo_modal:
     class: Drupal\exo_modal\Render\ExoModalRenderer
-    arguments: ['@title_resolver']
+    arguments: ['@title_resolver', '@module_handler']
     tags:
       - { name: render.main_content_renderer, format: drupal_exo_modal }

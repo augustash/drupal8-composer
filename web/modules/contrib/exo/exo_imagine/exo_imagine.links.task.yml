@@ -1,0 +1,4 @@
+exo_imagine.settings:
+  route_name: exo_imagine.settings
+  base_route: exo_imagine.settings
+  title: 'Settings'

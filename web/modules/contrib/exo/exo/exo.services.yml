@@ -8,3 +8,7 @@ services:
   plugin.manager.exo_extra_field_display:
     class: Drupal\exo\Plugin\ExoExtraFieldDisplayManager
     arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@entity_type.manager']
+  exo.throbber.manager:
+    class: Drupal\exo\Plugin\ExoThrobberManager
+    parent: default_plugin_manager
+    arguments: ['@router.admin_context', '@request_stack', '@config.factory']

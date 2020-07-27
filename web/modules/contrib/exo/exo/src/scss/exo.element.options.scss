@@ -32,7 +32,7 @@ div.exo-element-options { // sass-lint:disable-line no-qualifying-elements force
 
     label {
       display: block;
-      border: 1px solid grey(20);
+      border: 1px solid gray(20);
       padding: rem-calc(5 10);
       margin: 0;
       transition: color $global-speed ease, background-color $global-speed ease, border-color $global-speed ease, opacity $global-speed ease, text-shadow $global-speed ease !important;
@@ -238,10 +238,24 @@ div.exo-element-options { // sass-lint:disable-line no-qualifying-elements force
   display: inline-block;
   width: rem-calc(10);
   height: rem-calc(10);
-  border: 1px dotted grey(50);
+  border: 1px dotted gray(50);
   vertical-align: middle;
   margin-top: -2px;
   margin-right: rem-calc(5);
   transition: border-color 300ms, box-shadow 300ms;
   box-sizing: border-box;
+
+  &.exo-swatch-transparent {
+    background-color: gray(20) !important;
+    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"%3E%3Cg fill="%23ffffff" fill-opacity="1"%3E%3Cpath fill-rule="evenodd" d="M0 0h4v4H0V0zm4 4h4v4H4V4z"/%3E%3C/g%3E%3C/svg%3E') !important;
+  }
+
+  &.large {
+    width: rem-calc(20);
+    height: rem-calc(20);
+  }
+
+  &.no-pad {
+    margin-right: 0;
+  }
 }

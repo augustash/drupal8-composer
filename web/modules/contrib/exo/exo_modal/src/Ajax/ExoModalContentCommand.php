@@ -33,7 +33,6 @@ class ExoModalContentCommand extends InsertCommand {
    * Implements Drupal\Core\Ajax\CommandInterface:render().
    */
   public function render() {
-
     return [
       'command' => 'exoModalContent',
       'data' => $this->getRenderedContent(),

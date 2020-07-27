@@ -3,11 +3,9 @@
 namespace Drupal\exo_alchemist\Plugin\ExoComponentField;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
-use Drupal\Core\Field\FieldItemInterface;
-use Drupal\exo_alchemist\Definition\ExoComponentDefinitionField;
-use Drupal\exo_alchemist\Definition\ExoComponentDefinitionFieldPreview;
-use Drupal\exo_alchemist\Plugin\ExoComponentFieldFileTrait;
 use Drupal\exo_alchemist\Plugin\ExoComponentFieldImageStylesTrait;
+use Drupal\file\FileInterface;
+use Drupal\media\MediaInterface;
 
 /**
  * A 'media' adapter for exo components.
@@ -22,33 +20,33 @@ use Drupal\exo_alchemist\Plugin\ExoComponentFieldImageStylesTrait;
  *   provider = "media",
  * )
  */
-class MediaImage extends MediaBase {
+class MediaImage extends MediaFileBase {
 
-  use ExoComponentFieldFileTrait;
   use ExoComponentFieldImageStylesTrait;
 
   /**
    * Get the entity type.
    */
-  protected function getEntityTypeBundles(ExoComponentDefinitionField $field) {
+  protected function getEntityTypeBundles() {
     return ['image' => 'image'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentProcessDefinition(ExoComponentDefinitionField $field) {
-    parent::componentProcessDefinition($field);
-    $this->componentProcessDefinitionFile($field, TRUE);
-    $this->componentProcessDefinitionImageStyles($field);
+  public function processDefinition() {
+    parent::processDefinition();
+    $field = $this->getFieldDefinition();
+    $this->processDefinitionImageStyles($field);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentPropertyInfo(ExoComponentDefinitionField $field) {
-    $properties = parent::componentPropertyInfo($field);
-    foreach ($this->componentPropertyInfoImageStyles($field) as $key => $property) {
+  public function propertyInfo() {
+    $properties = parent::propertyInfo();
+    $field = $this->getFieldDefinition();
+    foreach ($this->propertyInfoImageStyles($field) as $key => $property) {
       $properties['style.' . $key] = $property;
     }
     return $properties;
@@ -57,63 +55,38 @@ class MediaImage extends MediaBase {
   /**
    * {@inheritdoc}
    */
-  public function componentInstallEntityType(ExoComponentDefinitionField $field, ConfigEntityInterface $entity) {
-    parent::componentUpdateEntityType($field, $entity);
-    $this->componentBuildImageStyles($field, $entity);
+  public function onInstall(ConfigEntityInterface $entity) {
+    parent::onInstall($entity);
+    $field = $this->getFieldDefinition();
+    $this->buildImageStyles($field);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentUpdateEntityType(ExoComponentDefinitionField $field, ConfigEntityInterface $entity) {
-    parent::componentUpdateEntityType($field, $entity);
-    $this->componentBuildImageStyles($field, $entity);
+  public function onUpdate(ConfigEntityInterface $entity) {
+    parent::onUpdate($entity);
+    $field = $this->getFieldDefinition();
+    $this->buildImageStyles($field);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentViewValue(ExoComponentDefinitionField $field, FieldItemInterface $item, $delta, $is_layout_builder) {
-    $media = $item->entity;
-    if ($media) {
-      $source_field_definition = $media->getSource()->getSourceFieldDefinition($media->bundle->entity);
-      $file = $media->{$source_field_definition->getName()}->entity;
-      if ($file) {
-        return [
-          'url' => $file->url(),
-          'title' => $media->label(),
-          'style' => $this->componentViewFileImageStyles($field, $file),
-        ];
-      }
-    }
-  }
-
-  /**
-   * Extending classes can use this method to set individual values.
-   *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionFieldPreview $preview
-   *   The field preview.
-   * @param \Drupal\Core\Field\FieldItemInterface $item
-   *   The current item.
-   *
-   * @return mixed
-   *   A value suitable for setting to \Drupal\Core\Field\FieldItemInterface.
-   */
-  protected function componentMediaValue(ExoComponentDefinitionFieldPreview $preview, FieldItemInterface $item = NULL) {
-    $values = [];
-    if ($file = $this->componentFile($preview)) {
-      $values[] = [
-        'target_id' => $file->id(),
-      ];
-    }
-    return $values;
+  public function getDefaultValue($delta = 0) {
+    return [
+      'path' => drupal_get_path('module', 'exo_alchemist') . '/images/default.png',
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getFileDirectory(ExoComponentDefinitionFieldPreview $preview) {
-    return 'public://media/' . str_replace('_', '-', $preview->getValue('bundle'));
+  protected function viewFileValue(MediaInterface $media, FileInterface $file) {
+    $field = $this->getFieldDefinition();
+    return [
+      'style' => $this->getImageStylesAsUrl($field, $file),
+    ] + parent::viewFileValue($media, $file);
   }
 
 }

@@ -1,12 +1,15 @@
 services:
   plugin.manager.exo_component:
     class: Drupal\exo_alchemist\ExoComponentManager
-    arguments: ['@entity_type.manager', '@cache.discovery', '@module_handler', '@theme_handler', '@plugin.manager.exo_component_field', '@plugin.manager.exo_component_property', '@exo_alchemist.animation.manager']
+    arguments: ['@entity_type.manager', '@entity.repository', '@cache.discovery', '@module_handler', '@theme_handler', '@plugin.manager.exo_component_field', '@plugin.manager.exo_component_property', '@plugin.manager.exo_component_enhancement', '@exo_alchemist.animation.manager', '@current_user']
   plugin.manager.exo_component_field:
     class: Drupal\exo_alchemist\ExoComponentFieldManager
     arguments: ['@container.namespaces', '@entity_type.manager', '@cache.discovery', '@module_handler']
   plugin.manager.exo_component_property:
     class: Drupal\exo_alchemist\ExoComponentPropertyManager
+    parent: default_plugin_manager
+  plugin.manager.exo_component_enhancement:
+    class: Drupal\exo_alchemist\ExoComponentEnhancementManager
     parent: default_plugin_manager
   exo_alchemist.animation.manager:
     class: Drupal\exo_alchemist\ExoComponentAnimationManager
@@ -18,11 +21,17 @@ services:
       - { name: paramconverter, priority: 10 }
   exo_alchemist.route_subscriber:
     class: Drupal\exo_alchemist\Routing\RouteSubscriber
+    arguments: ['@entity_type.manager', '@plugin.manager.exo_component']
     tags:
       - { name: event_subscriber, priority: 100 }
-  exo_alchemist.render_block_component_subscriber:
-    class: Drupal\exo_alchemist\EventSubscriber\BlockComponentRenderArray
-    arguments: ['@entity.repository']
+  exo_alchemist.block_component_render_array_before_subscriber:
+    class: Drupal\exo_alchemist\EventSubscriber\BlockComponentRenderArrayBeforeCore
+    arguments: ['@plugin.manager.exo_component']
+    tags:
+      - { name: event_subscriber }
+  exo_alchemist.block_component_render_array_after_subscriber:
+    class: Drupal\exo_alchemist\EventSubscriber\BlockComponentRenderArrayAfterCore
+    arguments: ['@plugin.manager.exo_component', '@current_user']
     tags:
       - { name: event_subscriber }
   exo_alchemist.get_block_dependency_subscriber:
@@ -35,11 +44,27 @@ services:
     arguments: ['@config.manager', '@entity_type.manager']
     tags:
       - { name: event_subscriber, priority: 100 }
-  # exo_alchemist.config_transform:
-  #   class: Drupal\exo_alchemist\EventSubscriber\ExoComponentConfigTransform
-  #   tags:
-  #     - { name: event_subscriber, priority: 100 }
+  exo_alchemist.exo_component_entity_builder:
+    class: Drupal\exo_alchemist\EventSubscriber\ExoComponentEntityBuilder
+    arguments: ['@state']
+    tags:
+      - { name: event_subscriber }
   access_check.exo_component:
     class: Drupal\exo_alchemist\Access\ExoComponentAccessCheck
+    arguments: ['@plugin.manager.exo_component']
     tags:
       - { name: access_check, applies_to: _exo_component }
+  access_check.exo_component.view_mode:
+    class: Drupal\exo_alchemist\Access\ExoComponentViewModeAccessCheck
+    arguments: ['@entity_type.manager']
+    tags:
+     - { name: access_check, applies_to: _exo_component_view_mode_access }
+  exo_alchemist.generator:
+    class: Drupal\exo_alchemist\ExoComponentGenerator
+    arguments: ['@database', '@layout_builder.tempstore_repository', '@plugin.manager.exo_component', '@plugin.manager.layout_builder.section_storage', '@uuid']
+  logger.channel.exo_alchemist:
+    parent: logger.channel_base
+    arguments: ['exo_alchemist']
+  exo_alchemist.repository:
+    class: Drupal\exo_alchemist\ExoComponentRepository
+    arguments: ['@plugin.manager.exo_component']

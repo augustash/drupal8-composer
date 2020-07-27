@@ -206,7 +206,7 @@ class ExoComponentDiscovery implements DiscoveryInterface {
         return str_replace($absolute_path, $relative_path, $closest_template);
       }
       else {
-        return '/' . \Drupal::service('module_handler')->getModule('exo_alchemist')->getPath() . '/images/component-default.jpg';
+        return '/' . \Drupal::service('module_handler')->getModule('exo_alchemist')->getPath() . '/images/component-default.png';
       }
     }
   }

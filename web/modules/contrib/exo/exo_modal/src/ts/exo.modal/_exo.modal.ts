@@ -122,6 +122,8 @@ class ExoModal extends ExoData {
   protected panelOpen:boolean = false;
   protected $trigger:JQuery;
   protected $element:JQuery;
+  protected $contentAjaxPlaceholder:JQuery;
+  protected contentAjaxLoaded:boolean = false;
   protected $overlay:JQuery;
   protected $navigate:JQuery;
   protected $wrap:JQuery;
@@ -152,6 +154,9 @@ class ExoModal extends ExoData {
           if ($element.length) {
             this.debug('log', 'Build: Found Element', '[' + this.id + ']');
             this.state = this.states.CLOSED;
+            if (this.get('contentAjax')) {
+              this.$contentAjaxPlaceholder = $('<div class="exo-modal-ajax-placeholder hidden" />').insertBefore($element);
+            }
           }
           // We resolve true if either the trigger or the element has been found.
           // This will only occur once per trigger/element as we use .once(). We
@@ -222,6 +227,9 @@ class ExoModal extends ExoData {
       if (this.$element.hasClass(this.name + '-hidden')) {
         this.$element.removeClass(this.name + '-hidden');
       }
+      if (this.get('class') !== '') {
+        this.$element.addClass(this.get('class'));
+      }
       this.class = (this.$element.attr('class') !== undefined) ? this.$element.attr('class') : '';
       this.content = this.$element.html();
       this.$overlay = $('<div class="' + this.name + '-overlay" style="background-color:' + this.get('overlayColor') + '"></div>');
@@ -229,14 +237,11 @@ class ExoModal extends ExoData {
       this.$element.attr('aria-hidden', 'true');
       this.$element.attr('aria-labelledby', this.getId());
       this.$element.attr('role', 'dialog');
-      this.$container = this.$element.find('.' + this.name + '-container');
-      this.$content = this.$element.find('.' + this.name + '-content');
+      this.$container = this.$element.find('.' + this.name + '-container').first();
+
+      this.$content = this.$element.find('.' + this.name + '-content').first();
       this.$sectionHeader = this.$element.find('.' + this.name + '-section-header');
       this.$sectionFooter = this.$element.find('.' + this.name + '-section-footer');
-
-      if (this.get('class') !== '') {
-        this.$element.addClass(this.get('class'));
-      }
 
       if (!this.$element.hasClass(this.name)) {
         this.$element.addClass(this.name);
@@ -256,7 +261,7 @@ class ExoModal extends ExoData {
         else {
           this.$element.appendTo(this.get('appendTo'));
         }
-        // Of modal is within eXo content, we need to offset it so that it
+        // If modal is within eXo content, we need to offset it so that it
         // accounts for displacement.
         if (this.$element.closest('.exo-content').length) {
           this.$element.css({
@@ -283,7 +288,7 @@ class ExoModal extends ExoData {
         }
       }
 
-      this.$wrap = this.$element.find('.' + this.name + '-wrap');
+      this.$wrap = this.$element.find('.' + this.name + '-wrap').first();
 
       if (this.get('zindex') !== null) {
         this.setZindex(this.get('zindex'));
@@ -293,7 +298,7 @@ class ExoModal extends ExoData {
         this.$element.css('border-radius', this.get('radius'));
       }
 
-      if (this.get('padding') !== '') {
+      if (this.get('padding') !== '' && this.get('padding') !== 0) {
         this.$content.css('padding', this.get('padding'));
       }
 
@@ -387,6 +392,7 @@ class ExoModal extends ExoData {
   public createFooter() {
     // This can be called multiple times and should be rebuilt each time.
     this.$element.find('.' + this.name + '-footer').remove();
+    this.$element.removeClass('has-footer');
 
     if (this.get('smartActions') === true) {
       const $actions = this.$element.find('.form-actions');
@@ -401,6 +407,7 @@ class ExoModal extends ExoData {
       $('.exo-modal-views-view .exo-form-container-form-actions').addClass('exo-modal-actions');
       const $inputs = this.$element.find('.exo-modal-actions:last input, .exo-modal-actions button, .exo-modal-actions a');
       if ($inputs.length) {
+        this.$element.addClass('has-footer');
         this.$element.append(this.$footer);
         this.$element.css('border-bottom-width', 0);
         this.set('borderBottom', false);
@@ -420,15 +427,16 @@ class ExoModal extends ExoData {
               $original.trigger('mousedown').trigger('mouseup').trigger('click');
             }
           }
-
+          const $primary = $inputs.filter('.button--primary');
           $inputs.each((index, element) => {
             const $original = $(element);
+            const isPrimary = $primary.length ? $original.hasClass('button--primary') : index === 0;
             $original.clone()
               .attr('id', $original.attr('id') + '-clone')
               .attr('name', $original.attr('name') + '-clone')
               .attr('data-drupal-selector', $original.attr('data-drupal-selector') + '-clone')
               .removeAttr('class')
-              .addClass('exo-modal-action' + (index === 0 ? ' primary': ''))
+              .addClass('exo-modal-action' + (isPrimary ? ' primary': ''))
               .on('click', e => {
                 e.preventDefault();
                 const buttonDelay = $original.data('exo-modal-action-delay');
@@ -628,7 +636,7 @@ class ExoModal extends ExoData {
 
   protected recalcSize() {
     var windowWidth = Drupal.Exo.$window.width() - displace.offsets.left - displace.offsets.right;
-    var modalWidth = this.get('left') && this.get('right') ? windowWidth - (Drupal.Exo.getMeasurementValue(this.get('left')) || 0) - (Drupal.Exo.getMeasurementValue(this.get('right')) || 0) : this.get('width');
+    var modalWidth = (this.get('left') !== null && this.get('left') !== false) && (this.get('right') !== null && this.get('right') !== false) ? windowWidth - (Drupal.Exo.getMeasurementValue(this.get('left')) || 0) - (Drupal.Exo.getMeasurementValue(this.get('right')) || 0) : this.get('width');
     this.$element.css('max-width', modalWidth);
     var modalHeight = this.get('height');
     if (modalHeight) {
@@ -782,6 +790,14 @@ class ExoModal extends ExoData {
   public open(param?:any) {
     if (this.state == this.states.CLOSED) {
       this.debug('log', 'Open', '[' + this.getId() + ']', this.getData());
+      if (this.get('contentAjax')) {
+        if (this.contentAjaxLoaded === false) {
+          this.contentAjaxLoaded = true;
+          // Rebind trigger so that it doesn't do another ajax request.
+          this.$trigger.off('click.exo.modal.' + this.getId());
+          this.bindTrigger();
+        }
+      }
       this.toggleContentSelector();
       this.buildContent();
       Drupal.ExoDisplace.calculate();
@@ -1097,6 +1113,10 @@ class ExoModal extends ExoData {
       $('html').removeClass(this.name + '-isAttached');
     }
 
+    if (this.get('contentAjax')) {
+      this.$element.insertAfter(this.$contentAjaxPlaceholder);
+      this.rebuildContent();
+    }
     if (this.get('destroyOnClose')) {
       this.destroy();
     }
@@ -1127,6 +1147,11 @@ class ExoModal extends ExoData {
       .attr('style', '')
       .remove();
 
+    if (this.$contentAjaxPlaceholder) {
+      this.$contentAjaxPlaceholder.remove();
+    }
+    this.$contentAjaxPlaceholder = null;
+    this.contentAjaxLoaded = false;
     this.$overlay.remove();
     this.$navigate.remove();
     this.$element.trigger(this.states.DESTROYED);
@@ -1455,11 +1480,11 @@ class ExoModal extends ExoData {
   protected bindTrigger() {
     const $trigger = this.getTriggerElement();
     if ($trigger.length) {
-      if (this.get('ajax') || this.get('contentAjax')) {
+      if (this.get('ajax') || (this.get('contentAjax') && this.contentAjaxLoaded === false)) {
         this.bindTriggerAjax();
       }
       else {
-        $trigger.on('click.exo.modal.' + this.getId(), e => {
+        $trigger.off('click.exo.modal.' + this.getId()).on('click.exo.modal.' + this.getId(), e => {
           e.preventDefault();
           this.toggle();
         });

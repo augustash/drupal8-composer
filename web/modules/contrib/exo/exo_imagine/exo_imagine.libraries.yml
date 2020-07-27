@@ -1,0 +1,11 @@
+image:
+  version: VERSION
+  css:
+    component:
+      css/exo.imagine.css: { minified: true }
+  js:
+    js/exo.imagine.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - exo/exo

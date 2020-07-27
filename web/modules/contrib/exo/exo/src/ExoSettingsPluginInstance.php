@@ -34,10 +34,7 @@ class ExoSettingsPluginInstance extends ExoSettingsInstance implements ExoSettin
   }
 
   /**
-   * An array of setting keys to exclude from diff comparisons.
-   *
-   * @return array
-   *   An array of setting keys.
+   * {@inheritdoc}
    */
   public function getDiffExcludes() {
     return $this->exoSettings->getPluginDiffExcludes($this->pluginId);
@@ -62,7 +59,7 @@ class ExoSettingsPluginInstance extends ExoSettingsInstance implements ExoSettin
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array $form, FormStateInterface $form_state) {
     $this->exoSettings->setPluginSettings($this->pluginId, $this->getSettings());
     $this->exoSettings->submitPluginForm($this->pluginId, $form, $form_state);
   }

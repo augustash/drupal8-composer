@@ -1,2 +1,8 @@
-use exo link menu:
+administer exo link menu:
+  title: 'Administer link menu'
+add exo link menu icon:
   title: 'Allow adding icons to menu items'
+add exo link menu target:
+  title: 'Allow adding target to menu items'
+add exo link menu class:
+  title: 'Allow adding class to menu items'

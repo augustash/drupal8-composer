@@ -1,0 +1,37 @@
+exo_component.appearance:
+  title: 'Appearance'
+  route_name: 'layout_builder.component.appearance'
+  group: 'exo_component'
+  options:
+    attributes:
+      class: ['use-ajax']
+      data-dialog-type: dialog
+      data-dialog-renderer: off_canvas
+      data-dialog-options: '{"exo_modal": {"icon": "regular-pencil-paintbrush", "subtitle": "Configure component appearance", "overlayColor": "transparent"}}'
+
+exo_component.restore:
+  title: 'Restore'
+  route_name: 'layout_builder.component.restore'
+  group: 'exo_component'
+  options:
+    attributes:
+      class: ['use-ajax']
+      data-dialog-type: dialog
+      data-dialog-renderer: off_canvas
+      data-dialog-options: '{"exo_modal": {"icon": "regular-question-circle", "subtitle": "Are you sure you want to proceed?", "overlayColor": "transparent"}}'
+
+exo_component.remove:
+  title: 'Remove'
+  route_name: 'layout_builder.remove_block'
+  group: 'exo_component'
+  options:
+    attributes:
+      class: ['use-ajax']
+      data-dialog-type: dialog
+      data-dialog-renderer: off_canvas
+      data-dialog-options: '{"exo_modal": {"icon": "regular-question-circle", "subtitle": "Are you sure you want to proceed?", "overlayColor": "transparent"}}'
+
+exo_component.field.udpate:
+  title: 'Update'
+  route_name: 'layout_builder.field.update'
+  group: 'exo_component_field'

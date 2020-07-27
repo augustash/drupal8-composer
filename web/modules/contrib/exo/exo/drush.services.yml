@@ -1,5 +1,5 @@
 services:
-  sync.commands:
+  exo.commands:
     class: Drupal\exo\Command\ExoDrushCommands
     arguments: ['@plugin.manager.exo_theme', '@file_system']
     tags:

@@ -1,0 +1,15 @@
+.exo-form-element-type-exo-radios-slider {
+
+  .field-suffix {
+    display: block;
+    height: auto !important;
+    line-height: 1.8 !important;
+    padding: 0 !important;
+  }
+
+  .exo-radios-slider-pips .exo-radios-slider-slide {
+    border-width: 1px;
+    border-style: solid;
+    padding: $global-padding $global-padding * 1.5 ($global-padding + rem-calc(30));
+  }
+}

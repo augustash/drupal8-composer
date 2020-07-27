@@ -5,18 +5,15 @@
  * Contains exo_alchemist.module.
  */
 
-use Drupal\block_content\BlockContentInterface;
-use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\NestedArray;
-use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\Entity\ThirdPartySettingsInterface;
-use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
@@ -24,10 +21,19 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\exo_alchemist\Element\ExoLayoutBuilder;
+use Drupal\exo_alchemist\Entity\ExoLayoutBuilderEntityViewDisplay;
 use Drupal\exo_alchemist\ExoComponentAnimationManager;
 use Drupal\exo_alchemist\ExoComponentManager;
 use Drupal\exo_alchemist\ExoComponentPropertyManager;
+use Drupal\exo_alchemist\Form\ExoOverridesEntityForm;
+use Drupal\exo_modal\ExoModalInterface;
+use Drupal\layout_builder\Entity\LayoutBuilderEntityViewDisplay;
 use Drupal\layout_builder\Entity\LayoutEntityDisplayInterface;
+use Drupal\layout_builder\Form\OverridesEntityForm;
+use Drupal\layout_builder\Plugin\SectionStorage\DefaultsSectionStorage;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_help().
@@ -48,7 +54,7 @@ function exo_alchemist_help($route_name, RouteMatchInterface $route_match) {
 /**
  * Implements hook_theme().
  */
-function exo_alchemist_theme() {
+function exo_alchemist_theme($existing, $type, $theme, $path) {
   $themes = [];
   $themes['exo_component_wrapper'] = [
     'render element' => 'element',
@@ -61,10 +67,19 @@ function exo_alchemist_theme() {
       'path' => $definition->getPath(),
       'variables' => [
         'entity' => NULL,
+        'instance_id' => NULL,
         'attributes' => [],
         'content_attributes' => [],
+        'preview' => NULL,
       ],
     ];
+    // Drupal crawls the entire active theme for tpl files. We need to protect
+    // against it picking up our components and overriding module tpls.
+    // @see exo_alchemist_theme_registry_alter(). This may result in actual
+    // overrides not working as they should.
+    if (isset($existing[$definition->getName()])) {
+      $theme['revert_core'] = $existing[$definition->getName()];
+    }
     foreach ($definition->getFields() as $field) {
       $theme['variables'][$field->getName()] = NULL;
     }
@@ -72,6 +87,9 @@ function exo_alchemist_theme() {
       if ($modifier->getName() !== '_global') {
         $theme['variables'][ExoComponentPropertyManager::modifierNameToKey($modifier->getName())] = NULL;
       }
+    }
+    if (!empty($definition->getEnhancements())) {
+      $theme['variables']['enhancement'] = NULL;
     }
     foreach ($definition->getAnimations() as $animation) {
       if ($animation->getName() !== '_global') {
@@ -81,6 +99,22 @@ function exo_alchemist_theme() {
     $themes[$definition->getThemeHook()] = $theme;
   }
   return $themes;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function exo_alchemist_theme_registry_alter(&$theme_registry) {
+  $exo_component_manager = \Drupal::service('plugin.manager.exo_component');
+  foreach ($exo_component_manager->getInstalledDefinitions() as $definition) {
+    $component_definition = $theme_registry[$definition->getThemeHook()];
+    if (isset($component_definition['revert_core'])) {
+      $current_definition = &$theme_registry[$definition->getName()];
+      if ($component_definition['path'] === $current_definition['path']) {
+        $current_definition['path'] = $component_definition['revert_core']['path'];
+      }
+    }
+  }
 }
 
 /**
@@ -97,16 +131,33 @@ function template_preprocess_exo_component_wrapper(array &$variables) {
   $element = $variables['element'];
   // Ensure #attributes is set.
   $element += ['#wrapper_attributes' => []];
+  $variables['prefix'] = [];
+  $variables['suffix'] = [];
   $variables['children'] = $element['#children'];
   $variables['attributes'] = $element['#wrapper_attributes'];
+
+  if (isset($element) && is_array($element) && !empty($element['#contextual_links'])) {
+    // Mark this element as potentially having contextual links attached to it.
+    $variables['attributes']['class'][] = 'contextual-region';
+
+    // Renders a contextual links placeholder unconditionally, thus not breaking
+    // the render cache. Although the empty placeholder is rendered for all
+    // users, contextual_page_attachments() only adds the asset library for
+    // users with the 'access contextual links' permission, thus preventing
+    // unnecessary HTTP requests for users without that permission.
+    $variables['prefix']['contextual_links'] = [
+      '#type' => 'contextual_links_placeholder',
+      '#id' => _contextual_links_to_id($element['#contextual_links']),
+    ];
+  }
 }
 
 /**
  * Implements hook_form_alter().
  */
-function exo_alchemist_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $route_name = \Drupal::routeMatch()->getRouteName();
-  if (substr($route_name, 0, 15) == 'layout_builder.') {
+function exo_alchemist_form_alter(&$form, FormStateInterface $form_state, $form_id) {// We use form id instead of route as we don't want this impacting component
+  // forms inserted into content.
+  if (substr($form['#form_id'], 0, 15) == 'layout_builder_') {
     foreach (['drupal_ajax', 'drupal_modal', 'drupal_dialog'] as $wrapper) {
       if (strpos(\Drupal::request()->get(MainContentViewSubscriber::WRAPPER_FORMAT), $wrapper) !== FALSE) {
         $form['#exo_theme'] = 'black';
@@ -115,13 +166,139 @@ function exo_alchemist_form_alter(&$form, FormStateInterface $form_state, $form_
   }
   if (substr($form_id, -20) === '_layout_builder_form') {
     $form_object = $form_state->getFormObject();
-    if ($form_object instanceof ContentEntityForm) {
+    if ($form_object instanceof EntityFormInterface) {
       $entity = $form_object->getEntity();
       $entity->layoutBuilderEnabled = TRUE;
       $form['#exo_form_ignore'] = TRUE;
       $form['actions']['#attributes']['class'] = exo_form_classes();
+      if ($form_object instanceof OverridesEntityForm) {
+        ExoLayoutBuilder::alterCompleteForm($form, $form_state);
+      }
     }
   }
+  if ($form_id === 'entity_view_display_edit_form') {
+    $form_object = $form_state->getFormObject();
+    if ($form_object instanceof EntityFormInterface) {
+      /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $entity */
+      $entity = $form_object->getEntity();
+      if (substr($entity->getMode(), 0, 10) === 'exo_field_') {
+        $form['layout']['#access'] = FALSE;
+      }
+      if (!empty($form['modes']['display_modes_custom'])) {
+        $exo_enabled = [];
+        $has_display = FALSE;
+        foreach ($form['modes']['display_modes_custom']['#options'] as $key => $label) {
+          if (substr($key, 0, 10) === 'exo_field_') {
+            $has_display = TRUE;
+            $exo_enabled[$key] = '';
+            if (in_array($key, $form['modes']['display_modes_custom']['#default_value'])) {
+              $exo_enabled[$key] = $key;
+            }
+            unset($form['modes']['display_modes_custom']['#options'][$key]);
+          }
+        }
+        if ($has_display) {
+          $form_state->set('exo_field_modes', $exo_enabled);
+          $form['modes']['display_modes_custom']['#element_validate'][] = 'exo_alchemist_entity_view_display_edit_form_validate';
+        }
+      }
+    }
+  }
+  if ($form_id === 'layout_builder_configure_section') {
+    $current_user = \Drupal::currentUser();
+    $route_match = \Drupal::routeMatch();
+    /** @var \Drupal\layout_builder\Form\ConfigureSectionForm $form_object */
+    $form_object = $form_state->getFormObject();
+    $section_storage = $form_object->getSectionStorage();
+    $delta = $route_match->getParameter('delta');
+    $form_state->set('section_delta', $delta);
+    $is_update = is_null($route_match->getParameter('plugin_id'));
+    $lock_default = FALSE;
+    $permission_default = '';
+    if ($is_update) {
+      $section = $section_storage->getSection($delta);
+      $settings = $section->getLayoutSettings();
+      // Dynamic column widths cannot be changed.
+      if (isset($settings['column_widths']) && $settings['column_widths'] == 'dynamic') {
+        $form['layout_settings']['column_widths']['#type'] = 'hidden';
+      }
+      $lock_default = !empty($settings['exo_section_lock']);
+      $permission_default = isset($settings['exo_section_permission']) ? $settings['exo_section_permission'] : '';
+    }
+    if ($section_storage instanceof DefaultsSectionStorage) {
+      $form['layout_settings']['exo_section_lock'] = [
+        '#type' => 'checkbox',
+        '#title' => t('Lock section'),
+        '#description' => t('Prevent components within this section from being added/edited/removed when overriding.'),
+        '#default_value' => $lock_default,
+      ];
+    }
+    if ($current_user->hasPermission('administer exo alchemist')) {
+      $permission_options = ['' => t('- Allow all users with layout access -')];
+      $permissions = \Drupal::service('user.permissions')->getPermissions();
+      $module_handler = \Drupal::service('module_handler');
+      foreach ($permissions as $perm => $perm_item) {
+        $provider = $perm_item['provider'];
+        $display_name = $module_handler->getName($provider);
+        $permission_options[$display_name][$perm] = strip_tags($perm_item['title']);
+      }
+      $form['layout_settings']['exo_section_permission'] = [
+        '#type' => 'select',
+        '#title' => t('Permission'),
+        '#description' => t('Only users with the listed permission will be able to add/edit/remove components from this section.'),
+        '#options' => $permission_options,
+        '#default_value' => $permission_default,
+      ];
+    }
+    $form['#submit'][] = 'exo_alchemist_layout_builder_configure_section_submit';
+  }
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter() for node_form.
+ */
+function exo_alchemist_form_node_form_alter(&$form, FormStateInterface $form_state) {
+  foreach (array_keys($form['actions']) as $action) {
+    if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+      $form['actions'][$action]['#submit'][] = 'exo_alchemist_node_form_submit';
+    }
+  }
+
+}
+
+/**
+ * Handle redirect to layout.
+ */
+function exo_alchemist_node_form_submit($form, FormStateInterface $form_state) {
+  $generator = \Drupal::service('exo_alchemist.generator');
+  $generator->nodeFormSubmit($form, $form_state);
+}
+
+/**
+ * Remove dynamically generated displays.
+ */
+function exo_alchemist_entity_view_display_edit_form_validate($element, FormStateInterface $form_state) {
+  $values = $form_state->getValue($element['#parents']);
+  $values += $form_state->get('exo_field_modes');
+  $form_state->setValueForElement($element, $values);
+}
+
+/**
+ * Handle saving additional settings for a section.
+ */
+function exo_alchemist_layout_builder_configure_section_submit($form, FormStateInterface $form_state) {
+  /** @var \Drupal\layout_builder\Form\ConfigureSectionForm $form_object */
+  $form_object = $form_state->getFormObject();
+  $section_storage = $form_object->getSectionStorage();
+  $section = $section_storage->getSection($form_state->get('section_delta'));
+  $configuration = $section->getLayoutSettings();
+  $configuration['exo_section_lock'] = $form_state->getValue(['layout_settings', 'exo_section_lock']);
+  $configuration['exo_section_permission'] = $form_state->getValue(['layout_settings', 'exo_section_permission']);
+  if (empty($configuration['exo_section_uuid'])) {
+    $configuration['exo_section_uuid'] = \Drupal::service('uuid')->generate();
+  }
+  $section->setLayoutSettings($configuration);
+  \Drupal::service('layout_builder.tempstore_repository')->set($section_storage);
 }
 
 /**
@@ -149,72 +326,25 @@ function exo_alchemist_library_info_build() {
 }
 
 /**
- * Implements hook_element_info_alter().
+ * Implements hook_element_plugin_alter().
  */
-function exo_alchemist_element_info_alter(array &$info) {
-  $info['layout_builder']['#pre_render'][] = 'exo_alchemist_element_layout_builder_pre_render';
+function exo_alchemist_element_plugin_alter(&$definitions) {
+  $definitions['layout_builder']['class'] = 'Drupal\exo_alchemist\Element\ExoLayoutBuilder';
 }
 
 /**
- * Pre-render layout builder element.
+ * Implements hook_entity_type_alter().
  */
-function exo_alchemist_element_layout_builder_pre_render($element) {
-  $has_section = isset($element['layout_builder'][1]);
-  $element['layout_builder'][0]['link']['#title'] = t('Add Component');
-  /** @var \Drupal\Core\Url $url */
-  $url = $element['layout_builder'][0]['link']['#url'];
-  $options = $url->getOptions();
-  $options['attributes']['data-dialog-options'] = Json::encode([
-    'exo_modal' => [
-      'title' => t('Component'),
-      'subtitle' => t('Select a component to add it to the layout.'),
-      'icon' => 'regular-layer-plus',
-      'width' => 700,
-    ],
-  ]);
-  $element['layout_builder'][0]['link']['#url'] = Url::fromRoute('layout_builder.choose_component', $url->getRouteParameters(), $options);
-  $element['layout_builder'][0]['#weight'] = 100;
-  $element['#attached']['library'][] = 'exo_alchemist/admin';
+function exo_alchemist_entity_type_alter(array &$entity_types) {
+  /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
+  $entity_types['entity_view_display']->setClass(ExoLayoutBuilderEntityViewDisplay::class);
 
-  if ($has_section) {
-    $element['layout_builder'][2]['#access'] = FALSE;
-    $element['layout_builder'][1]['remove']['#access'] = FALSE;
-    $element['layout_builder'][1]['configure']['#access'] = FALSE;
-    $element['layout_builder'][1]['layout-builder__section']['content']['layout_builder_add_block']['#access'] = FALSE;
-    $delta = 0;
-    uasort($element['layout_builder'][1]['layout-builder__section']['content'], [SortArray::class, 'sortByWeightProperty']);
-    foreach (Element::children($element['layout_builder'][1]['layout-builder__section']['content']) as $key) {
-      $component = &$element['layout_builder'][1]['layout-builder__section']['content'][$key];
-      if (!empty($component['content']['#exo_component'])) {
-        if (!empty($component['content']['#is_layout_builder'])) {
-          $component['#attributes']['class'][] = 'exo-alchemist-component-edit';
-          $component['#attributes']['data-exo-alchemist-section'] = $key;
-          $component['#attributes']['data-exo-alchemist-delta'] = $delta;
-        }
-        // Do not wrap in block tpl.
-        if (!empty($component['#attributes'])) {
-          $component['content']['#wrapper_attributes'] = NestedArray::mergeDeep($component['content']['#wrapper_attributes'], $component['#attributes']);
-        }
-        $component['content']['#wrapper_attributes']['class'] = array_filter((array) $component['content']['#wrapper_attributes']['class'], function ($class_name) {
-          return $class_name != 'layout-builder-block';
-        });
-        $component = $component['content'];
-        // Remove contextual links because we hate them and want to make them
-        // better.
-        unset($component['#contextual_links']);
-        $delta++;
-      }
+  // Ensure every fieldable entity type has a layout form.
+  foreach ($entity_types as $entity_type) {
+    if ($entity_type->entityClassImplements(FieldableEntityInterface::class)) {
+      $entity_type->setFormClass('layout_builder', ExoOverridesEntityForm::class);
     }
-    // Disable dragging.
-    foreach ($element['layout_builder'][1]['layout-builder__section']['content']['#attributes']['class'] as $key => $value) {
-      if ($value == 'js-layout-builder-region') {
-        unset($element['layout_builder'][1]['layout-builder__section']['content']['#attributes']['class'][$key]);
-      }
-    }
-    $element['#attached']['drupalSettings']['exoAlchemist']['componentTotal'] = $delta;
   }
-
-  return $element;
 }
 
 /**
@@ -226,7 +356,30 @@ function exo_alchemist_entity_access(EntityInterface $entity, $operation, Accoun
       return AccessResult::forbidden();
     }
   }
+  if ($entity->getEntityTypeId() == 'media' && $operation != 'view') {
+    if (!$entity->get('alchemist_key')->isEmpty()) {
+      return AccessResult::forbidden();
+    }
+  }
+  if ($entity->getEntityTypeId() == 'entity_view_mode' && $operation != 'view') {
+    /** @var \Drupal\Core\Entity\EntityViewModeInterface $entity */
+    list(, $bundle) = explode('.', $entity->id());
+    if (substr($bundle, 0, 10) === 'exo_field_') {
+      return AccessResult::forbidden();
+    }
+  }
   return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function exo_alchemist_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  if ($view->id() == 'media') {
+    /** @var \Drupal\views\Plugin\views\query\Sql $query */
+    // Do not show media items used by default exo components.
+    $query->addWhere(1, 'media_field_data.alchemist_key', NULL, 'IS NULL');
+  }
 }
 
 /**
@@ -255,15 +408,36 @@ function exo_alchemist_entity_base_field_info(EntityTypeInterface $entity_type) 
   $fields = [];
 
   if ($entity_type->id() === ExoComponentManager::ENTITY_TYPE) {
+    $fields['alchemist_data'] = BaseFieldDefinition::create('exo_alchemist_map')
+      ->setLabel(t('Data'))
+      ->setDescription(t('Storage for component configuration.'))
+      ->setRevisionable(TRUE);
+    $fields['alchemist_path'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Path'))
+      ->setDescription(t('Storage for component path.'))
+      ->setSetting('max_length', 255);
     $fields['alchemist_default'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Default'))
       ->setDescription(t('A flag indicating whether this is the default entity.'))
-      ->setTranslatable(TRUE)
-      ->setRevisionable(TRUE)
       ->setDefaultValue(TRUE);
   }
 
+  if ($entity_type->id() === 'media') {
+    $fields['alchemist_key'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Key'))
+      ->setDescription(t('A key that can be used to prevent duplicate entity creation.'))
+      ->setReadOnly(TRUE);
+  }
+
   return $fields;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function exo_alchemist_entity_presave(EntityInterface $entity) {
+  // Managed generated components.
+  \Drupal::service('exo_alchemist.generator')->handlePreSave($entity);
 }
 
 /**
@@ -277,52 +451,27 @@ function exo_alchemist_entity_insert(EntityInterface $entity) {
  * Implements hook_entity_update().
  */
 function exo_alchemist_entity_update(EntityInterface $entity) {
-  if ($entity->getEntityTypeId() == ExoComponentManager::ENTITY_BUNDLE_TYPE) {
-    /** @var \Drupal\exo_alchemist\ExoComponentManager $exo_component_manager */
-    $exo_component_manager = \Drupal::service('plugin.manager.exo_component');
-    if ($definition = $exo_component_manager->getEntityBundleComponentDefinition($entity, TRUE)) {
-      $exo_component_manager->installThumbnail($definition);
-      $exo_component_manager->clearCachedDefinitions();
-    }
-  }
-
-  /** @var \Drupal\exo_alchemist\ExoComponentManager $exo_component_manager */
-  $exo_component_manager = \Drupal::service('plugin.manager.exo_component');
-  $exo_component_manager->handleRootEntityUpdate($entity);
-}
-
-/**
- * Implements hook_entity_delete().
- */
-function exo_alchemist_entity_delete(EntityInterface $entity) {
-  if ($entity->getEntityTypeId() == ExoComponentManager::ENTITY_BUNDLE_TYPE) {
-    /** @var \Drupal\exo_alchemist\ExoComponentManager $exo_component_manager */
-    $exo_component_manager = \Drupal::service('plugin.manager.exo_component');
-    if ($definition = $exo_component_manager->getEntityBundleComponentDefinition($entity, TRUE)) {
-      $exo_component_manager->uninstallThumbnail($definition);
-    }
-  }
-  /** @var \Drupal\exo_alchemist\ExoComponentManager $exo_component_manager */
-  $exo_component_manager = \Drupal::service('plugin.manager.exo_component');
-  $exo_component_manager->handleRootEntityDelete($entity);
+  // Managed generated components.
+  // @see \Drupal\exo_alchemist\ExoComponentGenerator
+  \Drupal::service('exo_alchemist.generator')->handlePostSave($entity);
 }
 
 /**
  * Implements hook_entity_predelete().
  */
 function exo_alchemist_entity_predelete(EntityInterface $entity) {
-  if ($entity->getEntityTypeId() == ExoComponentManager::ENTITY_TYPE) {
-    // Only act on the default entity.
-    if (!empty($entity->get('alchemist_default')->value)) {
-      /** @var \Drupal\exo_alchemist\ExoComponentManager $exo_component_manager */
-      $exo_component_manager = \Drupal::service('plugin.manager.exo_component');
-      if ($definition = $exo_component_manager->getEntityComponentDefinition($entity)) {
-        // Do we need this here? It is called in hook_entity_delete.
-        $exo_component_manager->uninstallThumbnail($definition);
-        $exo_component_manager->uninstallEntity($definition, $entity);
-      }
-    }
-  }
+  // Managed generated components.
+  // @see \Drupal\exo_alchemist\ExoComponentGenerator
+  \Drupal::service('exo_alchemist.generator')->handlePreDelete($entity);
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function exo_alchemist_entity_delete(EntityInterface $entity) {
+  // Managed generated components.
+  // @see \Drupal\exo_alchemist\ExoComponentGenerator
+  \Drupal::service('exo_alchemist.generator')->handlePostDelete($entity);
 }
 
 /**
@@ -330,24 +479,118 @@ function exo_alchemist_entity_predelete(EntityInterface $entity) {
  */
 function exo_alchemist_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
   if ($display instanceof LayoutEntityDisplayInterface && $display->isLayoutBuilderEnabled()) {
-    if (!empty($build['_layout_builder'][0]['content'])) {
-      $first_component = reset($build['_layout_builder'][0]['content']);
-      $last_component = end($build['_layout_builder'][0]['content']);
-      if (!empty($first_component['content']['#exo_component'])) {
-        $entity->exoComponentFirst = $first_component['content']['#exo_component'];
+    $keys = Element::children($build['_layout_builder']);
+    if (empty($keys)) {
+      return;
+    }
+    $first_key = key($keys);
+    end($keys);
+    $last_key = key($keys);
+    foreach (Element::children($build['_layout_builder'][$first_key]) as $region_id) {
+      $region = &$build['_layout_builder'][$first_key][$region_id];
+      $component_ids = Element::children($region);
+      $component = $region[reset($component_ids)];
+      if (!empty($component['content']['#exo_component'])) {
+        $entity->exoComponentFirst = $component['content']['#exo_component']->id();
       }
-      if (!empty($last_component['content']['#exo_component'])) {
-        $entity->exoComponentLast = $last_component['content']['#exo_component'];
+    }
+    foreach (Element::children($build['_layout_builder'][$last_key]) as $region_id) {
+      $region = &$build['_layout_builder'][$last_key][$region_id];
+      $component_ids = Element::children($region);
+      $component = $region[end($component_ids)];
+      if (!empty($component['content']['#exo_component'])) {
+        $entity->exoComponentLast = $component['content']['#exo_component']->id();
       }
     }
     $build['#page'] = TRUE;
     $entity->layoutBuilderEnabled = TRUE;
   }
-  if ($entity->getEntityTypeId() == ExoComponentManager::ENTITY_TYPE) {
-    $exo_component_manager = \Drupal::service('plugin.manager.exo_component');
-    $plugin_id = $exo_component_manager->getPluginIdFromSafeId($entity->bundle());
-    if ($definition = $exo_component_manager->getInstalledDefinition($plugin_id, FALSE)) {
-      $exo_component_manager->viewEntity($definition, $build, $entity, $display, $view_mode);
+}
+
+/**
+ * Implements tempalte_preprocess_node().
+ */
+function exo_alchemist_preprocess_node(&$variables) {
+  $view_mode = $variables['view_mode'];
+  if (isset($variables['content']['_layout_builder'])) {
+    $variables['page'] = TRUE;
+  }
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ *
+ * ExtraFieldBlock block plugins add placeholders for each extra field which is
+ * configured to be displayed. Those placeholders are replaced by this hook.
+ * Modules that implement hook_entity_extra_field_info() use their
+ * implementations of hook_entity_view_alter() to add the rendered output of
+ * the extra fields they provide, so we cannot get the rendered output of extra
+ * fields before this point in the view process.
+ * exo_alchemist_module_implements_alter() moves this implementation of
+ * hook_entity_view_alter() to the end of the list.
+ *
+ * @see \Drupal\exo_alchemist\Plugin\ExoComponentField\EntityExtraField::build()
+ * @see exo_alchemist_module_implements_alter()
+ */
+function exo_alchemist_entity_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  // Only replace extra fields when Layout Builder has been used to alter the
+  // build. See \Drupal\layout_builder\Entity\LayoutBuilderEntityViewDisplay::buildMultiple().
+  if (isset($build['_layout_builder']) && !Element::isEmpty($build['_layout_builder'])) {
+    /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
+    $field_manager = \Drupal::service('entity_field.manager');
+    $extra_fields = $field_manager->getExtraFields($entity->getEntityTypeId(), $entity->bundle());
+    if (!empty($extra_fields['display'])) {
+      foreach ($extra_fields['display'] as $field_name => $extra_field) {
+        // If the extra field is not set replace with an empty array to avoid
+        // the placeholder text from being rendered.
+        $replacement = isset($build[$field_name]) ? $build[$field_name] : [];
+        exo_alchemist_replace_field_placeholder($build['_layout_builder'], $replacement, $field_name);
+        // After the rendered field in $build has been copied over to the
+        // ExtraFieldBlock block we must remove it from its original location or
+        // else it will be rendered twice.
+        unset($build[$field_name]);
+      }
+    }
+  }
+
+  $route_name = \Drupal::routeMatch()->getRouteName();
+
+  // If the entity is displayed within a Layout Builder block and the current
+  // route is in the Layout Builder UI, then remove all contextual link
+  // placeholders.
+  if ($display instanceof LayoutBuilderEntityViewDisplay && strpos($route_name, 'layout_builder.') === 0) {
+    unset($build['#contextual_links']);
+  }
+}
+
+/**
+ * Replaces all placeholders for a given field.
+ *
+ * @param array $build
+ *   The built render array for the elements.
+ * @param array $built_field
+ *   The render array to replace the placeholder.
+ * @param string $field_name
+ *   The field name.
+ *
+ * @see ::build()
+ */
+function exo_alchemist_replace_field_placeholder(array &$build, array $built_field, $field_name) {
+  foreach (Element::children($build) as $child) {
+    if (isset($build[$child]['#exo_component'])) {
+      /** @var \Drupal\exo_alchemist\Definition\ExoComponentDefinition $definition */
+      $definition = $build[$child]['#exo_component'];
+      foreach ($definition->getFieldsByType('extra_field') as $field) {
+        if (isset($build[$child]['#' . $field->getName()])) {
+          $render = &$build[$child]['#' . $field->getName()]['render'];
+          if (isset($render['#extra_field_placeholder_field_name']) && $render['#extra_field_placeholder_field_name'] === $field_name) {
+            $render = $built_field;
+          }
+        }
+      }
+    }
+    else {
+      exo_alchemist_replace_field_placeholder($build[$child], $built_field, $field_name);
     }
   }
 }
@@ -384,39 +627,45 @@ function exo_alchemist_preprocess_page(&$variables) {
  */
 function exo_alchemist_preprocess_block__page_title_block(&$variables) {
   $node = \Drupal::routeMatch()->getParameter('node');
-  if (isset($node->layoutBuilderEnabled) && $node->layoutBuilderEnabled == TRUE) {
+  // If field exists we can assume this is handled by layout builder.
+  if ($node && \Drupal::service('exo_alchemist.generator')->isLayoutCompatibleEntity($node)) {
     $variables['attributes']['class'][] = 'visually-hidden';
+  }
+  else {
+    $route_name = \Drupal::routeMatch()->getRouteName();
+    switch ($route_name) {
+      case 'exo_alchemist.component.preview':
+        $variables['attributes']['class'][] = 'visually-hidden';
+        break;
+    }
   }
 }
 
 /**
- * Implements hook_preprocess_page().
+ * Implements hook_ENTITY_TYPE_access().
+ */
+function exo_alchemist_block_content_access(EntityInterface $entity, $operation, $account) {
+  // We need to allow all operations of alchemist types.
+  // Without this, media library returns on 403 when adding media.
+  if ($operation !== 'view' && substr($entity->bundle(), 0, 4) == 'exo_') {
+    return AccessResult::allowedIfHasPermission($account, 'edit exo components');
+  }
+  // Defer to layout builder content access if we are not acting on an exo
+  // component.
+  return layout_builder_block_content_access($entity, $operation, $account);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_create_access().
  */
 function exo_alchemist_block_content_create_access(AccountInterface $account, array $context, $entity_bundle) {
   // Because new block_content within layout builder do not have IDs, the create
   // access check is called. We need to allow creation of alchemist types.
   // Without this, media library returns on 403 when adding media.
   if (substr($entity_bundle, 0, 4) == 'exo_') {
-    return AccessResult::allowedIfHasPermission($account, 'create and edit custom blocks');
+    return AccessResult::allowedIfHasPermission($account, 'add exo components');
   }
   return AccessResult::neutral();
-}
-
-/**
- * Implements hook_ENTITY_TYPE_presave().
- */
-function exo_alchemist_block_content_presave(BlockContentInterface $entity) {
-  if (substr($entity->bundle(), 0, 4) == 'exo_' && $entity->id() && $entity->isNew()) {
-    // This is an ugly workaround of the lack of deep serialization. Entities
-    // nested more than 1 level are never serialized and we therefore we set
-    // these entities as "new" so that they are serialized and then we set them
-    // back here.
-    // @see \Drupal\exo_alchemist\Form/ExoFieldUpdateForm::submitForm().
-    // @see https://www.drupal.org/project/drupal/issues/2824097
-    // @TODO Remove when patch added to core.
-    $entity->enforceIsNew(FALSE);
-    $entity->original = \Drupal::entityTypeManager()->getStorage('block_content')->load($entity->id());
-  }
 }
 
 /**
@@ -425,13 +674,16 @@ function exo_alchemist_block_content_presave(BlockContentInterface $entity) {
 function exo_alchemist_entity_view_display_load(array $entities) {
   foreach ($entities as $entity) {
     if ($entity instanceof LayoutEntityDisplayInterface && $entity->isLayoutBuilderEnabled()) {
-      foreach ($entity->getSection(0)->getComponents() as $component) {
-        $configuration = $component->get('configuration');
-        if (!empty($configuration['block_uuid'])) {
-          $block = \Drupal::service('entity.repository')->loadEntityByUuid('block_content', $configuration['block_uuid']);
-          if ($block) {
-            $configuration['block_revision_id'] = $block->getRevisionId();
-            $component->setConfiguration($configuration);
+      $sections = $entity->getSections();
+      foreach ($sections as $section) {
+        foreach ($section->getComponents() as $component) {
+          $configuration = $component->get('configuration');
+          if (!empty($configuration['block_uuid'])) {
+            $block = \Drupal::service('entity.repository')->loadEntityByUuid('block_content', $configuration['block_uuid']);
+            if ($block) {
+              $configuration['block_revision_id'] = $block->getRevisionId();
+              $component->setConfiguration($configuration);
+            }
           }
         }
       }
@@ -440,41 +692,87 @@ function exo_alchemist_entity_view_display_load(array $entities) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_presave().
+ * Implements hook_exo_modal_alter().
  */
-function exo_alchemist_entity_view_display_presave(EntityViewDisplayInterface $entity) {
-  if ($entity instanceof LayoutEntityDisplayInterface && $entity->isLayoutBuilderEnabled()) {
-    $third_party_settings = $entity->getThirdPartySettings('exo_alchemist');
-    foreach ($entity->getSection(0)->getComponents() as $component) {
-      $component_key = 'component_' . $component->getUuid();
-      unset($third_party_settings[$component_key]);
-      $configuration = $component->get('configuration');
-      $id_parts = explode(':', $configuration['id']);
-      if (isset($id_parts[1]) && substr($id_parts[1], 0, 4) == 'exo_') {
-        if (!empty($configuration['block_uuid'])) {
-          $block = \Drupal::service('entity.repository')->loadEntityByUuid('block_content', $configuration['block_uuid']);
-          if (!$block) {
-            // We could not find the block. This will cause issues. We should
-            // have this stored and can use it to rebuild the entity.
-            if ($serialized_block = $entity->getThirdPartySetting('exo_alchemist', $component_key)) {
-              $block = unserialize($serialized_block);
-              $block = $block->createDuplicate();
-              $block->set('uuid', $configuration['block_uuid']);
-              $block->save();
-            }
-          }
-        }
-        elseif (!empty($configuration['block_serialized'])) {
-          $block = unserialize($configuration['block_serialized']);
-          // Store the UUID so we do not have revision_id conflicts on deploy.
-          $configuration['block_uuid'] = $block->uuid();
-          $entity->setThirdPartySetting('exo_alchemist', $component_key, serialize($block));
-        }
-        $component->setConfiguration($configuration);
-      }
-    }
-    foreach ($third_party_settings as $key => $value) {
-      $entity->unsetThirdPartySetting('exo_alchemist', $key);
+function exo_alchemist_exo_modal_alter(ExoModalInterface $modal, array $context) {
+  // Link dialog must be nested.
+  if (substr($context['route_name'], 0, 15) == 'layout_builder.') {
+    $trigger_name = \Drupal::request()->request->get('_triggering_element_name');
+    $modal->setSetting('theme', 'black');
+    $modal->setSetting('theme_content', 'black');
+    $modal->setModalSetting('overlay', TRUE);
+    $modal->setModalSetting('width', 500);
+    $modal->setModalSetting('bodyOverflow', TRUE);
+    $modal->addModalClass('is-admin');
+    if ($trigger_name && strpos($trigger_name, 'media-library-open-button') !== FALSE) {
+      // $modal->setModalSetting('width', '80%');
+      $modal->setModalSetting('top', '20px');
+      $modal->setModalSetting('bottom', '20px');
+      $modal->setModalSetting('right', '20px');
+      $modal->setModalSetting('left', '20px');
+      $modal->setModalSetting('width', '100%');
     }
   }
+  if ($context['route_name'] == 'editor.link_dialog') {
+    $modal->setSetting('theme', 'black');
+    $modal->setSetting('theme_content', 'black');
+    $modal->setModalSetting('nest', TRUE);
+  }
+}
+
+/**
+ * Implements hook_exo_form_settings_alter().
+ */
+function exo_alchemist_exo_form_settings_alter(array &$settings, array $context) {
+  // Act on layout builder routes except for the overrides page.
+  switch ($context['route_name']) {
+    case 'layout_builder.field.update':
+      $trigger_name = \Drupal::request()->request->get('_triggering_element_name');
+      // Ignore if trigger name is 'op' as that means we are rebuilding the
+      // layout.
+      if ($trigger_name && $trigger_name !== 'op') {
+        $settings['theme'] = 'black';
+        $settings['style'] = 'intersect';
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function exo_alchemist_module_implements_alter(&$implementations, $hook) {
+  if ($hook == 'entity_presave') {
+    // $group = $implementations['exo_alchemist'];
+    // $implementations = ['exo_alchemist' => $group] + $implementations;
+    // We need deeper control over when layout builder entity_presave is called.
+    unset($implementations['layout_builder']);
+  }
+  if ($hook == 'block_content_access') {
+    // We replace layout builder's block content access check with our own.
+    unset($implementations['layout_builder']);
+  }
+  if ($hook == 'entity_type_alter') {
+    $group = $implementations['exo_alchemist'];
+    unset($implementations['exo_alchemist']);
+    $implementations['exo_alchemist'] = $group;
+  }
+  if ($hook === 'entity_view_alter') {
+    // Ensure that this module's implementation of hook_entity_view_alter() runs
+    // last so that other modules that use this hook to render extra fields will
+    // run before it.
+    $group = $implementations['exo_alchemist'];
+    unset($implementations['exo_alchemist']);
+    $implementations['exo_alchemist'] = $group;
+    // Remove regular layout builder alter as we replace it.
+    unset($implementations['layout_builder']);
+  }
+}
+
+/**
+ * Implements hook_layout_builder_section_storage_alter().
+ */
+function exo_alchemist_layout_builder_section_storage_alter(array &$definitions) {
+  $definitions['defaults']->setClass('Drupal\exo_alchemist\Plugin\SectionStorage\ExoDefaultsSectionStorage');
+  $definitions['overrides']->setClass('Drupal\exo_alchemist\Plugin\SectionStorage\ExoOverridesSectionStorage');
 }

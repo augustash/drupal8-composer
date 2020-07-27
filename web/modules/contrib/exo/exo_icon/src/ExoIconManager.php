@@ -113,6 +113,9 @@ class ExoIconManager extends DefaultPluginManager implements ExoIconManagerInter
     if (!is_array($prefixes)) {
       $prefixes = [$prefixes];
     }
+    if (empty($prefixes)) {
+      return $definitions;
+    }
     $prefixed_definitions = [];
     if (!empty($prefixes)) {
       foreach ($prefixes as $prefix) {

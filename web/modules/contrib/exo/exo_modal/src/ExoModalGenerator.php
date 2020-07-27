@@ -27,10 +27,7 @@ class ExoModalGenerator implements ExoModalGeneratorInterface {
   }
 
   /**
-   * Generate an eXo modal.
-   *
-   * @return \Drupal\exo_modal\ExoModalInterface
-   *   An eXo modal.
+   * {@inheritdoc}
    */
   public function generate($id, array $settings = [], $modal = NULL) {
     // Allow theme and theme_content to be passed in within the modal settings

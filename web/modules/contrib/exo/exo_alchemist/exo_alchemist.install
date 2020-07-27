@@ -1,0 +1,59 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update functions for exo alchemist.
+ */
+
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\exo_alchemist\ExoComponentManager;
+
+/**
+ * Add media base field.
+ */
+function exo_alchemist_update_8001() {
+  $field_storage_definition = BaseFieldDefinition::create('string')
+    ->setLabel(t('Key'))
+    ->setDescription(t('A key that can be used to prevent duplicate entity creation.'))
+    ->setReadOnly(TRUE);
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('alchemist_key', 'media', 'exo_alchemist', $field_storage_definition);
+}
+
+/**
+ * Set module weight so it is called after layout_builder.
+ */
+function exo_alchemist_update_8002() {
+  // Because we take over a lot of layout builder's functionality, we need to
+  // make sure out hooks are called last. Normally hook_module_implements_alter
+  // can be used for this, however, we event need hook_module_implements_alter
+  // to be called after layout builder.
+  module_set_weight('exo_alchemist', 10);
+}
+
+/**
+ * Add field for storing individual component data.
+ */
+function exo_alchemist_update_8003() {
+  $field_storage_definition = BaseFieldDefinition::create('exo_alchemist_map')
+    ->setLabel(t('Data'))
+    ->setDescription(t('Storage for component configuration.'))
+    ->setRevisionable(TRUE);
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('alchemist_data', ExoComponentManager::ENTITY_TYPE, 'exo_alchemist', $field_storage_definition);
+}
+
+/**
+ * Add field for storing component path.
+ */
+function exo_alchemist_update_8004() {
+  $field_storage_definition = BaseFieldDefinition::create('string')
+    ->setLabel(t('Path'))
+    ->setDescription(t('Storage for component path.'))
+    ->setSetting('max_length', 255);
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('alchemist_path', ExoComponentManager::ENTITY_TYPE, 'exo_alchemist', $field_storage_definition);
+}

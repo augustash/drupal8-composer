@@ -6,6 +6,7 @@ use Drupal\Core\Menu\MenuLinkTree;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Render\Markup;
+use Drupal\exo_icon\ExoIconIconize;
 
 /**
  * Implements the loading, transforming and rendering of menu link trees.
@@ -46,8 +47,8 @@ class ExoMenuLinkTree extends MenuLinkTree {
       // Add the theme wrapper for outer markup.
       // Allow menu-specific theme overrides.
       $build['#items'] = $items;
-      $build['#theme'] = 'ux_menu__' . strtr(implode('_', $menu_names), '-', '_');
-      $build['#menu_name'] = $menu_names;
+      $build['#menu_name'] = implode('_', $menu_names);
+      $build['#theme'] = 'exo_menu__' . strtr($build['#menu_name'], '-', '_');
       foreach ($menu_names as $menu_name) {
         // Set cache tag.
         $build['#cache']['tags'][] = 'config:system.menu.' . $menu_name;
@@ -94,7 +95,7 @@ class ExoMenuLinkTree extends MenuLinkTree {
         ]);
         $build['#levels'][$key]['items'] = $level['items'];
       }
-      $build['#theme'] = 'ux_menu_levels__' . strtr(implode('_', $menu_names), '-', '_');
+      $build['#theme'] = 'exo_menu_levels__' . strtr(implode('_', $menu_names), '-', '_');
       $build['#menu_name'] = $menu_names;
       foreach ($menu_names as $menu_name) {
         // Set cache tag.
@@ -131,6 +132,7 @@ class ExoMenuLinkTree extends MenuLinkTree {
       $data->level = $parent;
       $data->submenu = NULL;
       $data->subtree = [];
+      $data->options = $link->getOptions();
       $data->isSubmenuParent = FALSE;
       $levels[$key]['parent'] = $parent;
       $levels[$key]['items'][$id] = $data;
@@ -140,7 +142,7 @@ class ExoMenuLinkTree extends MenuLinkTree {
         $data->submenu = $key . '-' . $section;
 
         // Add parent to submenu if it is a URL.
-        if ($data->link->getUrlObject()->toString()) {
+        if ($link->getUrlObject()->toString()) {
           $parent_data = clone $data;
           $parent_data->isSubmenuParent = TRUE;
           $parent_data->isSubmenuClone = TRUE;
@@ -178,7 +180,6 @@ class ExoMenuLinkTree extends MenuLinkTree {
    */
   protected function buildItems(array $tree, CacheableMetadata &$tree_access_cacheability, CacheableMetadata &$tree_link_cacheability) {
     $items = parent::buildItems($tree, $tree_access_cacheability, $tree_link_cacheability);
-
     foreach ($tree as $data) {
       /** @var \Drupal\Core\Menu\MenuLinkInterface $link */
       $link = $data->link;
@@ -191,6 +192,24 @@ class ExoMenuLinkTree extends MenuLinkTree {
           $element['attributes']->addClass($options['attributes']['class']);
           $options['attributes']['class'] = [];
         }
+        if (!empty($options['attributes']['data-class'])) {
+          $element['attributes']->addClass($options['attributes']['data-class'] . '-wrapper');
+          $options['attributes']['class'] = [$options['attributes']['data-class']];
+        }
+        if (!empty($options['attributes']['data-target'])) {
+          $options['attributes']['target'] = $options['attributes']['data-target'];
+        }
+        if (!empty($options['attributes']['data-icon'])) {
+          $options['attributes']['target'] = $options['attributes']['data-icon'];
+        }
+        if (!empty($options['attributes']['data-icon']) && !empty($element['title'])) {
+          $position = isset($options['attributes']['data-icon-position']) ? $options['attributes']['data-icon-position'] : 'before';
+          $element['title'] = ExoIconIconize::iconize($element['title'])->setIcon($options['attributes']['data-icon'])->setIconPosition($position)->render();
+        }
+        unset($options['attributes']['data-icon']);
+        unset($options['attributes']['data-icon-position']);
+        unset($options['attributes']['data-target']);
+        unset($options['attributes']['data-class']);
         if (!empty($options['spacer'])) {
           $element['title'] = '';
           $options['attributes']['class'][] = 'exo-menu-spacer';
@@ -212,6 +231,10 @@ class ExoMenuLinkTree extends MenuLinkTree {
         $element['url']->setOptions($options);
         $element['link_attributes'] = new Attribute($options['attributes']);
       }
+    }
+    foreach ($items as &$item) {
+      $item['below_prefix'] = NULL;
+      $item['below_suffix'] = NULL;
     }
 
     return $items;

@@ -93,15 +93,16 @@ class ExoModalViewsBlock extends ExoModalBlockBase {
     }
 
     $form['view']['view_argument'] = [
-      '#title' => 'Argument',
+      '#title' => $this->t('Argument'),
       '#type' => 'textfield',
-      '#default_value' => $this->configuration['view_argument'],
+      '#default_value' => !empty($this->configuration['view_argument']) ? $this->configuration['view_argument'] : NULL,
       '#states' => [
         'visible' => [
           ':input[name="settings[view][view_id]"]' => ['filled' => TRUE],
         ],
       ],
     ];
+
     return $form;
   }
 

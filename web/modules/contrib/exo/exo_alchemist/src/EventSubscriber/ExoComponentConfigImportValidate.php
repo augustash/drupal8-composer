@@ -23,6 +23,7 @@ class ExoComponentConfigImportValidate extends BundleConfigImportValidate {
       // Get the config entity type ID. This also ensure we are dealing with a
       // configuration entity.
       if ($entity_type_id = $this->configManager->getEntityTypeIdByName($config_name)) {
+        /**  @var \Drupal\Core\Config\Entity\ConfigEntityTypeInterface $entity_type */
         $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
         if ($entity_type_id == ExoComponentManager::ENTITY_BUNDLE_TYPE) {
           // Does this entity type define a bundle of another entity type.

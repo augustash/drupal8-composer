@@ -6,11 +6,29 @@ system.admin_config_exo_alchemist:
   requirements:
     _permission: 'administer exo alchemist'
 
+exo_alchemist.settings:
+  path: '/admin/config/exo/alchemist/settings'
+  defaults:
+    _form: '\Drupal\exo_alchemist\Form\ExoAlchemistSettingsForm'
+    _title: 'eXo Alchemist Settings'
+  requirements:
+    _permission: 'administer exo alchemist'
+  options:
+    _admin_route: TRUE
+
 exo_alchemist.component.collection:
   path: '/admin/config/exo/alchemist/library'
   defaults:
     _controller: '\Drupal\exo_alchemist\Controller\ExoComponentLibraryController::listComponents'
     _title: 'Component Library'
+  requirements:
+    _permission: 'administer exo alchemist'
+
+exo_alchemist.component.fields:
+  path: '/admin/config/exo/alchemist/fields'
+  defaults:
+    _controller: '\Drupal\exo_alchemist\Controller\ExoComponentFieldController::fieldList'
+    _title: 'Field List'
   requirements:
     _permission: 'administer exo alchemist'
 
@@ -25,7 +43,6 @@ exo_alchemist.component.refresh:
 exo_alchemist.component.preview:
   path: '/admin/config/exo/alchemist/library/{definition}/preview'
   defaults:
-    # _controller: '\Drupal\exo_alchemist\Controller\ExoComponentLibraryController::previewComponent'
     _form: '\Drupal\exo_alchemist\Form\ExoComponentPreviewForm'
     _title: 'Preview'
   options:
@@ -79,8 +96,8 @@ exo_alchemist.component.uninstall:
     _permission: 'administer exo alchemist'
     _exo_component: 'definition.delete'
 
-layout_builder.choose_component:
-  path: '/layout_builder/choose/component/{section_storage_type}/{section_storage}/{delta}'
+layout_builder.component.choose:
+  path: '/layout_builder/choose/component/{section_storage_type}/{section_storage}/{delta}/{region}'
   defaults:
    _controller: '\Drupal\exo_alchemist\Controller\ExoComponentChooseController::build'
    _title: 'Choose a component for this section'
@@ -92,10 +109,86 @@ layout_builder.choose_component:
       section_storage:
         layout_builder_tempstore: TRUE
 
-layout_builder.add_component:
-  path: '/layout_builder/add/component/{section_storage_type}/{section_storage}/{delta}/{plugin_id}'
+layout_builder.component.add:
+  path: '/layout_builder/add/component/{section_storage_type}/{section_storage}/{delta}/{region}/{plugin_id}'
   defaults:
     _controller: '\Drupal\exo_alchemist\Controller\ExoComponentAddController::build'
+  requirements:
+    _layout_builder_access: 'view'
+  options:
+    _admin_route: TRUE
+    parameters:
+      section_storage:
+        layout_builder_tempstore: TRUE
+
+layout_builder.component.configure:
+  path: '/layout_builder/configure/component/{section_storage_type}/{section_storage}/{delta}/{region}/{plugin_id}'
+  defaults:
+    _form: '\Drupal\exo_alchemist\Form\ExoComponentConfigureForm'
+    _title: 'Configure'
+  requirements:
+    _layout_builder_access: 'view'
+  options:
+    _admin_route: TRUE
+    parameters:
+      section_storage:
+        layout_builder_tempstore: TRUE
+
+layout_builder.component.appearance:
+  path: '/layout_builder/appearance/component/{section_storage_type}/{section_storage}/{delta}/{region}/{uuid}'
+  defaults:
+    _form: '\Drupal\exo_alchemist\Form\ExoComponentAppearanceForm'
+    _title: 'Appearance'
+  requirements:
+    _layout_builder_access: 'view'
+  options:
+    _admin_route: TRUE
+    parameters:
+      section_storage:
+        layout_builder_tempstore: TRUE
+
+layout_builder.component.fields:
+  path: '/layout_builder/fields/component/{section_storage_type}/{section_storage}/{delta}/{region}/{uuid}'
+  defaults:
+    _form: '\Drupal\exo_alchemist\Form\ExoComponentFieldsForm'
+    _title: 'Fields'
+  requirements:
+    _layout_builder_access: 'view'
+  options:
+    _admin_route: TRUE
+    parameters:
+      section_storage:
+        layout_builder_tempstore: TRUE
+
+layout_builder.component.restore:
+  path: '/layout_builder/restore/component/{section_storage_type}/{section_storage}/{delta}/{region}/{uuid}'
+  defaults:
+    _form: '\Drupal\exo_alchemist\Form\ExoComponentRestoreForm'
+  requirements:
+    _layout_builder_access: 'view'
+  options:
+    _admin_route: TRUE
+    parameters:
+      section_storage:
+        layout_builder_tempstore: TRUE
+
+layout_builder.component.move:
+  path: '/layout_builder/move/component/{section_storage_type}/{section_storage}/{delta}/{region}/{uuid}'
+  defaults:
+    _title_callback: '\Drupal\exo_alchemist\Form\ExoComponentMoveForm::title'
+    _form: '\Drupal\exo_alchemist\Form\ExoComponentMoveForm'
+  requirements:
+    _layout_builder_access: 'view'
+  options:
+    _admin_route: TRUE
+    parameters:
+      section_storage:
+        layout_builder_tempstore: TRUE
+
+layout_builder.component.remove:
+  path: '/layout_builder/delete/component/{section_storage_type}/{section_storage}/{delta}/{region}/{uuid}'
+  defaults:
+    _form: '\Drupal\exo_alchemist\Form\ExoComponentRemoveForm'
   requirements:
     _layout_builder_access: 'view'
   options:
@@ -109,6 +202,19 @@ layout_builder.field.update:
   defaults:
     _form: '\Drupal\exo_alchemist\Form\ExoFieldUpdateForm'
     _title: 'Update'
+  requirements:
+    _layout_builder_access: 'view'
+  options:
+    _admin_route: TRUE
+    parameters:
+      section_storage:
+        layout_builder_tempstore: TRUE
+
+layout_builder.field.remove:
+  path: '/layout_builder/field/remove/{section_storage_type}/{section_storage}/{delta}/{region}/{uuid}/{path}'
+  defaults:
+    _form: '\Drupal\exo_alchemist\Form\ExoFieldRemoveForm'
+    _title: 'Remove'
   requirements:
     _layout_builder_access: 'view'
   options:
@@ -156,11 +262,11 @@ layout_builder.field.next:
       section_storage:
         layout_builder_tempstore: TRUE
 
-layout_builder.field.delete:
-  path: '/layout_builder/field/delete/{section_storage_type}/{section_storage}/{delta}/{region}/{uuid}/{path}'
+layout_builder.field.hide:
+  path: '/layout_builder/field/hide/{section_storage_type}/{section_storage}/{delta}/{region}/{uuid}/{path}'
   defaults:
-    _controller: '\Drupal\exo_alchemist\Controller\ExoFieldDeleteController::build'
-    _title: 'Delete component field'
+    _controller: '\Drupal\exo_alchemist\Controller\ExoFieldHideController::build'
+    _title: 'Hide component field'
   requirements:
     _layout_builder_access: 'view'
   options:
@@ -169,23 +275,11 @@ layout_builder.field.delete:
       section_storage:
         layout_builder_tempstore: TRUE
 
-layout_builder.component.appearance:
-  path: '/layout_builder/appearance/block/{section_storage_type}/{section_storage}/{delta}/{region}/{uuid}'
+layout_builder.section.move:
+  path: '/layout_builder/move/sections/{section_storage_type}/{section_storage}'
   defaults:
-    _form: '\Drupal\exo_alchemist\Form\ExoComponentAppearanceForm'
-    _title: 'Appearance'
-  requirements:
-    _layout_builder_access: 'view'
-  options:
-    _admin_route: TRUE
-    parameters:
-      section_storage:
-        layout_builder_tempstore: TRUE
-
-layout_builder.component.restore:
-  path: '/layout_builder/restore/block/{section_storage_type}/{section_storage}/{delta}/{region}/{uuid}'
-  defaults:
-    _form: '\Drupal\exo_alchemist\Form\ExoComponentRestoreForm'
+    _title: 'Reorder sections'
+    _form: '\Drupal\exo_alchemist\Form\ExoSectionMoveForm'
   requirements:
     _layout_builder_access: 'view'
   options:

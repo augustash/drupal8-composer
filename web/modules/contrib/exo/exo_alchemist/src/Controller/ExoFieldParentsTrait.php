@@ -4,7 +4,9 @@ namespace Drupal\exo_alchemist\Controller;
 
 use Drupal\block_content\Access\RefinableDependentAccessInterface;
 use Drupal\block_content\Access\RefinableDependentAccessTrait;
+use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\layout_builder\Plugin\Block\InlineBlock;
 
 /**
@@ -15,11 +17,18 @@ trait ExoFieldParentsTrait {
   use RefinableDependentAccessTrait;
 
   /**
-   * The block content entity.
+   * The entity type manager.
    *
-   * @var \Drupal\block_content\BlockContentInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $parentEntity;
+  protected $entityTypeManager;
+
+  /**
+   * The eXo component plugin manager.
+   *
+   * @var \Drupal\exo_alchemist\ExoComponentManager
+   */
+  protected $exoComponentManager;
 
   /**
    * Crawl path and return the child entity.
@@ -40,10 +49,12 @@ trait ExoFieldParentsTrait {
         /** @var \Drupal\Core\Field\FieldItemListInterface $items */
         $item = $items->get((int) $parent);
         if ($item && $item->entity) {
-          $entity = $item->entity;
+          if ($item->entity instanceof BlockContentInterface) {
+            $entity = $item->entity;
+          }
         }
       }
-      elseif ($entity->hasField($parent) && !$entity->get($parent)->isEmpty()) {
+      elseif ($entity->hasField($parent)) {
         $items = $entity->get($parent);
       }
     }
@@ -81,9 +92,13 @@ trait ExoFieldParentsTrait {
    *
    * @return $this
    */
-  protected function setTargetEntity(ContentEntityInterface $entity, ContentEntityInterface $child_entity, array $parents = []) {
-    $target = $this->getTarget($entity, $parents);
-    if (!empty($target['item'])) {
+  protected function setTargetEntity(ContentEntityInterface $parent_entity, ContentEntityInterface $child_entity, array $parents = []) {
+    // No need to update if entities are the same.
+    if ($parent_entity->uuid() === $child_entity->uuid()) {
+      return $this;
+    }
+    $target = $this->getTarget($parent_entity, $parents);
+    if (!empty($target['item']) && $target['items'] instanceof EntityReferenceFieldItemListInterface) {
       $target['item']->setValue([
         'target_id' => NULL,
         'entity' => $child_entity,
@@ -103,7 +118,7 @@ trait ExoFieldParentsTrait {
    * @return \Drupal\Core\Field\FieldItemListInterface
    *   Items.
    */
-  protected function getTargetField(ContentEntityInterface $entity, array $parents) {
+  protected function getTargetItems(ContentEntityInterface $entity, array $parents) {
     return $this->getTarget($entity, $parents)['items'];
   }
 
@@ -123,16 +138,14 @@ trait ExoFieldParentsTrait {
         $this->parentEntity = unserialize($configuration['block_serialized']);
       }
       elseif (!empty($configuration['block_uuid'])) {
-        $entity = \Drupal::service('entity.repository')->loadEntityByUuid('block_content', $configuration['block_uuid']);
-        $this->parentEntity = $entity;
+        $this->parentEntity = $this->exoComponentManager()->entityLoadByUuid($configuration['block_uuid']);
       }
       elseif (!empty($configuration['block_revision_id'])) {
-        $entity = \Drupal::entityTypeManager()->getStorage('block_content')->loadRevision($configuration['block_revision_id']);
-        $this->parentEntity = $entity;
+        $this->parentEntity = $this->exoComponentManager()->entityLoadByRevisionId($configuration['block_revision_id']);
       }
       else {
         $this->parentEntity = \Drupal::entityTypeManager()->getStorage('block_content')->create([
-          'type' => $this->getDerivativeId(),
+          'type' => $block_plugin->getDerivativeId(),
           'reusable' => FALSE,
         ]);
       }
@@ -141,6 +154,77 @@ trait ExoFieldParentsTrait {
       }
     }
     return $this->parentEntity;
+  }
+
+  /**
+   * Get top level field name from parents.
+   *
+   * @param array $parents
+   *   The parents of the child entity.
+   *
+   * @return string
+   *   The field name.
+   */
+  protected function getFieldNameFromParents(array $parents) {
+    $parents = array_reverse($parents);
+    foreach ($parents as $parent) {
+      if (substr($parent, 0, 10) === 'exo_field_') {
+        return $parent;
+      }
+    }
+    return NULL;
+  }
+
+  /**
+   * Get top level key from parents.
+   *
+   * The key may be the field delta. It may also be a computed field name.
+   *
+   * @param array $parents
+   *   The parents of the child entity.
+   *
+   * @return int
+   *   The delta.
+   */
+  protected function getKeyFromParents(array $parents) {
+    $parents = array_reverse($parents);
+    foreach ($parents as $parent) {
+      // Delta by not always be a number. For computed fields it may be a
+      // string.
+      if (substr($parent, 0, 10) !== 'exo_field_') {
+        if (is_numeric($parent)) {
+          $parent = (int) $parent;
+        }
+        return $parent;
+      }
+    }
+    return NULL;
+  }
+
+  /**
+   * Retrieves the entity type manager.
+   *
+   * @return \Drupal\Core\Entity\EntityTypeManagerInterface
+   *   The entity type manager.
+   */
+  protected function entityTypeManager() {
+    if (!isset($this->entityTypeManager)) {
+      $this->entityTypeManager = \Drupal::service('entity_type.manager');
+    }
+    return $this->entityTypeManager;
+  }
+
+  /**
+   * Retrieves the exo component manager.
+   *
+   * @return \Drupal\exo_alchemist\ExoComponentManager
+   *   The exo component manager.
+   */
+  protected function exoComponentManager() {
+    if (!isset($this->exoComponentManager)) {
+      $this->exoComponentManager = \Drupal::service('plugin.manager.exo_component');
+    }
+    return $this->exoComponentManager;
   }
 
 }

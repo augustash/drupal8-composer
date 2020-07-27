@@ -18,7 +18,7 @@ use Drupal\Core\Block\BlockPluginInterface;
 function exo_element_info_alter(&$type) {
   if (isset($type['page'])) {
     $type['page']['#theme_wrappers']['exo'] = ['#weight' => -1000];
-    $type['page']['#pre_render'][] = 'exo_page_pre_render';
+    $type['page']['#pre_render'][] = ['Drupal\exo\ExoPageHandler', 'preRender'];
     \Drupal::moduleHandler()->alter('exo', $type['page']['#theme_wrappers']['exo']);
   }
 }
@@ -120,6 +120,48 @@ function exo_library_info_alter(&$libraries, $extension) {
         \Drupal::messenger()->addMessage($e->getMessage(), 'error');
       }
     }
+  }
+
+  // Throbber.
+  if ($extension == 'exo') {
+    /** @var \Drupal\exo\Plugin\ExoThrobberManagerInterface $throbber_manager */
+    $throbber_manager = Drupal::service('exo.throbber.manager');
+
+    // Add all css for throbber plugins on admin page.
+    foreach ($throbber_manager->loadAllThrobberInstances() as $throbber) {
+      /** @var \Drupal\exo\Plugin\ExoThrobberPluginInterface $throbber */
+      $libraries['throbber_admin']['css']['theme'][$throbber->getCssFile()] = [];
+    }
+
+    $settings = \Drupal::config('exo.loader');
+    if (!empty($settings) && isset($libraries['throbber']) && !empty($settings->get('throbber'))) {
+      // Add css for chosen throbber.
+      $throbber = $throbber_manager->loadThrobberInstance($settings->get('throbber'));
+      $libraries['throbber']['css']['theme'][$throbber->getCssFile()] = [];
+    }
+  }
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function exo_page_attachments(array &$page) {
+  /** @var \Drupal\exo\ThrobberManagerInterface $throbber_manager */
+  $settings = \Drupal::config('exo.loader');
+  $throbber_manager = Drupal::service('exo.throbber.manager');
+  $throbber = $settings->get('throbber');
+
+  if ($throbber_manager->getDefinition($throbber, FALSE) && $throbber_manager->routeIsApplicable()) {
+    /** @var \Drupal\exo\ThrobberPluginInterface $throbber */
+    $throbber = $throbber_manager->loadThrobberInstance($settings->get('throbber'));
+    $settings = [
+      'markup' => $throbber->getMarkup(),
+      'hideAjaxMessage' => $settings->get('hide_ajax_message'),
+      'alwaysFullscreen' => $settings->get('always_fullscreen'),
+      'throbberPosition' => $settings->get('throbber_position'),
+    ];
+    $page['#attached']['drupalSettings']['exoLoader'] = $settings;
+    $page['#attached']['library'][] = 'exo/throbber';
   }
 }
 

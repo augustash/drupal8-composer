@@ -50,17 +50,22 @@ function exo_icon_local_tasks_alter(&$local_tasks) {
   $config = \Drupal::config('exo_icon_local_task.settings');
   $manager = \Drupal::service('plugin.manager.exo_icon');
   foreach ($local_tasks as &$local_task) {
-    $icon = $manager->getDefinitionMatch($local_task['title'], ['local_task', 'admin']);
-    if ($icon) {
-      $local_task['options']['attributes']['data-icon'] = $icon;
+    if (!empty($local_task['options']['attributes']['data-icon'])) {
       $local_task['options']['attributes']['data-icon-only'] = $config->get('icon_only');
-      switch ($local_task['route_name']) {
-        case 'user.register':
-        case 'user.login':
-        case 'user.logout':
-        case 'user.pass':
-          $local_task['options']['attributes']['data-icon-only'] = FALSE;
-          break;
+    }
+    else {
+      $icon = $manager->getDefinitionMatch($local_task['title'], ['local_task', 'admin']);
+      if ($icon) {
+        $local_task['options']['attributes']['data-icon'] = $icon;
+        $local_task['options']['attributes']['data-icon-only'] = $config->get('icon_only');
+        switch ($local_task['route_name']) {
+          case 'user.register':
+          case 'user.login':
+          case 'user.logout':
+          case 'user.pass':
+            $local_task['options']['attributes']['data-icon-only'] = FALSE;
+            break;
+        }
       }
     }
   }

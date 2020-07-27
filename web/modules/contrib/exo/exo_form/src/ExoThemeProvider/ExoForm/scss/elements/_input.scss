@@ -30,8 +30,8 @@ div.exo-form-input {
   // The line placed beneath input fields.
   .exo-form-input-line {
     display: block;
-    height: 2px;
-    background-size: 0 2px, 100% 1px;
+    height: 1px;
+    background-size: 0 1px, 100% 1px;
     background-repeat: no-repeat;
     background-position: center bottom, center calc(100% - 1px);
   }
@@ -48,7 +48,8 @@ div.exo-form-input {
     border: 0;
     margin: 0;
     height: $input-height;
-    line-height: $input-height;
+    // Not needed. Breaks datetime fields.
+    // line-height: $input-height;
     font-size: $input-font-size;
     padding: $input-padding;
     box-sizing: border-box;
@@ -60,6 +61,15 @@ div.exo-form-input {
     &.form-textarea:focus {
       outline: 0;
       box-shadow: none;
+    }
+  }
+
+  .field-prefix,
+  .field-suffix {
+    line-height: $input-height;
+
+    br {
+      display: none;
     }
   }
 
@@ -90,6 +100,8 @@ div.exo-form-input {
   }
 
   textarea {
+    height: auto;
+    min-height: rem-calc(200);
 
     &.exo-form-input-item {
       overflow: auto;
@@ -146,7 +158,7 @@ div.exo-form-input {
   &.focused {
 
     .exo-form-input-line {
-      background-size: 100% 2px, 100% 1px;
+      background-size: 100% 1px, 100% 1px;
     }
   }
 

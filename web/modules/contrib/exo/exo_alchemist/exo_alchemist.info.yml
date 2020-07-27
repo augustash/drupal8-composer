@@ -6,4 +6,6 @@ package: 'eXo'
 dependencies:
   - exo:exo
   - exo:exo_layout_builder
+  - exo:exo_media
   - core:block_content
+  - core:media

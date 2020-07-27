@@ -48,22 +48,28 @@ class ExoModals extends ExoDataManager<ExoModal> {
    * Build the bindings.
    */
   protected buildBindings() {
-    // Close when the Escape key is pressed
-    Drupal.Exo.$document.on('keydown.exo.modal', e => {
+    Drupal.Exo.$document.off('keydown.exo.modal').on('keydown.exo.modal', (e:JQueryEventObject) => {
       this.getVisible().each((modal:ExoModal) => {
-        if (modal.getElement().find('form').length && e.keyCode === 13) {
-          // This may cause issues as it is just clicking the first button it
-          // finds.
-          modal.getElement().find('form .form-submit:first').mousedown();
-        }
-        if (modal.get('closeOnEscape') && e.keyCode === 27) {
-          modal.close();
+        const $element = $(e.target);
+        if (modal.getElement().find(e.target).length) {
+          if (e.keyCode === 13 && modal.getElement().find('form').length) {
+            if ($element.has('[data-autocomplete-path]').length || $element.hasClass('ui-autocomplete-input')) {
+              return;
+            }
+            // This may cause issues as it is just clicking the first button it
+            // finds.
+            modal.getElement().find('form .form-submit:first').mousedown();
+          }
+          // Close when the Escape key is pressed
+          else if (e.keyCode === 27 && modal.get('closeOnEscape')) {
+            modal.close();
+          }
         }
       });
     });
 
     // Next and prev for grouped modals.
-    Drupal.Exo.$document.on('keyup.exo.modal', e => {
+    Drupal.Exo.$document.off('keyup.exo.modal').on('keyup.exo.modal', e => {
       const target = e.target;
       if (!e.ctrlKey && !e.metaKey && !e.altKey && target['tagName'].toUpperCase() !== 'INPUT' && target['tagName'].toUpperCase() != 'TEXTAREA') {
         this.getVisible().each((modal:ExoModal) => {

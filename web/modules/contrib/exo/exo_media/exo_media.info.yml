@@ -4,4 +4,5 @@ description: 'Provides enhancements to media handling.'
 core: 8.x
 package: 'eXo'
 dependencies:
-  - media
+  - core:media
+  - core:media_library

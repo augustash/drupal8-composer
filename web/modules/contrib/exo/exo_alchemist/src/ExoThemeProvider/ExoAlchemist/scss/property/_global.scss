@@ -2,11 +2,19 @@
   @include flex();
   @include flex-align(center, middle);
   position: relative;
-  overflow: hidden;
+  // Removed because it makes elements hard to style. May need to restore.
+  // overflow: hidden;
 
   > .exo-component {
     flex: 1 1 auto;
     position: static;
+  }
+
+  p {
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }
 
@@ -17,14 +25,10 @@
   padding-right: $global-padding;
 }
 
-// [class^='exo-modifier--color-bg-'],
-// [class*=' exo-modifier--color-bg-'] {
-
-//   .exo-component-content {
-//     padding-left: 0;
-//     padding-right: 0;
-//   }
-// }
+.exo-component-flush {
+  padding-left: 0;
+  padding-right: 0;
+}
 
 .exo-modifier {
   transition: all $global-speed;
@@ -35,5 +39,14 @@
     &:after {
       transition: all $global-speed;
     }
+  }
+
+  .exo-component-content,
+  .exo-modifier--bg-color,
+  .exo-modifier--bg-color-invert,
+  .exo-modifier--color,
+  .exo-modifier--bg-color-invert,
+  .exo-modifier--height {
+    transition: all $global-speed;
   }
 }

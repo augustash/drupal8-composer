@@ -144,17 +144,28 @@ class ImageBlock extends BlockBase implements ContainerFactoryPluginInterface {
       if (!empty($this->configuration['image_style'])) {
         $image_style = $this->imageStyleStorage->load($this->configuration['image_style']);
         $cache_tags = $image_style->getCacheTags();
+        $build['image'] = [
+          '#theme' => 'image_style',
+          '#style_name' => $this->configuration['image_style'],
+          '#width' => $image->getWidth(),
+          '#height' => $image->getHeight(),
+          '#uri' => $image->getSource(),
+          '#cache' => [
+            'tags' => $cache_tags,
+          ],
+        ];
       }
-      $build['image'] = [
-        '#theme' => 'image_style',
-        '#style_name' => $this->configuration['image_style'],
-        '#width' => $image->getWidth(),
-        '#height' => $image->getHeight(),
-        '#uri' => $image->getSource(),
-        '#cache' => [
-          'tags' => $cache_tags,
-        ],
-      ];
+      else {
+        $build['image'] = [
+          '#theme' => 'image',
+          '#width' => $image->getWidth(),
+          '#height' => $image->getHeight(),
+          '#uri' => $image->getSource(),
+          '#cache' => [
+            'tags' => $cache_tags,
+          ],
+        ];
+      }
     }
     return $build;
   }

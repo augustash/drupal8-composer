@@ -2,7 +2,10 @@
 
 namespace Drupal\exo_alchemist\Definition;
 
+use Drupal\Component\Plugin\Definition\ContextAwarePluginDefinitionInterface;
+use Drupal\Component\Plugin\Definition\ContextAwarePluginDefinitionTrait;
 use Drupal\Component\Plugin\Definition\PluginDefinition;
+use Drupal\Component\Plugin\PluginBase;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\exo\Shared\ExoArrayAccessDefinitionTrait;
@@ -12,9 +15,10 @@ use Drupal\exo\Shared\ExoArrayAccessDefinitionTrait;
  *
  * @package Drupal\exo_alchemist\Definition
  */
-class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
+class ExoComponentDefinition extends PluginDefinition implements ContextAwarePluginDefinitionInterface, \ArrayAccess {
 
   use DependencySerializationTrait;
+  use ContextAwarePluginDefinitionTrait;
   use ExoArrayAccessDefinitionTrait;
 
   /**
@@ -34,8 +38,11 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
     'label' => '',
     'description' => '',
     'version' => '0.0.0',
+    'category' => '',
+    'permission' => '',
     'ignore' => FALSE,
     'hidden' => FALSE,
+    'computed' => FALSE,
     'modifier' => '',
     'modifiers' => [],
     'modifier_globals' => [],
@@ -46,9 +53,11 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
     'template' => '',
     'theme hook' => '',
     'thumbnail' => '',
-    'category' => '',
     'provider' => '',
+    'enhancements' => [],
     'animations' => [],
+    'parents' => [],
+    'tags' => [],
     'additional' => [],
   ];
 
@@ -74,13 +83,6 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
   protected $missing = FALSE;
 
   /**
-   * The render parents.
-   *
-   * @var string[]
-   */
-  protected $parents = [];
-
-  /**
    * The default component modifiers for each component.
    *
    * @var array
@@ -90,6 +92,11 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
       'type' => 'exo_theme_color',
       'label' => 'Background Color',
       'status' => TRUE,
+    ],
+    'color_bg_content' => [
+      'type' => 'exo_theme_color',
+      'label' => 'Background Color: Content',
+      'status' => FALSE,
     ],
     'invert' => [
       'type' => 'invert',
@@ -123,6 +130,12 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
       'description' => 'Padding is the space between a component and its contents.',
       'status' => TRUE,
     ],
+    'padding_v_content' => [
+      'type' => 'padding_vertical',
+      'label' => 'Padding: Content',
+      'description' => 'Padding is the space between a component\'s content and a component\'s edge.',
+      'status' => FALSE,
+    ],
     'containment' => [
       'type' => 'containment',
       'label' => 'Containment',
@@ -130,8 +143,8 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
     ],
     'containment_content' => [
       'type' => 'containment',
-      'label' => 'Content Containment',
-      'status' => FALSE,
+      'label' => 'Containment: Content',
+      'status' => TRUE,
     ],
     'border_radius' => [
       'type' => 'border_radius',
@@ -144,6 +157,12 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
    * ExoComponentDefinition constructor.
    */
   public function __construct(array $definition = []) {
+    // Allow installed to be passed in to the definition but do not store it
+    // as part of the definition.
+    if (isset($definition['installed'])) {
+      $this->setInstalled($definition['installed']);
+      unset($definition['installed']);
+    }
     foreach ($definition as $name => $value) {
       if (array_key_exists($name, $this->definition)) {
         $this->definition[$name] = $value;
@@ -157,6 +176,7 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
     $this->setThemeHook(self::PATTERN_PREFIX . $this->id());
     $this->setFields($this->definition['fields']);
     $this->setModifiers($this->definition['modifiers']);
+    $this->setEnhancements($this->definition['enhancements']);
     $this->setAnimations($this->definition['animations']);
   }
 
@@ -174,6 +194,9 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
     }
     foreach ($this->getModifiers() as $modifier) {
       $definition['modifiers'][$modifier->getName()] = $modifier->toArray();
+    }
+    foreach ($this->getEnhancements() as $enhancement) {
+      $definition['enhancements'][$enhancement->getName()] = $enhancement->toArray();
     }
     foreach ($this->getAnimations() as $animation) {
       $definition['animations'][$animation->getName()] = $animation->toArray();
@@ -286,11 +309,38 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
   /**
    * Getter.
    *
-   * @return ExoComponentDefinitionField[]
+   * @return \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField[]
    *   Property value.
    */
   public function getFields() {
     return $this->definition['fields'];
+  }
+
+  /**
+   * Getter.
+   *
+   * @return bool
+   *   Property value.
+   */
+  public function hasFields() {
+    return !empty($this->definition['fields']);
+  }
+
+  /**
+   * Get field by type.
+   *
+   * @param string $type
+   *   The field type.
+   *
+   * @return \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField[]
+   *   Property value.
+   */
+  public function getFieldsByType($type) {
+    return array_filter($this->getFields(), function ($field) use ($type) {
+      /** @var \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field */
+      $parts = explode(PluginBase::DERIVATIVE_SEPARATOR, $field->getType());
+      return $parts[0] == $type;
+    });
   }
 
   /**
@@ -482,6 +532,35 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
   }
 
   /**
+   * Set enhancements.
+   *
+   * @param mixed $enhancements
+   *   Property value.
+   *
+   * @return $this
+   */
+  public function setEnhancements($enhancements) {
+    foreach ($enhancements as $name => $value) {
+      if ($value === FALSE) {
+        continue;
+      }
+      $enhancement = $this->getEnhancementDefinition($name, $value);
+      $this->definition['enhancements'][$enhancement->getName()] = $enhancement;
+    }
+    return $this;
+  }
+
+  /**
+   * Get enhancements.
+   *
+   * @return ExoComponentDefinitionEnhancement[]
+   *   Property value.
+   */
+  public function getEnhancements() {
+    return $this->definition['enhancements'];
+  }
+
+  /**
    * Set animations.
    *
    * @param mixed $animations
@@ -571,6 +650,16 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
   public function setDescription($description) {
     $this->definition['description'] = $description;
     return $this;
+  }
+
+  /**
+   * Getter.
+   *
+   * @return string
+   *   Property value.
+   */
+  public function getPermission() {
+    return $this->definition['permission'];
   }
 
   /**
@@ -694,6 +783,16 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
   }
 
   /**
+   * Getter.
+   *
+   * @return mixed
+   *   Property value.
+   */
+  public function isComputed() {
+    return !empty($this->definition['computed']);
+  }
+
+  /**
    * Get Provider property.
    *
    * @return string
@@ -742,26 +841,43 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
   /**
    * Add an item as a parent.
    *
+   * @param string $key
+   *   A string that will be used as the unique key for the parent.
    * @param string $value
    *   A string that will be appending to the parents.
    *
    * @return $this
    */
-  public function addParent($value) {
-    $this->parents[] = $value;
+  protected function addParent($key, $value) {
+    $this->definition['parents'][$key] = $value;
     return $this;
   }
 
   /**
-   * Add an item as a parent.
+   * Add field as a parent.
    *
-   * @param array $parents
-   *   An array of parent keys.
+   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field
+   *   The field.
    *
    * @return $this
    */
-  public function setParents(array $parents) {
-    $this->parents = $parents;
+  public function addParentField(ExoComponentDefinitionField $field) {
+    $this->addParent($field->safeId(), $field->safeId());
+    return $this;
+  }
+
+  /**
+   * Add a field delta as a parent.
+   *
+   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field
+   *   The field.
+   * @param int $delta
+   *   The delta.
+   *
+   * @return $this
+   */
+  public function addParentFieldDelta(ExoComponentDefinitionField $field, $delta) {
+    $this->addParent($field->safeId() . '_delta', $delta);
     return $this;
   }
 
@@ -772,7 +888,37 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
    *   An array of parent keys.
    */
   public function getParents() {
-    return $this->parents;
+    return $this->definition['parents'];
+  }
+
+  /**
+   * Clear the parents of this component.
+   *
+   * @return $this
+   */
+  public function clearParents() {
+    $this->definition['parents'] = [];
+    return $this;
+  }
+
+  /**
+   * Get the parents of this component as a string.
+   *
+   * @return string
+   *   Parent keys separated by a period.
+   */
+  public function getParentsAsPath() {
+    return implode('.', $this->getParents());
+  }
+
+  /**
+   * Get the tags of this component.
+   *
+   * @return array
+   *   An array of tags.
+   */
+  public function getTags() {
+    return $this->definition['tags'];
   }
 
   /**
@@ -889,8 +1035,7 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
    *   Definition instance.
    */
   public function getFieldDefinition($name, $value) {
-    $field = new ExoComponentDefinitionField($name, $value);
-    $field->setComponent($this);
+    $field = new ExoComponentDefinitionField($name, $value, $this);
     return $field;
   }
 
@@ -906,9 +1051,24 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
    *   Definition instance.
    */
   public function getModifierDefinition($name, $value) {
-    $field = new ExoComponentDefinitionModifier($name, $value);
-    $field->setComponent($this);
+    $field = new ExoComponentDefinitionModifier($name, $value, $this);
     return $field;
+  }
+
+  /**
+   * Factory method: create a new enhancement definition.
+   *
+   * @param string $name
+   *   Field name.
+   * @param array $value
+   *   Field value.
+   *
+   * @return \Drupal\exo_alchemist\Definition\ExoComponentDefinitionEnhancement
+   *   Definition instance.
+   */
+  public function getEnhancementDefinition($name, array $value) {
+    $animation = new ExoComponentDefinitionEnhancement($name, $value, $this);
+    return $animation;
   }
 
   /**
@@ -923,8 +1083,7 @@ class ExoComponentDefinition extends PluginDefinition implements \ArrayAccess {
    *   Definition instance.
    */
   public function getAnimationDefinition($name, array $value) {
-    $animation = new ExoComponentDefinitionAnimation($name, $value);
-    $animation->setComponent($this);
+    $animation = new ExoComponentDefinitionAnimation($name, $value, $this);
     return $animation;
   }
 

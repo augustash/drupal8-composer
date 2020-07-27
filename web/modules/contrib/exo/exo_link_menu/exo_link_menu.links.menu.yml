@@ -1,0 +1,8 @@
+
+# eXo Config File menu items definition
+exo_link_menu.config:
+  title: 'Link Menu'
+  route_name: exo_link_menu.config
+  description: 'Link menu settings and configuration.'
+  parent: system.admin_config_exo
+  weight: 0

@@ -239,7 +239,7 @@ class ExoFilter extends InputRequired {
 
       $form[$id] = [
         '#type' => 'fieldset',
-        '#title' => $title,
+        '#title' => $title . ' (' . $type . ')',
         '#weight' => 20,
       ];
 

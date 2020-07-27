@@ -24,11 +24,15 @@ class ExoComponentDefinitionField implements \ArrayAccess {
     'label' => NULL,
     'description' => NULL,
     'type' => NULL,
+    'alias' => NULL,
+    'computed' => FALSE,
     'group' => NULL,
     'component' => NULL,
     'cardinality' => 1,
     'required' => FALSE,
-    'preview' => [],
+    'edit' => TRUE,
+    'hide' => TRUE,
+    'default' => [],
     'modifier' => '',
     'additional' => [],
   ];
@@ -50,7 +54,8 @@ class ExoComponentDefinitionField implements \ArrayAccess {
   /**
    * ExoComponentDefinitionField constructor.
    */
-  public function __construct($name, $values) {
+  public function __construct($name, $values, $component) {
+    $this->component = $component;
     if (is_scalar($values)) {
       $this->definition['name'] = is_numeric($name) ? $values : $name;
       $this->definition['label'] = $values;
@@ -68,8 +73,17 @@ class ExoComponentDefinitionField implements \ArrayAccess {
       }
       $this->definition['name'] = !isset($values['name']) ? $name : $values['name'];
       $this->definition['label'] = isset($values['label']) ? $values['label'] : ucwords(str_replace('_', ' ', $this->definition['name']));
-      if (!empty($values['preview'])) {
-        $this->setPreviews($values['preview']);
+      if (!empty($values['default'])) {
+        $this->setDefaults($values['default']);
+      }
+      elseif (!empty($values['preview'])) {
+        \Drupal::messenger()->addWarning(t('@label (@name) in component (@id) needs to be updated to use "default" instead of "preview".', [
+          '@label' => $this->definition['label'],
+          '@name' => $this->definition['name'],
+          '@id' => $component->id(),
+        ]));
+        $this->setDefaults($values['preview']);
+        unset($values['preview']);
       }
     }
   }
@@ -82,7 +96,7 @@ class ExoComponentDefinitionField implements \ArrayAccess {
    */
   public function toArray() {
     $definition = $this->definition;
-    $definition['preview'] = $this->getPreviewsAsArray();
+    $definition['default'] = $this->getDefaultsAsArray();
     return $definition;
   }
 
@@ -177,6 +191,26 @@ class ExoComponentDefinitionField implements \ArrayAccess {
   }
 
   /**
+   * Get alias property.
+   *
+   * @return mixed
+   *   Property value.
+   */
+  public function getAlias() {
+    return $this->definition['alias'];
+  }
+
+  /**
+   * Getter.
+   *
+   * @return mixed
+   *   Property value.
+   */
+  public function isComputed() {
+    return !empty($this->definition['computed']);
+  }
+
+  /**
    * Get group property.
    *
    * @return mixed
@@ -220,6 +254,16 @@ class ExoComponentDefinitionField implements \ArrayAccess {
   }
 
   /**
+   * Check if supports unlimited values.
+   *
+   * @return bool
+   *   TRUE if supports multiple.
+   */
+  public function supportsUnlimimted() {
+    return $this->getCardinality() === -1;
+  }
+
+  /**
    * Check if field is required.
    *
    * @return bool
@@ -239,6 +283,52 @@ class ExoComponentDefinitionField implements \ArrayAccess {
    */
   public function setRequired($required = TRUE) {
     $this->definition['required'] = $required === TRUE;
+    return $this;
+  }
+
+  /**
+   * Check if field is editable.
+   *
+   * @return bool
+   *   TRUE if field is editable.
+   */
+  public function isEditable() {
+    return $this->definition['edit'] === TRUE;
+  }
+
+  /**
+   * Set editable property.
+   *
+   * @param bool $editable
+   *   Property value.
+   *
+   * @return $this
+   */
+  public function setEditable($editable = TRUE) {
+    $this->definition['edit'] = $editable === TRUE;
+    return $this;
+  }
+
+  /**
+   * Check if field is hideable.
+   *
+   * @return bool
+   *   TRUE if field is hideable.
+   */
+  public function isHideable() {
+    return $this->definition['hide'] === TRUE;
+  }
+
+  /**
+   * Set hideable property.
+   *
+   * @param bool $hideable
+   *   Property value.
+   *
+   * @return $this
+   */
+  public function setHideable($hideable = TRUE) {
+    $this->definition['hide'] = $hideable === TRUE;
     return $this;
   }
 
@@ -276,23 +366,23 @@ class ExoComponentDefinitionField implements \ArrayAccess {
   }
 
   /**
-   * Has preview property.
+   * Has default property.
    *
    * @return bool
    *   TRUE if has property.
    */
-  public function hasPreview() {
-    return !empty($this->getPreviews());
+  public function hasDefault() {
+    return !empty($this->getDefaults());
   }
 
   /**
    * Get Preview property.
    *
-   * @return \Drupal\exo_alchemist\Definition\ExoComponentDefinitionFieldPreview[]
+   * @return \Drupal\exo_alchemist\Definition\ExoComponentDefinitionFieldDefault[]
    *   Property value.
    */
-  public function getPreviews() {
-    return $this->definition['preview'];
+  public function getDefaults() {
+    return $this->definition['default'];
   }
 
   /**
@@ -301,54 +391,70 @@ class ExoComponentDefinitionField implements \ArrayAccess {
    * @return array
    *   Array definition.
    */
-  public function getPreviewsAsArray() {
-    $previews = [];
-    foreach ($this->getPreviews() as $delta => $preview) {
-      $previews[$delta] = $preview->toArray();
+  public function getDefaultsAsArray() {
+    $defaults = [];
+    foreach ($this->getDefaults() as $delta => $default) {
+      $defaults[$delta] = $default->toArray();
     }
-    return $previews;
+    return $defaults;
   }
 
   /**
    * Set Preview property.
    *
-   * @param mixed $previews
+   * @param mixed $defaults
    *   Property value.
    *
    * @return $this
    */
-  public function setPreviews($previews) {
-    $this->definition['preview'] = [];
-    if (!is_array($previews)) {
-      $previews = [['value' => $previews]];
-    }
-    else {
-      // Preview value should be a simple array. If it isn't, we assume we
-      // have a complex preview value and it needs to be nested.
-      $modified_previews = [];
-      foreach ($previews as $key => $value) {
-        if (!is_int($key)) {
-          $modified_previews[] = $previews;
-          break;
-        }
-        if (!is_array($value)) {
-          $modified_previews[] = ['value' => $value];
-        }
-        else {
-          $modified_previews[] = $value;
-        }
+  public function setDefaults($defaults) {
+    $this->definition['default'] = [];
+    if (!empty($defaults)) {
+      if (!is_array($defaults)) {
+        $defaults = [['value' => $defaults]];
       }
-      $previews = $modified_previews;
-    }
-    foreach ($previews as $delta => $preview) {
-      $this->definition['preview'][$delta] = new ExoComponentDefinitionFieldPreview($delta, $preview);
-      $this->definition['preview'][$delta]->setField($this);
+      else {
+        // Preview value should be a simple array. If it isn't, we assume we
+        // have a complex default value and it needs to be nested.
+        $modified_defaults = [];
+        foreach ($defaults as $key => $value) {
+          if (!is_int($key)) {
+            $modified_defaults[] = $defaults;
+            break;
+          }
+          if (!is_array($value)) {
+            $modified_defaults[] = ['value' => $value];
+          }
+          else {
+            $modified_defaults[] = $value;
+          }
+        }
+        $defaults = $modified_defaults;
+      }
+      foreach ($defaults as $delta => $default) {
+        $this->setDefault($default, $delta);
+      }
     }
     return $this;
   }
 
   /**
-   * Set preview property value on all available deltas.
+   * Set Preview property.
+   *
+   * @param array $values
+   *   Property value.
+   * @param int $delta
+   *   The delta of the default.
+   *
+   * @return $this
+   */
+  public function setDefault(array $values, $delta = 0) {
+    $this->definition['default'][$delta] = new ExoComponentDefinitionFieldDefault($this, $values);
+    return $this;
+  }
+
+  /**
+   * Set default property value on all available deltas.
    *
    * @param mixed $parents
    *   An array of parent keys, starting with the outermost key.
@@ -360,16 +466,16 @@ class ExoComponentDefinitionField implements \ArrayAccess {
    *   FALSE, PHP throws an error if trying to add into a value that is not an
    *   array. Defaults to FALSE.
    */
-  public function setPreviewValueOnAll($parents = [], $value = NULL, $force = FALSE) {
-    foreach ($this->getPreviews() as $preview) {
-      if (!$preview->getValue($parents)) {
-        $preview->setValue($parents, $value, $force);
+  public function setDefaultValueOnAll($parents = [], $value = NULL, $force = FALSE) {
+    foreach ($this->getDefaults() as $default) {
+      if (!$default->getValue($parents)) {
+        $default->setValue($parents, $value, $force);
       }
     }
   }
 
   /**
-   * Determines whether all previews contains the requested property.
+   * Determines whether all defaults contains the requested property.
    *
    * @param mixed $parents
    *   An array of parent keys, starting with the outermost key.
@@ -377,9 +483,9 @@ class ExoComponentDefinitionField implements \ArrayAccess {
    * @see NestedArray::unsetValue()
    * @see NestedArray::getValue()
    */
-  public function hasPreviewPropertyOnAll($parents = []) {
-    foreach ($this->getPreviews() as $preview) {
-      if (!$preview->keyExists($parents)) {
+  public function hasDefaultPropertyOnAll($parents = []) {
+    foreach ($this->getDefaults() as $default) {
+      if (!$default->keyExists($parents)) {
         return FALSE;
       }
     }
@@ -447,6 +553,19 @@ class ExoComponentDefinitionField implements \ArrayAccess {
    */
   public function setAdditionalValue($parents, $value, $force = FALSE) {
     return NestedArray::setValue($this->definition['additional'], (array) $parents, $value, $force);
+  }
+
+  /**
+   * Unset additional property value.
+   *
+   * @param mixed $parents
+   *   An array of parent keys, starting with the outermost key.
+   *
+   * @see NestedArray::unsetValue()
+   * @see NestedArray::getValue()
+   */
+  public function unsetAdditionalValue($parents) {
+    return NestedArray::unsetValue($this->definition['additional'], (array) $parents);
   }
 
   /**

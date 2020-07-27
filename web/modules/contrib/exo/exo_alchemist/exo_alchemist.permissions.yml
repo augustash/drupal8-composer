@@ -2,3 +2,12 @@ administer exo alchemist:
   title: 'Administer eXo Alchemist'
   description: 'Allow to access the administration forms to configure eXo Alchemist.'
   restrict access: true
+add restricted exo components:
+  title: 'Can add restricted components'
+  description: 'Allow to add restricted components to layouts.'
+add exo components:
+  title: 'Can add components'
+  description: 'Can create new components within layouts.'
+edit exo components:
+  title: 'Can edit components'
+  description: 'Can edit existing components within layouts.'

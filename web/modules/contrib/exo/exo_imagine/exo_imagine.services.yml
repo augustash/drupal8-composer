@@ -1,0 +1,10 @@
+services:
+  exo_imagine.manager:
+    class: Drupal\exo_imagine\ExoImagineManager
+    arguments: ['@module_handler', '@entity_type.manager', '@breakpoint.manager', '@image.factory', '@plugin.manager.image.effect', '@exo_imagine.settings']
+  exo_imagine.settings:
+    class: Drupal\exo_imagine\ExoImagineSettings
+    arguments: ['@config.factory']
+  logger.channel.exo_imagine:
+    parent: logger.channel_base
+    arguments: ['exo_imagine']

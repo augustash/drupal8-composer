@@ -2,13 +2,17 @@
 
 namespace Drupal\exo_alchemist\Form;
 
+use Drupal\Component\Plugin\Factory\DefaultFactory;
+use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Ajax\AjaxFormHelperTrait;
 use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\ReplaceCommand;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Plugin\Context\EntityContext;
 use Drupal\Core\Routing\RedirectDestinationTrait;
 use Drupal\Core\Url;
 use Drupal\exo_alchemist\Ajax\ExoComponentModifierAttributesCommand;
@@ -16,7 +20,12 @@ use Drupal\exo_alchemist\Definition\ExoComponentDefinition;
 use Drupal\exo_alchemist\ExoComponentManager;
 use Drupal\exo_alchemist\ExoComponentPropertyManager;
 use Drupal\exo_alchemist\Plugin\ExoComponentPropertyOptionsInterface;
+use Drupal\layout_builder\Section;
+use Drupal\layout_builder\SectionComponent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Plugin\Context\Context;
+use Drupal\Core\Plugin\Context\ContextDefinition;
+use Drupal\exo_alchemist\Plugin\ExoComponentField\EntityField;
 
 /**
  * Provides a form form removing a component.
@@ -47,6 +56,13 @@ class ExoComponentPreviewForm extends FormBase {
    * @var \Drupal\exo_alchemist\ExoComponentPropertyManager
    */
   protected $exoComponentPropertyManager;
+
+  /**
+   * Preview contexts.
+   *
+   * @var \Drupal\Core\Plugin\Context\Context[]
+   */
+  protected $contexts;
 
   /**
    * Constructs a new ExoComponentAppearanceForm object.
@@ -86,6 +102,7 @@ class ExoComponentPreviewForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, ExoComponentDefinition $definition = NULL) {
+    /** @var \Drupal\exo_alchemist\Definition\ExoComponentDefinition $definition */
     $entity = $form_state->get('entity');
     if (empty($entity)) {
       $entity = $this->exoComponentManager->loadEntity($definition);
@@ -101,7 +118,27 @@ class ExoComponentPreviewForm extends FormBase {
         ],
       ];
       $entity->exoAlchemistPreview = TRUE;
-      $build['entity'] = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId())->view($entity);
+
+      // Pass entity through standard layout builder render.
+      /** @var \Drupal\layout_builder\Plugin\SectionStorage\DefaultsSectionStorage $storage */
+      $storage = \Drupal::service('plugin.manager.layout_builder.section_storage')->createInstance('defaults');
+      $storage->setContext('layout_builder.entity', EntityContext::fromEntity($entity));
+      $display = EntityViewDisplay::collectRenderDisplay($entity, 'default');
+      $storage->setContext('display', EntityContext::fromEntity($display));
+      $preview = new Context(new ContextDefinition('boolean'), TRUE);
+      $storage->setContext('preview', $preview);
+      $this->contexts = $storage->getContexts();
+
+      $section = new Section('layout_onecol');
+      $storage->insertSection(0, $section);
+      $component = new SectionComponent($entity->uuid(), 'content', [
+        'id' => 'inline_block:' . $entity->bundle(),
+        'label_display' => FALSE,
+        'block_serialized' => serialize($entity),
+      ]);
+      $section->appendComponent($component);
+      $build['entity'] = $section->toRenderArray($storage->getContexts(), TRUE);
+
       $form['#prefix'] = \Drupal::service('renderer')->render($build);
 
       if ($this->exoComponentManager->accessDefinition($definition, 'update')->isAllowed()) {
@@ -114,17 +151,21 @@ class ExoComponentPreviewForm extends FormBase {
         ]));
       }
 
-      $form['#id'] = 'exo-alchemist-appearance-form';
       $form['#attributes']['data-exo-alchemist-refresh'] = '';
       $form['#attached']['library'][] = 'exo_alchemist/admin.preview';
       $form['#attributes']['class'][] = 'exo-form-wrap';
+      $form['#attributes']['class'][] = 'exo-form-lock';
       $form['#exo_theme'] = 'black';
+      // This is a very dirty way to force forms to use the intersect style.
+      // All forms rendered after this request will use this style.
+      exo_form_get_settings(['style' => 'intersect']);
+
       $form['modifiers'] = [
         '#type' => 'exo_modal',
         '#title' => $this->t('Modify Appearance'),
         '#trigger_icon' => 'regular-pencil-paintbrush',
         '#trigger_attributes' => [
-          'class' => ['button', 'button--primary'],
+          'class' => ['exo-component-modify-button'],
         ],
         '#use_close' => FALSE,
         '#modal_attributes' => [
@@ -140,7 +181,6 @@ class ExoComponentPreviewForm extends FormBase {
             'icon' => 'regular-pencil-paintbrush',
             'width' => 400,
             'overlayColor' => 'transparent',
-            // 'class' => 'exo-form exo-form-theme-black',
           ],
         ],
         '#tree' => TRUE,
@@ -172,6 +212,11 @@ class ExoComponentPreviewForm extends FormBase {
     $info = $this->exoComponentManager->getExoComponentPropertyManager()->getAttributeInfo($definition);
     if (!empty($info)) {
       $form['attributes'] = $this->buildInfo($info, $this->t('Modifier: Attributes'), '.', '');
+    }
+
+    $info = $this->exoComponentManager->getExoComponentEnhancementManager()->getAttributeInfo($definition);
+    if (!empty($info)) {
+      $form['attributes'] = $this->buildInfo($info, $this->t('Enhancement: Attributes'), '.', '');
     }
 
     $info = $this->exoComponentManager->getExoComponentAnimationManager()->getAttributeInfo($definition);
@@ -222,7 +267,163 @@ class ExoComponentPreviewForm extends FormBase {
       $form['property_types'] = $this->buildInfo($info, $this->t('Modifier: Property Types'));
     }
 
+    // Support entity field helpers.
+    $entity_fields = $definition->getFieldsByType('field');
+    if (!empty($entity_fields)) {
+      $fields_wrapper_id = Html::getClass('exo-component-preview-entity-fields');
+      $form['entity_fields'] = [
+        '#type' => 'fieldset',
+        '#title' => $this->t('Entity Field Helper'),
+        '#tree' => TRUE,
+        '#open' => TRUE,
+        '#prefix' => '<div id="' . $fields_wrapper_id . '" class="exo-form-element exo-form-element-js">',
+        '#suffix' => '</div>',
+      ];
+      /** @var \Drupal\Core\Field\FormatterPluginManager $plugin_manager */
+      $plugin_manager = \Drupal::service('plugin.manager.field.formatter');
+      /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
+      $field_manager = \Drupal::service('entity_field.manager');
+      /** @var \Drupal\Core\Field\FieldTypePluginManagerInterface $field_type_manager */
+      $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
+      $field_map = $field_manager->getFieldMap();
+      foreach ($entity_fields as $field) {
+        $referenced_entity_type_id = EntityField::getEntityTypeIdFromPluginId($field->getType());
+        $referenced_field_name = EntityField::getFieldNameFromPluginId($field->getType());
+        if (isset($field_map[$referenced_entity_type_id][$referenced_field_name])) {
+          $map = $field_map[$referenced_entity_type_id][$referenced_field_name];
+          $referenced_entity_bundle = EntityField::getBundleFromPluginId($field->getType()) ?: reset($map['bundles']);
+          $options = $plugin_manager->getOptions($map['type']);
+          $definitions = $field_manager->getFieldDefinitions($referenced_entity_type_id, $referenced_entity_bundle);
+          if (isset($definitions[$referenced_field_name])) {
+            $field_definition = $definitions[$referenced_field_name];
+            $display_options = $form_state->getValue([
+              'entity_fields',
+              'fields',
+              $field->id(),
+            ]);
+            if (empty($display_options)) {
+              $field_type_definition = $field_type_manager->getDefinition($map['type']);
+              if (isset($field_type_definition['default_formatter'])) {
+                $display_options['type'] = $field_type_definition['default_formatter'];
+              }
+              $display_options['label'] = ['hidden'];
+              $display_options['settings'] = [];
+              // Merge in field defaults if set.
+              if ($defaults = $field->getDefaults()) {
+                $default = reset($defaults);
+                $display_options = $default->toArray() + $display_options;
+              }
+            }
+            $plugin = $plugin_manager->getInstance([
+              'field_definition' => $field_definition,
+              'view_mode' => 'default',
+              'configuration' => $display_options,
+            ]);
+            $applicable_options = [];
+            foreach ($options as $option => $label) {
+              $plugin_class = DefaultFactory::getPluginClass($option, $plugin_manager->getDefinition($option));
+              if ($plugin_class::isApplicable($field_definition)) {
+                $applicable_options[$option] = $label;
+              }
+            }
+            $field_wrapper_id = Html::getClass('exo-component-preview-entity-field-', $field->id());
+            $element = [
+              '#type' => 'fieldset',
+              '#title' => $field->getLabel(),
+              '#prefix' => '<div id="' . $field_wrapper_id . '">',
+              '#suffix' => '</div>',
+            ];
+            $element['label'] = [
+              '#type' => 'select',
+              '#title' => t('Label display for @title', ['@title' => $field_definition->getLabel()]),
+              '#title_display' => 'invisible',
+              '#options' => [
+                'above' => t('Above'),
+                'inline' => t('Inline'),
+                'hidden' => '- ' . t('Hidden') . ' -',
+                'visually_hidden' => '- ' . t('Visually Hidden') . ' -',
+              ],
+              '#default_value' => !empty($display_options['label']) ? $display_options['label'] : 'above',
+            ];
+            $element['type'] = [
+              '#type' => 'select',
+              '#title' => t('Plugin for @title', ['@title' => $field_definition->getLabel()]),
+              '#title_display' => 'invisible',
+              // '#options' => $applicable_options,
+              '#options' => $options,
+              '#default_value' => !empty($display_options['type']) ? $display_options['type'] : 'hidden',
+              // '#parents' => ['fields', $key, 'type'],
+              '#attributes' => ['class' => ['field-plugin-type']],
+              '#ajax' => [
+                'callback' => '::ajaxEntityFieldRefresh',
+                'wrapper' => $field_wrapper_id,
+              ],
+            ];
+            $element['settings'] = $plugin->settingsForm($form, $form_state);
+            if (!empty($form_state->getTriggeringElement()['#show_yaml'])) {
+              $yaml = [];
+              $yaml[] = '    default:';
+              $yaml[] = "      label: '" . $display_options['label'] . "'";
+              $yaml[] = "      type: '" . $display_options['type'] . "'";
+              if (!empty($display_options['settings'])) {
+                $yaml[] = '      settings:';
+                foreach ($display_options['settings'] as $key => $value) {
+                  if (is_string($value)) {
+                    $value = "'$value'";
+                  }
+                  $yaml[] = "        " . $key . ": " . $value . "";
+                }
+              }
+              $element['yaml'] = [
+                '#type' => 'html_tag',
+                '#tag' => 'pre',
+                // '#title' => $this->t('Component field YAML'),
+                // '#autogrow' => TRUE,
+                // '#rows' => count($yaml),
+                '#value' => implode("\n", $yaml),
+              ];
+            }
+            $form['entity_fields']['fields'][$field->id()] = $element;
+          }
+        }
+      }
+      $form['entity_fields']['actions'] = [
+        '#type' => 'actions',
+        'submit' => [
+          '#type' => 'submit',
+          '#value' => t('Build YAML'),
+          '#name' => 'entity_fields_submit',
+          '#show_yaml' => TRUE,
+          '#ajax' => [
+            'callback' => '::ajaxEntityFieldBuildYaml',
+            'wrapper' => $fields_wrapper_id,
+          ],
+          '#attributes' => [
+            'class' => ['exo-component-modify-button'],
+          ],
+        ],
+      ];
+    }
+
     return $form;
+  }
+
+  /**
+   * Submit form dialog #ajax callback.
+   */
+  public function ajaxEntityFieldRefresh(array &$form, FormStateInterface $form_state) {
+    $trigger = $form_state->getTriggeringElement();
+    // Go one level up in the form, to the widgets container.
+    return NestedArray::getValue($form, array_slice($trigger['#array_parents'], 0, -1));
+  }
+
+  /**
+   * Submit form dialog #ajax callback.
+   */
+  public function ajaxEntityFieldBuildYaml(array &$form, FormStateInterface $form_state) {
+    $trigger = $form_state->getTriggeringElement();
+    // Go one level up in the form, to the widgets container.
+    return NestedArray::getValue($form, array_slice($trigger['#array_parents'], 0, -2));
   }
 
   /**
@@ -241,7 +442,7 @@ class ExoComponentPreviewForm extends FormBase {
   protected function successfulAjaxSubmit(array $form, FormStateInterface $form_state) {
     $entity = $form_state->get('entity');
     $definition = $this->exoComponentManager->getEntityBundleComponentDefinition($entity->type->entity);
-    $attributes = $this->exoComponentPropertyManager->getModifierAttributes($definition, $entity, TRUE);
+    $attributes = $this->exoComponentPropertyManager->getModifierAttributes($definition, $entity, $this->contexts);
     $response = new AjaxResponse();
     $response->addCommand(new ExoComponentModifierAttributesCommand($attributes));
     return $response;

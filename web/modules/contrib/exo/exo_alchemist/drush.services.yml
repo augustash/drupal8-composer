@@ -1,0 +1,6 @@
+services:
+  exo.alchemist.commands:
+    class: Drupal\exo_alchemist\Command\ExoAlchemistDrushCommands
+    arguments: ['@plugin.manager.exo_component']
+    tags:
+      - { name: drush.command }

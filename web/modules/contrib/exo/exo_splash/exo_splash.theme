@@ -30,7 +30,6 @@ function template_preprocess_exo_splash(array &$variables) {
     $variables['attributes']['class'][] = 'exo-splash-theme-' . $theme;
   }
 
-  // ksm(str_replace('.svg', '-white.svg', $logo_uri), file_exists(drupal_get_path('theme', 'ash') . str_replace('.svg', '-white.svg', $logo_uri)));.
   if ($color = $exo_settings->getSetting(['logo_color'])) {
     if ($color == 'white') {
       if (file_exists(DRUPAL_ROOT . '/' . str_replace('.svg', '-white.svg', $logo_uri))) {

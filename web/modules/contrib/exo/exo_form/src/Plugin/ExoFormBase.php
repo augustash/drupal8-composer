@@ -108,12 +108,12 @@ abstract class ExoFormBase extends PluginBase implements ExoFormInterface {
     // Move exo_form_element_pre_render as last pre_render.
     if (!empty($element['#pre_render'])) {
       foreach ($element['#pre_render'] as $key => $value) {
-        if ($value == 'exo_form_element_pre_render') {
+        if (is_array($value) && $value[0] == 'Drupal\exo_form\ExoFormElementHandler') {
           unset($element['#pre_render'][$key]);
         }
       }
     }
-    $element['#pre_render'][] = 'exo_form_element_pre_render';
+    $element['#pre_render'][] = ['Drupal\exo_form\ExoFormElementHandler', 'preRender'];
   }
 
   /**
@@ -136,7 +136,7 @@ abstract class ExoFormBase extends PluginBase implements ExoFormInterface {
     if ($this->getSetting(['float'])) {
       $this->configuration['style'] = 'float';
     }
-    if ($this->getSetting('style') === 'float'&& $this->floatSupported) {
+    if ($this->getSetting('style') === 'float'&& !empty($this->floatSupported)) {
       $element['#' . $this->featureAttributeKey]['class'][] = 'exo-form-element-float';
     }
     if ($this->getSetting('style') === 'intersect' && !empty($this->intersectSupported)) {

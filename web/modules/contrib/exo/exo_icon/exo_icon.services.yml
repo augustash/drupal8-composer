@@ -9,3 +9,6 @@ services:
   plugin.manager.exo_icon:
     class: Drupal\exo_icon\ExoIconManager
     arguments: ['@module_handler', '@cache.discovery']
+  exo_icon.mime_manager:
+    class: Drupal\exo_icon\ExoIconMimeManager
+    arguments: []

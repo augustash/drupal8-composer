@@ -1,0 +1,41 @@
+label: '{{ label }}'
+{% if description %}
+description: '{{ description }}'
+{% endif %}
+category: '{{ category }}'
+version: 0.0.1
+{% if restrict_access %}
+permission: 'add restricted exo components'
+{% endif %}
+{% if fields %}
+fields:
+{% for field in fields %}
+  {{ field.id }}:
+    type: '{{ field.type }}'
+    label: '{{ field.label }}'
+{% if field.description %}
+    description: '{{ field.description }}'
+{% endif %}
+{% if field.default %}
+    default: '{{ field.default }}'
+{% endif %}
+{% if field.sample %}
+    sample: '{{ field.sample }}'
+{% endif %}
+{% endfor %}
+{% endif %}
+{% if modifiers %}
+modifier_globals:
+{% if modifiers.status %}
+  status:
+{% for id, value in modifiers.status %}
+    {{ id }}: {{ value }}
+{% endfor %}
+{% endif %}
+{% if modifiers.defaults %}
+  defaults:
+{% for id, value in modifiers.defaults %}
+    {{ id }}: {{ value }}
+{% endfor %}
+{% endif %}
+{% endif %}

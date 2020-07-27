@@ -133,7 +133,6 @@ class ExoParagraphsWidget extends ParagraphsWidget {
    *   The form element array.
    */
   protected function buildButtonsAddMode() {
-    $moduleHandler = \Drupal::service('module_handler');
     $add_more_elements = parent::buildButtonsAddMode();
 
     if (count($this->getAccessibleOptions()) === 1) {
@@ -165,6 +164,7 @@ class ExoParagraphsWidget extends ParagraphsWidget {
     }
 
     unset($add_more_elements['add_modal_form_area']);
+    $add_more_elements['#type'] = 'exo_modal';
 
     return $add_more_elements;
   }
@@ -176,8 +176,6 @@ class ExoParagraphsWidget extends ParagraphsWidget {
    *   Render element.
    */
   protected function buildModalAddForm(array &$element) {
-    $subtitle = $this->t('to %type', ['%type' => $this->fieldDefinition->getLabel()]);
-    $element['#type'] = 'exo_modal';
     $element['#use_close'] = FALSE;
     $element['#attached']['library'][] = 'exo_paragraphs/theme';
     $element['#trigger_text'] = $this->t('Add @title', [
@@ -187,7 +185,7 @@ class ExoParagraphsWidget extends ParagraphsWidget {
       '%type' => $this->fieldDefinition->getLabel(),
     ]);
     $element['#trigger_icon'] = 'regular-plus-circle';
-    $element['#trigger_as_button'] = TRUE;;
+    $element['#trigger_as_button'] = TRUE;
 
     $element['#modal_settings']['modal'] = [
       'theme' => 'default',

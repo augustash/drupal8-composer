@@ -2,144 +2,197 @@
 
 namespace Drupal\exo_alchemist\Plugin;
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Render\Element;
-use Drupal\exo_alchemist\Definition\ExoComponentDefinitionField;
-use Drupal\exo_alchemist\Definition\ExoComponentDefinitionFieldPreview;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\exo_alchemist\ExoComponentFieldManager;
+use Drupal\exo_alchemist\ExoComponentValue;
+use Drupal\exo_alchemist\ExoComponentValues;
 
 /**
  * Base class for Component Field plugins.
  */
-abstract class ExoComponentFieldFieldableBase extends ExoComponentFieldBase implements ExoComponentFieldFieldableInterface {
+abstract class ExoComponentFieldFieldableBase extends ExoComponentFieldBase implements ExoComponentFieldFieldableInterface, ExoComponentFieldFormInterface {
+
+  use ExoComponentFieldFormTrait;
 
   /**
    * {@inheritdoc}
    */
-  public function componentStorage(ExoComponentDefinitionField $field) {
+  public function getStorageConfig() {
     return $this->pluginDefinition['storage'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentField(ExoComponentDefinitionField $field) {
+  public function getFieldConfig() {
     return $this->pluginDefinition['field'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentWidget(ExoComponentDefinitionField $field) {
+  public function getWidgetConfig() {
     return $this->pluginDefinition['widget'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentFormatter(ExoComponentDefinitionField $field) {
+  public function getFormatterConfig() {
     return $this->pluginDefinition['formatter'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentPreUpdate(ExoComponentDefinitionField $field, FieldItemListInterface $items) {
+  public function onFieldClean(FieldItemListInterface $items, $update = TRUE) {
+    foreach ($items as $delta => $item) {
+      $this->cleanValue($item, $delta, $update);
+    }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentValues(ExoComponentDefinitionField $field, FieldItemListInterface $items) {
-    $values = [];
-    $previews = $field->getPreviews();
+  public function populateValues(ExoComponentValues $values, FieldItemListInterface $items) {
+    $field = $values->getDefinition();
+    // When an item is empty, we populate the defaults.
+    if (!$field->getDefaults()) {
+      $count = $field->getCardinality() > 1 ? $field->getCardinality() : 1;
+      for ($delta = 0; $delta < $count; $delta++) {
+        if ($value = $this->getDefaultValue($delta)) {
+          $values->set($delta, $value);
+        }
+      }
+    }
     foreach ($items as $delta => $item) {
-      // If we do not have a incoming preview for an item, we want to clean it
+      // If we do have incoming values for an item, we want to clean it
       // as if we are uninstalling it.
-      $update = isset($previews[$delta]);
-      $this->componentValueClean($field, $item, $update);
+      $this->cleanValue($item, $delta, $values->has($delta));
     }
-    foreach ($previews as $delta => $preview) {
+    return $this->getValues($values, $items);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDefaultValue($delta = 0) {
+    return [];
+  }
+
+  /**
+   * Extending classes can use this method to clean existing values.
+   *
+   * @param \Drupal\Core\Field\FieldItemInterface $item
+   *   The field item.
+   * @param int $delta
+   *   The field item delta.
+   * @param bool $update
+   *   TRUE if called when updating.
+   */
+  protected function cleanValue(FieldItemInterface $item, $delta, $update = TRUE) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function formSubmit(array $form, FormStateInterface $form_state) {
+    $field = $this->getFieldDefinition();
+    /** @var \Drupal\Core\Field\FieldItemListInterface $items */
+    $items = $form_state->get('component_entity')->get($field->safeId());
+    if ($items->isEmpty()) {
+      // When a field has been set to "empty", we place back in the defaults
+      // and then hide the field so that it can later be restored.
+      $values = ExoComponentValues::fromFieldDefaults($field);
+      $items->setValue($this->populateValues($values, $items));
+
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getValues(ExoComponentValues $values, FieldItemListInterface $items) {
+    $field_values = [];
+    foreach ($values as $delta => $value) {
+      $this->validateValue($value);
       $item = $items->offsetExists($delta) ? $items->get($delta) : NULL;
-      $values[$delta] = $this->componentValue($preview, $item);
+      $field_values[$delta] = $this->getValue($value, $item);
     }
-    return $values;
+    return $field_values;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateValue(ExoComponentValue $value) {
   }
 
   /**
    * Extending classes can use this method to set individual values.
    *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionFieldPreview $preview
-   *   The field preview.
+   * @param \Drupal\exo_alchemist\ExoComponentValue $value
+   *   The field value.
    * @param \Drupal\Core\Field\FieldItemInterface $item
    *   The current item.
    *
    * @return mixed
    *   A value suitable for setting to \Drupal\Core\Field\FieldItemInterface.
    */
-  protected function componentValue(ExoComponentDefinitionFieldPreview $preview, FieldItemInterface $item = NULL) {
-    return $preview->toArray();
-  }
-
-  /**
-   * Extending classes can use this method to clean existing values.
-   *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field
-   *   The eXo component field.
-   * @param \Drupal\Core\Field\FieldItemInterface $item
-   *   The field item.
-   * @param bool $update
-   *   TRUE if called when updating.
-   */
-  protected function componentValueClean(ExoComponentDefinitionField $field, FieldItemInterface $item, $update = TRUE) {
+  protected function getValue(ExoComponentValue $value, FieldItemInterface $item = NULL) {
+    return $value->toArray();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentClone(ExoComponentDefinitionField $field, FieldItemListInterface $items) {
+  public function onFieldRestore(ExoComponentValues $values, FieldItemListInterface $items) {
+    $field_values = [];
+    if ($items->isEmpty()) {
+      $field_values = $this->populateValues($values, $items);
+    }
+    return $field_values;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function onClone(FieldItemListInterface $items, $all = FALSE) {
     foreach ($items as $item) {
-      $item->setValue($this->componentCloneValue($field, $item));
+      $item->setValue($this->onCloneValue($item, $all));
     }
   }
 
   /**
    * Extending classes can use this method to clone existing values.
    *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionField $field
-   *   The eXo component field.
    * @param \Drupal\Core\Field\FieldItemInterface $item
    *   The field item.
+   * @param bool $all
+   *   Flag that determines if this is a partial clone or full clone.
    *
    * @return mixed
    *   A value suitable for setting to \Drupal\Core\Field\FieldItemInterface.
    */
-  protected function componentCloneValue(ExoComponentDefinitionField $field, FieldItemInterface $item) {
+  protected function onCloneValue(FieldItemInterface $item, $all) {
     return $item->getValue();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentRestore(ExoComponentDefinitionField $field, FieldItemListInterface $items) {
-    $values = [];
-    if ($items->isEmpty()) {
-      $values = $this->componentValues($field, $items);
-    }
-    return $values;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function componentView(ExoComponentDefinitionField $field, FieldItemListInterface $items, $is_layout_builder) {
+  public function view(FieldItemListInterface $items, array $contexts) {
     $output = [];
     if ($items->count()) {
       foreach ($items as $delta => $item) {
-        $output[$delta] = $this->componentViewValue($field, $item, $delta, $is_layout_builder);
+        $output[$delta] = $this->viewValue($item, $delta, $contexts);
       }
     }
-    elseif ($value = $this->componentViewEmptyValue($field, $is_layout_builder)) {
+    elseif ($value = $this->viewEmptyValue($contexts)) {
       $output[0] = $value;
     }
     return $output;
@@ -148,35 +201,81 @@ abstract class ExoComponentFieldFieldableBase extends ExoComponentFieldBase impl
   /**
    * {@inheritdoc}
    */
-  public function componentViewValue(ExoComponentDefinitionField $field, FieldItemInterface $item, $delta, $is_layout_builder) {
+  public function viewValue(FieldItemInterface $item, $delta, array $contexts) {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentViewEmptyValue(ExoComponentDefinitionField $field, $is_layout_builder) {
+  public function viewEmptyValue(array $contexts) {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentUpdate(ExoComponentDefinitionField $field, FieldItemListInterface $items) {}
-
-  /**
-   * {@inheritdoc}
-   */
-  public function componentDelete(ExoComponentDefinitionField $field, FieldItemListInterface $items) {
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function componentUninstall(ExoComponentDefinitionField $field, FieldItemListInterface $items) {
-    foreach ($items as $item) {
-      $this->componentValueClean($field, $item, FALSE);
+  public function getRequiredPaths() {
+    $paths = [];
+    $field = $this->getFieldDefinition();
+    $delta = 0;
+    if ($field->isRequired() && $field->isEditable() && !$field->hasDefault() && !$this->getDefaultValue($delta)) {
+      $paths[] = $this->getItemParentsAsPath($delta);
     }
+    return $paths;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function onPreSaveLayoutBuilderEntity(FieldItemListInterface $items, EntityInterface $parent_entity) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function onPostSaveLayoutBuilderEntity(FieldItemListInterface $items, EntityInterface $parent_entity) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function onPostDeleteLayoutBuilderEntity(FieldItemListInterface $items, EntityInterface $parent_entity) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function onDraftUpdateLayoutBuilderEntity(FieldItemListInterface $items) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function access(FieldItemListInterface $items, array $contexts, AccountInterface $account = NULL, $return_as_object = FALSE) {
+    $account = $account ?: \Drupal::currentUser();
+    $access = $this->componentAccess($items, $contexts, $account);
+    return $return_as_object ? $access : $access->isAllowed();
+  }
+
+  /**
+   * Indicates whether the field should be shown.
+   *
+   * Fields with specific access checking should override this method rather
+   * than access(), in order to avoid repeating the handling of the
+   * $return_as_object argument.
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
+   *   The field items.
+   * @param \Drupal\Core\Plugin\Context\Context[] $contexts
+   *   An array of current contexts.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The user session for which to check access.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   The access result.
+   *
+   * @see self::access()
+   */
+  protected function componentAccess(FieldItemListInterface $items, array $contexts, AccountInterface $account) {
+    // By default, the field is visible.
+    return AccessResult::allowed();
   }
 
 }

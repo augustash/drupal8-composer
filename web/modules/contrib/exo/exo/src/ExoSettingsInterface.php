@@ -137,6 +137,13 @@ interface ExoSettingsInterface {
   public function saveSettings(array $settings);
 
   /**
+   * Save settings.
+   *
+   * @return $this
+   */
+  public function save();
+
+  /**
    * Reset settings.
    *
    * @return $this

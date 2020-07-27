@@ -1,0 +1,67 @@
+@import 'exo-common';
+
+.exo-imagine {
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  transition: height 300ms;
+
+  picture {
+    display: block;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .exo-imagine-blur {
+    filter: blur(20px);
+    transform: scale(1.1);
+    transform-origin: center;
+  }
+
+  .exo-imagine-preview-picture {
+    position: relative;
+    opacity: 1;
+    transition: opacity 1000ms;
+    will-change: opacity;
+  }
+
+  .exo-imagine-image-picture {
+    position: absolute;
+    visibility: hidden;
+  }
+
+  &.exo-imagine-loaded {
+
+    .exo-imagine-preview-picture {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+
+    .exo-imagine-image-picture {
+      position: relative;
+      visibility: visible;
+      // display: block;
+    }
+  }
+
+  &.exo-imagine-animate {
+
+    .exo-imagine-preview-picture {
+      opacity: 0;
+      // will-change: opacity;
+      // animation: exo-image-fadeout 1s ease-out;
+    }
+  }
+}
+
+@keyframes exo-image-fadeout {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}

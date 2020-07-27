@@ -30,7 +30,6 @@ class InlineEntityFormExoAssetComplex extends InlineEntityFormComplex {
     $element['entities']['#theme'] = 'inline_entity_form_entity_table__exo_asset';
     $element['#attached']['library'][] = 'exo_asset/inline_entity_form';
     $element['#attributes']['class'][] = 'exo-asset-inline-entity-form';
-    // ksm($element);
     return $element;
   }
 

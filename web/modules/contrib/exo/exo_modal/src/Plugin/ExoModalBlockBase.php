@@ -114,18 +114,18 @@ abstract class ExoModalBlockBase extends BlockBase implements ExoModalBlockPlugi
 
     $form['blocks'] = [
       '#type' => 'details',
-      '#title' => $this->t('Blocks'),
+      '#title' => $this->t('Blocks (Header/Footer)'),
     ];
     $form['blocks']['header'] = [
       '#type' => 'details',
       '#title' => $this->t('Header'),
     ];
-    $form['blocks']['header']['blocks'] = $this->blocksForm('header', $form_state);
+    $form['blocks']['header']['blocks'] = $this->blocksForm('header', $form_state, $this->configuration['blocks']['header']);
     $form['blocks']['footer'] = [
       '#type' => 'details',
       '#title' => $this->t('Footer'),
     ];
-    $form['blocks']['footer']['blocks'] = $this->blocksForm('footer', $form_state);
+    $form['blocks']['footer']['blocks'] = $this->blocksForm('footer', $form_state, $this->configuration['blocks']['footer']);
 
     return $form;
   }
@@ -133,14 +133,12 @@ abstract class ExoModalBlockBase extends BlockBase implements ExoModalBlockPlugi
   /**
    * Build block selection form.
    */
-  protected function blocksForm($group, FormStateInterface $form_state) {
-    $settings = $this->configuration['blocks'][$group];
-
+  protected function blocksForm($group, FormStateInterface $form_state, $settings = [], $support_panel = TRUE) {
     $form = [
       '#type' => 'table',
       '#header' => [
         $this->t('Block'),
-        $this->t('As Panel'),
+        $this->t('Settings'),
         $this->t('Weight'),
       ],
       '#element_validate' => [[get_class($this), 'validateBlocks']],
@@ -152,6 +150,10 @@ abstract class ExoModalBlockBase extends BlockBase implements ExoModalBlockPlugi
         ],
       ],
     ];
+    if (!$support_panel) {
+      unset($form['#header'][1]);
+      $form['#header'] = array_values($form['#header']);
+    }
 
     $theme = $form_state->get('block_theme');
     $count = 0;
@@ -172,17 +174,21 @@ abstract class ExoModalBlockBase extends BlockBase implements ExoModalBlockPlugi
           ':input#' . $html_id => ['checked' => TRUE],
         ],
       ];
-      $form[$id]['panel']['status'] = [
-        '#type' => 'checkbox',
-        '#title' => $this->t('Enable'),
-        '#default_value' => !empty($panel_settings),
-        '#attributes' => ['id' => [$html_id]],
-      ];
-      $form[$id]['panel']['settings'] = [
-        '#type' => 'fieldset',
-        '#title' => $this->t('Settings'),
-        '#states' => $states,
-      ] + $this->exoModalSettings->getExoSettings()->buildPanelForm($panel_settings);
+      if ($support_panel) {
+        $form[$id]['panel']['status'] = [
+          '#type' => 'checkbox',
+          '#title' => $this->t('Enable'),
+          '#default_value' => !empty($panel_settings),
+          '#attributes' => ['id' => [$html_id]],
+        ];
+        $form[$id]['panel']['settings'] = [
+          '#type' => 'fieldset',
+          '#title' => $this->t('Settings'),
+          '#states' => $states,
+        ];
+        $form[$id]['panel']['settings'] += $this->exoModalSettings->getExoSettings()->buildPanelForm($panel_settings);
+      }
+
       $form[$id]['weight'] = [
         '#type' => 'number',
         '#title' => t('Weight for @title', ['@title' => $label]),
@@ -206,11 +212,13 @@ abstract class ExoModalBlockBase extends BlockBase implements ExoModalBlockPlugi
     });
     array_walk($values, function (&$value) {
       unset($value['status'], $value['weight']);
-      if ($value['panel']['status']) {
-        $value['panel'] = array_filter($value['panel']['settings']);
-      }
-      else {
-        unset($value['panel']);
+      if (isset($value['panel'])) {
+        if ($value['panel']['status']) {
+          $value['panel'] = array_filter($value['panel']['settings']);
+        }
+        else {
+          unset($value['panel']);
+        }
       }
       $value = array_filter($value);
     });
@@ -230,6 +238,7 @@ abstract class ExoModalBlockBase extends BlockBase implements ExoModalBlockPlugi
    * {@inheritdoc}
    */
   public function blockSubmit($form, FormStateInterface $form_state) {
+    /** @var \Drupal\Core\Form\SubformStateInterface $form_state */
     // There is a bug in BlockForm that passes the whole form vs just the
     // settings subform like it does in validate.
     $subform_state = SubformState::createForSubform($form['settings']['modal'], $form['settings'], $form_state);
@@ -327,10 +336,7 @@ abstract class ExoModalBlockBase extends BlockBase implements ExoModalBlockPlugi
     if (!empty($this->configuration['blocks'][$group])) {
       $count = 0;
       foreach ($this->configuration['blocks'][$group] as $block_id => $settings) {
-        $block = $this->entityTypeManager->getStorage('block')->load($block_id);
-        if ($block && $block->access('view')) {
-          $this->addCacheableDependency($block);
-          $block_render = $this->entityTypeManager->getViewBuilder('block')->view($block);
+        if ($block_render = $this->buildBlock($block_id)) {
           $block_render['#weight'] = $count;
           if (!empty($settings['panel'])) {
             $modal->addPanel($group, $block_id, $block_render, $settings['panel']);
@@ -342,6 +348,25 @@ abstract class ExoModalBlockBase extends BlockBase implements ExoModalBlockPlugi
         }
       }
     }
+  }
+
+  /**
+   * Build block content.
+   *
+   * @param string $block_id
+   *   The block id.
+   *
+   * @return mixed
+   *   A render array.
+   */
+  protected function buildBlock($block_id) {
+    $build = [];
+    $block = $this->entityTypeManager->getStorage('block')->load($block_id);
+    if ($block && $block->access('view')) {
+      $this->addCacheableDependency($block);
+      $build = $this->entityTypeManager->getViewBuilder('block')->view($block);
+    }
+    return $build;
   }
 
   /**

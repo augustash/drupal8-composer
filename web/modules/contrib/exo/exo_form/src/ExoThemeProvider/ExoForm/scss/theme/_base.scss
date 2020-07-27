@@ -27,22 +27,28 @@
       .exo-form-table-wrap {
         position: relative;
         border: theme-val($theme, form-padding-v) solid transparent;
-        // border-radius: theme-val($theme, form-border-radius);
 
         &:before {
           content: " ";
           position: absolute;
           z-index: 10;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
+          top: theme-val($theme, form-padding-v) * -1;
+          left: theme-val($theme, form-padding-v) * -1;
+          right: theme-val($theme, form-padding-v) * -1;
+          bottom: theme-val($theme, form-padding-v) * -1;
           border: theme-val($theme, form-padding-v) solid theme-val($theme, form-bg-color, true);
           pointer-events: none;
           border-radius: theme-val($theme, form-border-radius);
           box-shadow: theme-val($theme, form-box-shadow), 0 0 0 1px theme-val($theme, form-border-color, true);
           outline: 1px solid theme-val($theme, table-border-color, true);
           outline-offset: theme-val($theme, form-padding-v) * -1;
+
+          @-moz-document url-prefix() {
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+          }
         }
       }
 
@@ -118,6 +124,8 @@
       .fieldgroup .fieldset-legend {
         color: theme-val($theme, label-color, true);
         font-size: theme-val($theme, label-font-size);
+        font-weight: theme-val($theme, label-font-weight);
+        letter-spacing: theme-val($theme, label-letter-spacing);
         text-transform: theme-val($theme, label-text-transform);
       }
 
@@ -195,7 +203,7 @@
         border-bottom-width: theme-val($theme, input-border-bottom-width);
         border-left-width: theme-val($theme, input-border-left-width);
         border-radius: theme-val($theme, form-border-radius);
-        height: theme-val($theme, input-height);
+        min-height: theme-val($theme, input-height);
       }
 
       ////////////////////////////////////////////////////////////////////////////////
@@ -236,6 +244,12 @@
         .field-prefix,
         .field-suffix {
           height: theme-val($theme, input-height);
+          // Not needed. Breaks datetime fields.
+          // line-height: theme-val($theme, input-height);
+        }
+
+        .field-prefix,
+        .field-suffix {
           line-height: theme-val($theme, input-height);
         }
 
@@ -373,10 +387,33 @@
       ////////////////////////////////////////////////////////////////////////////
       &.exo-form-style-intersect {
 
+        label:not(.option) {
+          font-size: theme-val($theme, label-font-size) * 0.8;
+          font-weight: theme-val($theme, label-font-weight);
+          letter-spacing: theme-val($theme, label-letter-spacing);
+          text-transform: theme-val($theme, label-text-transform);
+        }
+
         .form-item > label,
         .fieldgroup .fieldset-legend {
           padding: 0 rem-calc(16);
-          font-size: theme-val($theme, label-font-size) * 0.8;
+        }
+
+        .description {
+          padding-left: rem-calc(4);
+          padding-right: rem-calc(4);
+        }
+
+        .image-widget {
+
+          > .exo-form-inline {
+            padding-top: 0;
+
+            > .image-preview,
+            > .image-widget-data {
+              padding-top: rem-calc(6);
+            }
+          }
         }
 
         .exo-form-pseudo {
@@ -384,7 +421,7 @@
           padding-bottom: rem-calc(5);
           padding-left: $global-padding;
           padding-right: $global-padding;
-          height: theme-val($theme, input-height) + rem-calc(5);
+          min-height: theme-val($theme, input-height) + rem-calc(5);
           background-color: theme-val($theme, form-bg-color, true);
         }
 
@@ -464,12 +501,12 @@
           }
         }
 
-        // > label,
-        // .fieldset-legend {
-        //   padding: 0 rem-calc(8);
-        //   font-size: theme-val($theme, label-font-size) * 0.8;
-        //   line-height: theme-val($theme, label-font-size) * 1.5;
-        // }
+        .fieldset-legend {
+          font-size: theme-val($theme, label-font-size) * 0.8;
+          font-weight: theme-val($theme, label-font-weight);
+          letter-spacing: theme-val($theme, label-letter-spacing);
+          text-transform: theme-val($theme, label-text-transform);
+        }
 
         .fieldset-legend > label {
           padding: 0;
@@ -516,17 +553,6 @@
           background-color: theme-val($theme, form-bg-color, true);
           min-height: theme-val($theme, input-height) + rem-calc(5);
           line-height: theme-val($theme, input-height) + rem-calc(5);
-
-          // &:after {
-          //   background-color: theme-val($theme, form-bg-color, true) !important;
-          // }
-
-          // &.exo-form-file-button {
-
-          //   &:before {
-          //     line-height: theme-val($theme, input-height) + rem-calc(5);
-          //   }
-          // }
         }
 
         .exo-form-button,
@@ -729,6 +755,10 @@
 
       .exo-element-options .exo-form-radio {
 
+        label.option {
+          border-color: theme-val($theme, border-color, true);
+        }
+
         &.active {
 
           label {
@@ -752,6 +782,12 @@
             }
           }
         }
+      }
+
+      .exo-radios-slider-slide {
+        border-color: theme-val($theme, border-color, true);
+        // background-color: theme-val($theme, radio-active-color, true);
+        border-radius: theme-val($theme, form-border-radius);
       }
 
       ////////////////////////////////////////////////////////////////////////////////
@@ -828,6 +864,10 @@
       }
 
       .exo-element-options .exo-form-checkbox {
+
+        label.option {
+          border-color: theme-val($theme, border-color, true);
+        }
 
         &.active {
 
@@ -1107,6 +1147,7 @@
       .exo-form-button,
       .form-actions .button,
       .form-actions .exo-modal-trigger,
+      > .button,
       td > .button,
       td > .exo-modal-trigger {
 

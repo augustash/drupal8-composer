@@ -30,32 +30,22 @@ class ExoComponentField extends Plugin {
    */
   public $label;
 
-  // /**
-  //  * The storage configuration.
-  //  *
-  //  * @var array
-  //  */
-  // public $storage;
+  /**
+   * The category in the admin UI where the block will be listed.
+   *
+   * @var \Drupal\Core\Annotation\Translation
+   *
+   * @ingroup plugin_translatable
+   */
+  public $category = '';
 
-  // /**
-  //  * The field configuration.
-  //  *
-  //  * @var array
-  //  */
-  // public $field;
-
-  // /**
-  //  * The widget configuration.
-  //  *
-  //  * @var array
-  //  */
-  // public $widget;
-
-  // /**
-  //  * The formatter configuration.
-  //  *
-  //  * @var array
-  //  */
-  // public $formatter;
+  /**
+   * An array of context definitions describing the context used by the plugin.
+   *
+   * The array is keyed by context names.
+   *
+   * @var \Drupal\Core\Annotation\ContextDefinition[]
+   */
+  public $context_definitions = [];
 
 }

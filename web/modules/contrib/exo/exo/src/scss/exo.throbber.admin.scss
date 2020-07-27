@@ -1,0 +1,12 @@
+@import 'exo-common';
+
+.throbber-example {
+  display: inline-block;
+  background-color: alpha(theme-black, 0.9);
+  padding: $global-padding;
+  margin-bottom: $global-margin;
+
+  .ajax-throbber {
+    margin: 0;
+  }
+}

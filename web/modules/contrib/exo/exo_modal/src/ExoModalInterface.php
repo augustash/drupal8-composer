@@ -2,10 +2,14 @@
 
 namespace Drupal\exo_modal;
 
+use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
+use Drupal\Core\Render\AttachmentsInterface;
+use Drupal\Core\Render\RenderableInterface;
+
 /**
  * Defines an object which can be rendered by the Render API.
  */
-interface ExoModalInterface {
+interface ExoModalInterface extends AttachmentsInterface, RenderableInterface, RefinableCacheableDependencyInterface {
 
   /**
    * The unique id of this instance.
@@ -119,6 +123,20 @@ interface ExoModalInterface {
    * @return $this
    */
   public function setSetting($key, $value);
+
+  /**
+   * Sets a modal settings.
+   *
+   * @return $this
+   */
+  public function setModalSetting($key, $value);
+
+  /**
+   * Sets the settings.
+   *
+   * @return $this
+   */
+  public function setSettings($values);
 
   /**
    * Get the modal for rendering.
@@ -258,5 +276,35 @@ interface ExoModalInterface {
    *   The trigger and modal render array.
    */
   public function toRenderable();
+
+  /**
+   * Set modal section content.
+   *
+   * @param string $group
+   *   The group used to seperate section content.
+   * @param string $id
+   *   Unique ID identifying this panel.
+   * @param mixed $render
+   *   An array suitable for a render array.
+   *
+   * @return $this
+   */
+  public function addSectionContent($group, $id, $render);
+
+  /**
+   * Add modal panel content.
+   *
+   * @param string $group
+   *   The section group to add the panel content to.
+   * @param string $id
+   *   Unique ID identifying this panel.
+   * @param mixed $render
+   *   An array suitable for a render array.
+   * @param array $settings
+   *   The settings for the modal. See exo_modal.settings.yml -> panel.
+   *
+   * @return $this
+   */
+  public function addPanel($group, $id, $render, array $settings = []);
 
 }

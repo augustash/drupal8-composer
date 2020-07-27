@@ -4,8 +4,7 @@ namespace Drupal\exo_alchemist\Plugin\ExoComponentField;
 
 use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Field\FieldItemInterface;
-use Drupal\exo_alchemist\Definition\ExoComponentDefinitionField;
-use Drupal\exo_alchemist\Definition\ExoComponentDefinitionFieldPreview;
+use Drupal\exo_alchemist\ExoComponentValue;
 
 /**
  * A 'media' adapter for exo components.
@@ -29,27 +28,37 @@ class MediaRemoteVideo extends MediaBase {
   /**
    * Get the entity type.
    */
-  protected function getEntityTypeBundles(ExoComponentDefinitionField $field) {
+  protected function getEntityTypeBundles() {
     return ['remote_video' => 'remote_video'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentProcessDefinition(ExoComponentDefinitionField $field) {
-    parent::componentProcessDefinition($field);
-    if (!$field->hasPreviewPropertyOnAll('path')) {
-      throw new PluginException(sprintf('eXo Component Field plugin (%s) requires [preview.path] be set.', $field->getType()));
+  public function validateValue(ExoComponentValue $value) {
+    parent::validateValue($value);
+    if ($value->get('value')) {
+      $value->set('path', $value->get('value'));
+      $value->unset('value');
+    }
+    if (!$value->has('path')) {
+      throw new PluginException(sprintf('eXo Component Field plugin (%s) requires [default.path] be set.', $value->getDefinition()->getType()));
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function componentPropertyInfo(ExoComponentDefinitionField $field) {
-    $properties = parent::componentPropertyInfo($field);
+  public function propertyInfo() {
+    $properties = parent::propertyInfo();
+    $properties['url'] = $this->t('The video url.');
+    $properties['embed'] = $this->t('The video embed code.');
+    $properties['thumbnailUrl'] = $this->t('The video thumbnail URL.');
+    $properties['thumbnailHeight'] = $this->t('The video thumbnail height.');
+    $properties['thumbnailWidth'] = $this->t('The video thumbnail width.');
+    $properties['title'] = $this->t('The video title.');
     if ($this->moduleHandler()->moduleExists('exo_video')) {
-      $properties['background'] = 'The video as a background.';
+      $properties['background'] = $this->t('The video as a background.');
     }
     return $properties;
   }
@@ -57,9 +66,10 @@ class MediaRemoteVideo extends MediaBase {
   /**
    * {@inheritdoc}
    */
-  public function componentViewValue(ExoComponentDefinitionField $field, FieldItemInterface $item, $delta, $is_layout_builder) {
+  public function viewValue(FieldItemInterface $item, $delta, array $contexts) {
     $media = $item->entity;
     if ($media) {
+      $field = $this->getFieldDefinition();
       $source_field_definition = $media->getSource()->getSourceFieldDefinition($media->bundle->entity);
       $url = $media->{$source_field_definition->getName()}->value;
       /** @var \Drupal\media\OEmbed\UrlResolverInterface $url_resolver */
@@ -90,7 +100,7 @@ class MediaRemoteVideo extends MediaBase {
           foreach ($settings as $key => $val) {
             $value['background']['#' . $key] = $val;
           }
-          if ($is_layout_builder) {
+          if ($this->isLayoutBuilder($contexts)) {
             $value['background']['#attributes']['class'][] = 'component-passthrough';
           }
         }
@@ -100,19 +110,21 @@ class MediaRemoteVideo extends MediaBase {
   }
 
   /**
-   * Extending classes can use this method to set individual values.
-   *
-   * @param \Drupal\exo_alchemist\Definition\ExoComponentDefinitionFieldPreview $preview
-   *   The field preview.
-   * @param \Drupal\Core\Field\FieldItemInterface $item
-   *   The current item.
-   *
-   * @return mixed
-   *   A value suitable for setting to \Drupal\Core\Field\FieldItemInterface.
+   * {@inheritdoc}
    */
-  protected function componentMediaValue(ExoComponentDefinitionFieldPreview $preview, FieldItemInterface $item = NULL) {
+  protected function setMediaValue(ExoComponentValue $value, FieldItemInterface $item = NULL) {
     return [
-      'value' => $preview->getValue('path'),
+      'value' => $value->get('path'),
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDefaultValue($delta = 0) {
+    return [
+      'name' => 'Example Video',
+      'path' => 'https://vimeo.com/171918951',
     ];
   }
 

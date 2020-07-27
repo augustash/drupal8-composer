@@ -25,9 +25,6 @@ class Options extends ExoFilterBase {
   public function exposedElementAlter(&$element, FormStateInterface $form_state, $context) {
     $element_id = $context['id'];
     $user_input = $form_state->getUserInput();
-    $view = $context['plugin']->view;
-    $view_id = $view->id();
-    $display_id = ($view->display_handler->isDefaulted('filters')) ? 'default' : $view->current_display;
     if (empty($element['#multiple'])) {
       $element['#type'] = 'radios';
     }

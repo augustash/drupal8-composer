@@ -3,3 +3,6 @@ administer exo:
 
 administer exo themes:
   title: 'Administer eXo Themes'
+
+administer ajax loader:
+  title: 'Administer ajax loader'

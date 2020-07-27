@@ -23,9 +23,10 @@ use Drupal\field\Entity\FieldStorageConfig;
 /**
  * Provides the Component Property plugin manager.
  */
-class ExoComponentPropertyManager extends DefaultPluginManager {
+class ExoComponentPropertyManager extends DefaultPluginManager implements ExoComponentContextInterface {
 
   use StringTranslationTrait;
+  use ExoComponentContextTrait;
 
   /**
    * The entity type to use as component entities.
@@ -239,13 +240,13 @@ class ExoComponentPropertyManager extends DefaultPluginManager {
    *   The values array.
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The content entity.
-   * @param string $is_layout_builder
-   *   TRUE if we are in layout builder mode.
+   * @param \Drupal\Core\Plugin\Context\Context[] $contexts
+   *   An array of current contexts.
    */
-  public function viewEntityValues(ExoComponentDefinition $definition, array &$values, ContentEntityInterface $entity, $is_layout_builder) {
-    $modifiers = $this->getModifierAttributes($definition, $entity, $is_layout_builder);
+  public function viewEntityValues(ExoComponentDefinition $definition, array &$values, ContentEntityInterface $entity, array $contexts) {
+    $modifiers = $this->getModifierAttributes($definition, $entity, $contexts);
     if (!empty($modifiers)) {
-      if ($is_layout_builder) {
+      if ($this->isLayoutBuilder($contexts)) {
         $values['#content_attributes']['class'][] = 'exo-modifier';
       }
       foreach ($modifiers as $modifier_name => $attribute_array) {
@@ -271,20 +272,20 @@ class ExoComponentPropertyManager extends DefaultPluginManager {
    *   The component definition.
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The content entity.
-   * @param string $is_layout_builder
-   *   TRUE if we are in layout builder mode.
+   * @param \Drupal\Core\Plugin\Context\Context[] $contexts
+   *   An array of current contexts.
    *
    * @return array
    *   An array of attributes.
    */
-  public function getModifierAttributes(ExoComponentDefinition $definition, ContentEntityInterface $entity, $is_layout_builder) {
+  public function getModifierAttributes(ExoComponentDefinition $definition, ContentEntityInterface $entity, array $contexts) {
     $modifier_attributes = [];
     if (($modifiers = $definition->getModifiers()) && $entity->hasField(self::MODIFIERS_FIELD_NAME)) {
       $values = self::getEntityModifierValues($entity);
       foreach ($modifiers as $modifier) {
         $modifier_name = $modifier->getName();
         $modifier_attributes[$modifier_name] = [];
-        if ($is_layout_builder || !empty($entity->exoAlchemistPreview)) {
+        if ($this->isLayoutBuilder($contexts) || $this->isPreview($contexts) || !empty($entity->exoAlchemistPreview)) {
           $modifier_attributes[$modifier_name]['data-exo-alchemist-modifier'] = $modifier_name . '_' . $entity->uuid();
           $modifier_attributes[$modifier_name]['class'][] = 'exo-modifier';
         }
@@ -349,7 +350,9 @@ class ExoComponentPropertyManager extends DefaultPluginManager {
       $form['modifiers'] = $form['modifiers'] + [
         '#type' => 'container',
         '#tree' => TRUE,
-        '#id' => 'exo-alchemist-appearance-form',
+        '#attributes' => [
+          'class' => ['exo-alchemist-appearance-form'],
+        ],
       ];
       $form['modifiers']['#attached']['library'][] = 'exo_alchemist/admin.appearance';
       $modifier_values = !$entity->get(self::MODIFIERS_FIELD_NAME)->isEmpty() ? $entity->get(self::MODIFIERS_FIELD_NAME)->first()->value : [];

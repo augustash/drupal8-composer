@@ -87,7 +87,7 @@ class ExoToolbarPathMatcher implements ExoToolbarPathMatcherInterface {
         // Do not trim a trailing slash if that is the complete path.
         $path = $path === '/' ? $path : rtrim($path, '/');
         // Set static variable.
-        $this->isAdmin = $this->pathMatcher->matchPath($path, implode($include, "\n")) && !$this->pathMatcher->matchPath($path, implode($exclude, "\n"));
+        $this->isAdmin = $this->pathMatcher->matchPath($path, implode("\n", $include)) && !$this->pathMatcher->matchPath($path, implode("\n", $exclude));
       }
     }
     return $this->isAdmin;

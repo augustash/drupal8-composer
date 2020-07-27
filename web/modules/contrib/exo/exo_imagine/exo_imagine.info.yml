@@ -1,0 +1,5 @@
+name: 'eXo Imagine'
+type: module
+description: 'Improved responsive image handler along with other image enhancements.'
+core: 8.x
+package: 'eXo'

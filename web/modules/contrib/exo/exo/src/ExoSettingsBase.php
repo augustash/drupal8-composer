@@ -119,6 +119,7 @@ abstract class ExoSettingsBase implements ExoSettingsInterface {
   public function getSiteSettings() {
     if (!isset($this->siteSettings)) {
       $this->siteSettings = $this->getConfig()->get();
+      unset($this->siteSettings['_core']);
       $hook = $this->getModuleId() . '_site_settings';
       \Drupal::moduleHandler()->alter($hook, $this->siteSettings);
     }
@@ -168,6 +169,7 @@ abstract class ExoSettingsBase implements ExoSettingsInterface {
     $settings = $this->getSettings();
     NestedArray::setValue($settings, (array) $key, $value);
     $this->setSettings($settings);
+    return $this;
   }
 
   /**
@@ -338,6 +340,14 @@ abstract class ExoSettingsBase implements ExoSettingsInterface {
    */
   public function saveSettings(array $settings) {
     $this->getConfig()->setData($settings)->save();
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save() {
+    $this->getConfig()->setData($this->getSettings())->save();
     return $this;
   }
 

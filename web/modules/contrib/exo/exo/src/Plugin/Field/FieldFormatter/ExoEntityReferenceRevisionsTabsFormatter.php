@@ -69,6 +69,10 @@ class ExoEntityReferenceRevisionsTabsFormatter extends EntityReferenceRevisionsE
     $elements = parent::viewElements($items, $langcode);
     $direction = $this->getSetting('direction');
 
+    if (empty($elements)) {
+      return $elements;
+    }
+
     $element = [
       '#type' => $direction . '_tabs',
       '#theme_wrappers' => [$direction . '_tabs'],

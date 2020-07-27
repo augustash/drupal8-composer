@@ -11,6 +11,7 @@ use Drupal\exo_form\Plugin\ExoFormBase;
  *   id = "generic",
  *   label = @Translation("Generic"),
  *   element_types = {
+ *     "item",
  *     "exo_radios_slider",
  *     "jquery_colorpicker",
  *   }

@@ -181,6 +181,9 @@ class ExoToolbarElement implements ExoToolbarElementInterface {
     $attributes = isset($values['attributes']) ? $values['attributes'] : [];
     $this->id = Html::getUniqueId('exo-toolbar-element');
     $attributes['id'] = $this->id;
+    if (isset($attributes['class']) && !is_array($attributes['class'])) {
+      $attributes['class'] = [$attributes['class']];
+    }
     $attributes['class'][] = 'exo-toolbar-element';
     $this->attributes = new Attribute($attributes);
     $this->itemAttributes = new Attribute();

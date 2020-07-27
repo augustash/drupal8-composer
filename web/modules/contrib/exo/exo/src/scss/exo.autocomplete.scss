@@ -1,0 +1,207 @@
+// sass-lint:disable-all
+
+ul.ui-autocomplete {
+  max-height: 240px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  padding: 3px;
+}
+
+a.exo-autocomplete-single:hover {
+  text-decoration: none;
+}
+
+.ui-autocomplete {
+  .ui-menu-item a {
+    color: black;
+    display: block;
+
+    &:hover {
+      text-decoration: none;
+      background: #0072b9;
+      color: white;
+    }
+  }
+
+  .ui-state-hover {
+    background-color: #3875d7;
+    background-image: linear-gradient(to-top, #3875d7 20%, #2a62bc 90%);
+    color: #fff;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.exo-autocomplete-container {
+  display: inline-block;
+  position: relative;
+  padding: 0;
+  border: 1px solid #cccccc;
+  background: no-repeat -38px -22px, linear-gradient(to-top, #eeeeee 1%, #ffffff 15%);
+}
+
+div.exo-autocomplete-container input {
+  &.exo-autocomplete-form {
+    background: #fff no-repeat -38px -22px;
+    padding: 4px 5px 4px 5px;
+    border: none;
+  }
+
+  &.exo-autocomplete-form-single {
+    width: 90%;
+    border: none;
+    background: no-repeat -38px -22px, linear-gradient(to-top, #eeeeee 1%, #ffffff 15%);
+  }
+}
+
+.exo-autocomplete-search {
+  margin: 0px 0px 4px 0px;
+  padding: 3px 4px;
+  position: relative;
+  white-space: nowrap;
+  z-index: 1010;
+}
+
+span.exo-autocomplete-value-delete {
+  display: inline-block;
+  float: right;
+  background: url('x.gif') no-repeat center;
+  width: 18px;
+  width: 18px;
+
+  /* Prevent text selection. */
+  user-select: none;
+}
+
+.exo-autocomplete-single-open {
+  border: 1px solid #aaa;
+  -webkit-box-shadow: 0 1px 0 #fff inset;
+  -moz-box-shadow: 0 1px 0 #fff inset;
+  -o-box-shadow: 0 1px 0 #fff inset;
+  box-shadow: 0 1px 0 #fff inset;
+  background-color: #eee;
+  filter: progid:DXImageTransform.Microsoft.gradient(to- startColorstr='#eeeeee', endColorstr='#ffffff', GradientType=0 );
+  background-image: linear-gradient(to-top, #eeeeee 20%, #ffffff 80%);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+div.exo-autocomplete-multiple {
+  box-sizing: border-box;
+  display: inline-block;
+  font-size: 13px;
+  position: relative;
+  background-color: #ffffff;
+  background: #fff no-repeat -38px -22px;
+  background: no-repeat -38px -22px, linear-gradient(to-top, #eeeeee 1%, #ffffff 15%);
+  padding: 4px 5px;
+  border: 1px solid #aaaaaa;
+  cursor: text;
+  height: auto !important;
+  margin: 0;
+  overflow: hidden;
+  padding: 5px;
+  position: relative;
+  line-height: 15pt;
+  width: 100%;
+  cursor: text;
+}
+
+input.exo-autocomplete-form.exo-autocomplete-multiple {
+  border: 3px none;
+  width: 25px;
+  margin-left: 5px;
+  float: left;
+}
+
+div.exo-autocomplete-throbber {
+  width: 16px;
+  float: right;
+  height: 50%;
+}
+
+.exo-autocomplete-closed {
+  background: url('../images/throbber.gif') no-repeat 100% 6px;
+}
+
+.exo-autocomplete-open {
+  background: url('../images/throbber.gif') no-repeat 100% -14px;
+}
+
+.exo-autocomplete-item {
+  float: left;
+  background-clip: padding-box;
+  background-color: #e4e4e4;
+  background-image: -moz-linear-gradient(to-center top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+  border: 1px solid #aaaaaa;
+  border-radius: 3px 3px 3px 3px;
+  box-shadow: 0 0 2px #ffffff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
+  color: #333333;
+  cursor: move;
+  line-height: 13px;
+  margin: 3px 0 3px 5px;
+  padding: 3px 20px 3px 5px;
+  position: relative;
+}
+
+.exo-autocomplete-item-delete {
+  background: url('../images/x.gif');
+  display: block;
+  font-size: 1px;
+  height: 13px;
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  width: 12px;
+}
+
+.exo-autocomplete-item-focus {
+  background: none repeat scroll 0 0 #d4d4d4;
+}
+
+.exo-autocomplete-highlight-char {
+  color: inherit;
+  font-weight: bold;
+}
+
+/* RTL styling */
+
+[dir='rtl'] {
+  span.exo-autocomplete-value-delete {
+    float: left;
+  }
+
+  div.exo-autocomplete-multiple {
+    padding: 4px 5px;
+  }
+
+  input.exo-autocomplete-form.exo-autocomplete-multiple {
+    margin-left: 0;
+    margin-right: 5px;
+    float: right;
+  }
+
+  div.exo-autocomplete-throbber {
+    float: left;
+  }
+
+  .exo-autocomplete-closed {
+    background-position: 0 6px;
+  }
+
+  .exo-autocomplete-open {
+    background-position: 0 -14px;
+  }
+
+  .exo-autocomplete-item {
+    float: right;
+    margin: 3px 5px 3px 0;
+    padding: 3px 5px 3px 20px;
+  }
+
+  .exo-autocomplete-item-delete {
+    position: absolute;
+    right: auto;
+    left: 3px;
+  }
+}

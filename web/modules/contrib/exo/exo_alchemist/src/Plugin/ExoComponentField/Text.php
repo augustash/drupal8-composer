@@ -3,7 +3,6 @@
 namespace Drupal\exo_alchemist\Plugin\ExoComponentField;
 
 use Drupal\Core\Field\FieldItemInterface;
-use Drupal\exo_alchemist\Definition\ExoComponentDefinitionField;
 use Drupal\exo_alchemist\Plugin\ExoComponentFieldFieldableBase;
 
 /**
@@ -19,7 +18,7 @@ class Text extends ExoComponentFieldFieldableBase {
   /**
    * {@inheritdoc}
    */
-  public function componentStorage(ExoComponentDefinitionField $field) {
+  public function getStorageConfig() {
     return [
       'type' => 'string',
       'settings' => [
@@ -31,7 +30,7 @@ class Text extends ExoComponentFieldFieldableBase {
   /**
    * {@inheritdoc}
    */
-  public function componentWidget(ExoComponentDefinitionField $field) {
+  public function getWidgetConfig() {
     return [
       'type' => 'string_textfield',
     ];
@@ -40,7 +39,7 @@ class Text extends ExoComponentFieldFieldableBase {
   /**
    * {@inheritdoc}
    */
-  public function componentPropertyInfo(ExoComponentDefinitionField $field) {
+  public function propertyInfo() {
     return [
       'value' => $this->t('The string value.'),
     ];
@@ -49,7 +48,19 @@ class Text extends ExoComponentFieldFieldableBase {
   /**
    * {@inheritdoc}
    */
-  public function componentViewValue(ExoComponentDefinitionField $field, FieldItemInterface $item, $delta, $is_layout_builder) {
+  public function getDefaultValue($delta = 0) {
+    $field = $this->getFieldDefinition();
+    return [
+      'value' => $this->t('Placeholder for @label', [
+        '@label' => strtolower($field->getLabel()),
+      ]),
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function viewValue(FieldItemInterface $item, $delta, array $contexts) {
     return [
       'value' => $item->value,
     ];

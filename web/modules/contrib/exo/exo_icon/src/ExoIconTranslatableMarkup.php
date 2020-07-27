@@ -91,6 +91,36 @@ class ExoIconTranslatableMarkup extends TranslatableMarkup {
   }
 
   /**
+   * Create from string.
+   *
+   * @param string $string
+   *   A string containing the English text to translate.
+   * @param array $arguments
+   *   (optional) An associative array of replacements to make after
+   *   translation. Based on the first character of the key, the value is
+   *   escaped and/or themed. See
+   *   \Drupal\Component\Render\FormattableMarkup::placeholderFormat() for
+   *   details.
+   * @param array $options
+   *   (optional) An associative array of additional options, with the following
+   *   elements:
+   *   - 'langcode' (defaults to the current language): A language code, to
+   *     translate to a language other than what is used to display the page.
+   *   - 'context' (defaults to the empty context): The context the source
+   *     string belongs to.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   (optional) The string translation service.
+   *
+   * @throws \InvalidArgumentException
+   *   Exception thrown when $string is not a string.
+   *
+   * @return static
+   */
+  public static function fromString($string = '', array $arguments = [], array $options = [], TranslationInterface $string_translation = NULL) {
+    return new static($string, $arguments, $options, $string_translation);
+  }
+
+  /**
    * Retrieves the exo icon manager.
    *
    * @return \Drupal\exo_icon\ExoIconManagerInterface
@@ -108,11 +138,13 @@ class ExoIconTranslatableMarkup extends TranslatableMarkup {
    *
    * @param array|string $prefix
    *   An optional prefix to filter the icon definitions by.
+   * @param string $string
+   *   An option string to use for icon matching.
    *
    * @return $this
    */
-  public function match($prefix = []) {
-    $icon = static::exoIconManager()->getDefinitionMatch($this->getUntranslatedString(), $prefix);
+  public function match($prefix = [], $string = NULL) {
+    $icon = static::exoIconManager()->getDefinitionMatch($string ?: $this->getUntranslatedString(), $prefix);
     if ($icon) {
       $this->setIcon($icon);
     }
@@ -255,6 +287,16 @@ class ExoIconTranslatableMarkup extends TranslatableMarkup {
     $output = $is_root_call ? $renderer->renderPlain($elements) : $renderer->render($elements);
     $this->attachedAssets = AttachedAssets::createFromRenderArray($elements);
     return $output;
+  }
+
+  /**
+   * Returns a HTML string.
+   *
+   * @return string
+   *   The HTML of the icon.
+   */
+  public function toString() {
+    return preg_replace('/([\s])\1+/', ' ', preg_replace('/\r|\n/', '', $this->toMarkup()));
   }
 
   /**

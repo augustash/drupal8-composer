@@ -28,10 +28,6 @@ class Address extends ExoFormBase {
       $wrapper_id = $element['#wrapper_id'];
       $element['#prefix'] = '<div id="' . $wrapper_id . '" class="exo-form-address form-wrapper exo-form-element exo-form-element-js">';
     }
-    // If (!empty($element['country_code']['#default_value']) && isset($element['country_code']['#available_countries']) && count($element['country_code']['#available_countries']) === 1) {
-    //   $element['country_code']['#prefix'] = '<div class="hidden">';
-    //   $element['country_code']['#suffix'] = '</div>';
-    // }.
     return $element;
   }
 

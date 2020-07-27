@@ -2,21 +2,18 @@
 
 namespace Drupal\exo_modal;
 
-use Drupal\Core\Render\RenderableInterface;
 use Drupal\Core\Template\Attribute;
-use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Cache\RefinableCacheableDependencyTrait;
 use Drupal\exo_icon\ExoIconTranslationTrait;
 use Drupal\Component\Utility\Html;
 use Drupal\exo\ExoSettingsInstanceInterface;
-use Drupal\Core\Render\AttachmentsInterface;
 use Drupal\Core\Render\AttachmentsTrait;
 use Drupal\Component\Utility\UrlHelper;
 
 /**
  * Defines an eXo modal.
  */
-class ExoModal implements ExoModalInterface, AttachmentsInterface, RenderableInterface, RefinableCacheableDependencyInterface {
+class ExoModal implements ExoModalInterface {
   use RefinableCacheableDependencyTrait;
   use AttachmentsTrait;
   use ExoIconTranslationTrait;
@@ -229,19 +226,20 @@ class ExoModal implements ExoModalInterface, AttachmentsInterface, RenderableInt
   }
 
   /**
-   * Set modal section content.
-   *
-   * @param string $group
-   *   The group used to seperate section content.
-   * @param string $id
-   *   Unique ID identifying this panel.
-   * @param mixed $render
-   *   An array suitable for a render array.
-   *
-   * @return $this
+   * {@inheritdoc}
    */
   public function addSectionContent($group, $id, $render) {
     $this->sections[$group][$id] = $render;
+    return $this;
+  }
+
+  /**
+   * Clear the modal sections.
+   *
+   * @return $this
+   */
+  public function clearSections() {
+    $this->sections = [];
     return $this;
   }
 
@@ -262,18 +260,7 @@ class ExoModal implements ExoModalInterface, AttachmentsInterface, RenderableInt
   }
 
   /**
-   * Add modal panel content.
-   *
-   * @param string $group
-   *   The section group to add the panel content to.
-   * @param string $id
-   *   Unique ID identifying this panel.
-   * @param mixed $render
-   *   An array suitable for a render array.
-   * @param array $settings
-   *   The settings for the modal. See exo_modal.settings.yml -> panel.
-   *
-   * @return $this
+   * {@inheritdoc}
    */
   public function addPanel($group, $id, $render, array $settings = []) {
     $settings = $settings + $this->getSetting('panel');
@@ -343,12 +330,34 @@ class ExoModal implements ExoModalInterface, AttachmentsInterface, RenderableInt
   }
 
   /**
-   * Sets the settings.
+   * Sets a setting.
    *
    * @return $this
    */
   public function setSetting($key, $value) {
     $this->exoSettings->setSetting($key, $value);
+    return $this;
+  }
+
+  /**
+   * Sets a modal settings.
+   *
+   * @return $this
+   */
+  public function setModalSetting($key, $value) {
+    $this->exoSettings->setSetting(['modal', $key], $value);
+    return $this;
+  }
+
+  /**
+   * Sets the settings.
+   *
+   * @return $this
+   */
+  public function setSettings($values) {
+    foreach ($values as $key => $value) {
+      $this->exoSettings->setSetting($key, $value);
+    }
     return $this;
   }
 

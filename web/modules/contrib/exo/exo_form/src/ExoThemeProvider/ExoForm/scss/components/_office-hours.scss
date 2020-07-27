@@ -1,0 +1,34 @@
+.exo-form {
+
+  .office-hours-hide {
+    .exo-form-element {
+      display: inherit !important;
+    }
+  }
+
+  .office-hours-add-link,
+  .office-hours-copy-link,
+  .office-hours-delete-link {
+    font-size: rem-calc(10);
+    padding-left: $global-padding / 2;
+  }
+
+  .office-hours-add-link {
+    @include exo-icon(regular, f067) {
+      padding-right: rem-calc(2);
+    }
+    padding-left: 0;
+  }
+
+  .office-hours-copy-link {
+    @include exo-icon(regular, f24d) {
+      padding-right: rem-calc(2);
+    }
+  }
+
+  .office-hours-delete-link {
+    @include exo-icon(regular, f00d) {
+      padding-right: rem-calc(2);
+    }
+  }
+}

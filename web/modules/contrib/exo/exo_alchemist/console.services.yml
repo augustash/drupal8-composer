@@ -1,0 +1,11 @@
+services:
+  exo_alchemist.component:
+    class: Drupal\exo_alchemist\Command\ExoComponentCommand
+    arguments: ['@console.extension_manager', '@exo_alchemist.component.generator', '@plugin.manager.exo_component', '@console.string_converter', '@console.validator', '@console.chain_queue']
+    tags:
+      - { name: drupal.command }
+  exo_alchemist.component.generator:
+    class: Drupal\exo_alchemist\Generator\ExoComponentGenerator
+    arguments: ['@console.extension_manager']
+    tags:
+      - { name: drupal.generator }

@@ -17,7 +17,7 @@ trait ExoEntityReferenceLinkTrait {
 
     if (isset($form['image_link'])) {
       if ($options = $this->getLinkFieldOptions()) {
-        \Drupal::messenger()->addMessage('If you see this, talk to Cyle! If this IS Cyle, you know what to do.');
+        $form['image_link']['#options'] += $options;
       }
     }
 
@@ -32,7 +32,7 @@ trait ExoEntityReferenceLinkTrait {
     $fields = \Drupal::service('entity_field.manager')->getFieldDefinitions($this->fieldDefinition->getTargetEntityTypeId(), $this->fieldDefinition->getTargetBundle());
     foreach ($fields as $field_name => $field) {
       if ($field->getType() == 'link') {
-        $options[$field->getName()] = $field->getLabel();
+        $options[$field->getName()] = $this->t('Field @label', ['@label' => $field->getLabel()]);
       }
     }
     return $options;

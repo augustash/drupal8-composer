@@ -7,6 +7,9 @@ dependencies:
     - field.field.media.image.field_tags
     - image.style.thumbnail
     - media.type.image
+  module:
+    - exo
+    - focal_point
 _core:
   default_config_hash: gq3bovy8uSTqVRHoDwFOwJfaaAzyEE8Hzjk-CkPG4uU
 id: media.image.default
@@ -18,35 +21,38 @@ content:
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
+      preview_link: true
+      offsets: '50,50'
     third_party_settings: {  }
-    type: image_image
-    weight: 2
-    region: content
-  field_tags:
-    weight: 3
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: entity_reference_autocomplete_tags
-    region: content
-  name:
-    type: string_textfield
+    type: image_focal_point
     weight: 0
     region: content
+  field_tags:
+    weight: 1
     settings:
+      limit: '10'
+      min_length: '0'
+      delimiter: ''
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: '1'
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+      not_found_message_allow: 0
+      match_operator: CONTAINS
+      autocomplete_route_name: exo_autocomplete.autocomplete
       size: 60
-      placeholder: ''
+      selection_handler: default
     third_party_settings: {  }
+    type: exo_autocomplete
+    region: content
   status:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 1
+    weight: 2
     region: content
     third_party_settings: {  }
 hidden:
   created: true
+  name: true
   path: true
   uid: true

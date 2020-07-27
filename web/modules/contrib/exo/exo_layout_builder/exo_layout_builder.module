@@ -28,6 +28,10 @@ function exo_layout_builder_help($route_name, RouteMatchInterface $route_match) 
  * Implements hook_form_FORM_ID_alter().
  */
 function exo_layout_builder_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form_id == 'layout_builder_revert_overrides' || $form_id == 'layout_builder_discard_changes') {
+    $form['#attached']['library'][] = 'exo_layout_builder/base';
+    $form['#attributes']['class'][] = 'exo-form-lock';
+  }
   if (substr($form_id, -20) === '_layout_builder_form') {
     $form['#attached']['library'][] = 'exo_layout_builder/base';
     $form['#attributes']['class'][] = 'exo-layout-builder';

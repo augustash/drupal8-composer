@@ -15,7 +15,7 @@ trait ExoComponentFieldImageStylesTrait {
   /**
    * {@inheritdoc}
    */
-  protected function componentProcessDefinitionImageStyles(ExoComponentDefinitionField $field) {
+  protected function processDefinitionImageStyles(ExoComponentDefinitionField $field) {
     if ($styles = $field->getAdditionalValue('styles')) {
       $effect_manager = \Drupal::service('plugin.manager.image.effect');
       foreach ($styles as $key => $style_config) {
@@ -33,13 +33,19 @@ trait ExoComponentFieldImageStylesTrait {
   /**
    * {@inheritdoc}
    */
-  protected function componentBuildImageStyles(ExoComponentDefinitionField $field, ConfigEntityInterface $entity) {
+  protected function buildImageStyles(ExoComponentDefinitionField $field) {
     if ($styles = $field->getAdditionalValue('styles')) {
       $style_storage = \Drupal::entityTypeManager()->getStorage('image_style');
       $effect_manager = \Drupal::service('plugin.manager.image.effect');
       foreach ($styles as $key => $style_config) {
-        $style_id = $this->getComponentImageStyleId($field, $key);
-        $effect_type = 'image_' . $style_config['type'];
+        $style_id = $this->imageStyleId($field, $key);
+        $style_type = $style_config['type'];
+        $style_prefix = 'image';
+        // Suppor focal point.
+        if (empty($style_config['prefix']) && in_array($style_type, ['crop', 'scale_and_crop']) && \Drupal::moduleHandler()->moduleExists('focal_point')) {
+          $style_prefix = 'focal_point';
+        }
+        $effect_type = $style_prefix . '_' . $style_type;
         if ($effect_manager->hasDefinition($effect_type)) {
           $effect_configuration = $style_config;
           // All keys except type are config for image effect.
@@ -75,12 +81,12 @@ trait ExoComponentFieldImageStylesTrait {
   /**
    * {@inheritdoc}
    */
-  public function componentViewFileImageStyles(ExoComponentDefinitionField $field, FileInterface $file) {
+  public function getImageStylesAsUrl(ExoComponentDefinitionField $field, FileInterface $file) {
     $item_styles = [];
     if ($styles = $field->getAdditionalValue('styles')) {
       $style_storage = \Drupal::entityTypeManager()->getStorage('image_style');
       foreach ($styles as $key => $style_config) {
-        $style_id = $this->getComponentImageStyleId($field, $key);
+        $style_id = $this->imageStyleId($field, $key);
         $image_uri = $file->getFileUri();
         // Load image style "thumbnail".
         $style = $style_storage->load($style_id);
@@ -97,7 +103,7 @@ trait ExoComponentFieldImageStylesTrait {
   /**
    * {@inheritdoc}
    */
-  public function componentPropertyInfoImageStyles(ExoComponentDefinitionField $field) {
+  public function propertyInfoImageStyles(ExoComponentDefinitionField $field) {
     $properties = [];
     if ($styles = $field->getAdditionalValue('styles')) {
       foreach ($styles as $key => $style_config) {
@@ -115,7 +121,7 @@ trait ExoComponentFieldImageStylesTrait {
    * @return string
    *   An id.
    */
-  protected function getComponentImageStyleId(ExoComponentDefinitionField $field, $style_key) {
+  protected function imageStyleId(ExoComponentDefinitionField $field, $style_key) {
     return 'exo_style_' . substr(hash('sha256', $field->id() . '_' . $style_key), 0, 22);
   }
 

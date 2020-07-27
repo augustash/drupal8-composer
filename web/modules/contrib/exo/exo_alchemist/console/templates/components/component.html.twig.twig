@@ -1,0 +1,9 @@
+<div{{ '{{' }} attributes {{ '}}' }}>
+  <div{{ '{{' }} content_attributes {{ '}}' }}>
+  {% for field in fields %}
+  {{ '{%' }} if {{ field.id }} {{ '%}' }}
+      <div{{ '{{' }} {{ field.id }}.attributes {{ '}}' }}>{{ '{{' }} {{ field.id }}.value {{ '}}' }}</div>
+    {{ '{%' }} endif {{ '%}' }}
+  {% endfor %}
+</div>
+</div>

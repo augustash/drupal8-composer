@@ -70,6 +70,8 @@ $themes-global: (
   label-focus-color: primary,
   label-text-transform: none,
   label-font-size: rem-calc(15),
+  label-font-weight: 400,
+  label-letter-spacing: normal,
   description-color: base (color-scale-inverse: 20%),
   message-color: offset (color-scale-inverse: 60%),
   message-bg-color: offset (color-scale-inverse: 10%),

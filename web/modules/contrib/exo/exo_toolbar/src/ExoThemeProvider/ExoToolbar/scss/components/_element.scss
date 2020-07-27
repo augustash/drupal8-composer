@@ -221,6 +221,30 @@
   }
 }
 
+.badge-theme-success {
+
+  .exo-toolbar-element-badge {
+    background: color(theme-success);
+    color: color(theme-white);
+  }
+}
+
+.badge-theme-warning {
+
+  .exo-toolbar-element-badge {
+    background: color(theme-warning);
+    color: color(theme-white);
+  }
+}
+
+.badge-theme-alert {
+
+  .exo-toolbar-element-badge {
+    background: color(theme-alert);
+    color: color(theme-white);
+  }
+}
+
 .exo-toolbar-element-image {
 
   &,

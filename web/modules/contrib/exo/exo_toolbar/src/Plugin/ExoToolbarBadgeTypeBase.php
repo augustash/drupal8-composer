@@ -123,7 +123,7 @@ abstract class ExoToolbarBadgeTypeBase extends PluginBase implements ExoToolbarB
       '#type' => 'select',
       '#title' => $this->t('Theme'),
       '#description' => $this->t('The theme style to use for the badge.'),
-      '#options' => exo_theme_options(),
+      '#options' => exo_theme_options(FALSE, TRUE),
       '#default_value' => $this->configuration['theme'],
     ];
     return $form;

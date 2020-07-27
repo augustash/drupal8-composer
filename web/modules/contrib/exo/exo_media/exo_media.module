@@ -5,11 +5,15 @@
  * Contains exo_media.module.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\editor\Entity\Editor;
+use Drupal\exo_modal\ExoModalInterface;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_theme().
@@ -53,6 +57,16 @@ function exo_media_form_alter(&$form, FormStateInterface $form_state, $form_id) 
   if (isset($info['base_form_id']) && in_array($info['base_form_id'], ['media_form'])) {
     exo_media_revision_hide($form, $form_state);
   }
+  if ($form_id === 'editor_media_dialog') {
+    if (isset($form['align'])) {
+      $form['align']['#type'] = 'exo_radios';
+      $form['align']['#exo_style'] = 'inline';
+      $form['align']['#attributes']['class'] = [];
+      $form['align']['#options']['left'] = exo_icon($form['align']['#options']['left'])->setIcon('regular-long-arrow-left');
+      $form['align']['#options']['center'] = exo_icon($form['align']['#options']['center'])->setIcon('regular-arrows-h');
+      $form['align']['#options']['right'] = exo_icon($form['align']['#options']['right'])->setIcon('regular-long-arrow-right');
+    }
+  }
 }
 
 /**
@@ -64,7 +78,18 @@ function exo_media_library_info_alter(&$libraries, $extension) {
       $path = '/' . drupal_get_path('module', 'exo_media');
       $libraries['widget']['css']['component'][$path . '/css/exo-media.library.css'] = ['minified' => TRUE];
     }
+    if (isset($libraries['view'])) {
+      $path = '/' . drupal_get_path('module', 'exo_media');
+      $libraries['view']['css']['component'][$path . '/css/exo-media.library.css'] = ['minified' => TRUE];
+    }
   }
+}
+
+/**
+ * Implements hook_ckeditor_css_alter().
+ */
+function exo_media_ckeditor_css_alter(array &$css, Editor $editor) {
+  $css[] = drupal_get_path('module', 'exo_media') . '/css/exo-media.library.css';
 }
 
 /**
@@ -91,6 +116,7 @@ function exo_media_revision_hide(&$form, FormStateInterface $form_state) {
 function exo_media_media_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
   if ($build['#view_mode'] == 'media_library') {
     $build['#attributes']['class'][] = 'exo-media-preview';
+    $build['#attributes']['class'][] = 'exo-media-type--' . Html::getClass($entity->bundle());
   }
 }
 
@@ -158,5 +184,58 @@ function exo_media_page_attachments_alter(array &$attachments) {
         }
       }
     }
+  }
+}
+
+/**
+ * Implements hook_exo_modal_alter().
+ */
+function exo_media_exo_modal_alter(ExoModalInterface $modal, array $context) {
+  switch ($context['route_name']) {
+    case 'editor.media_dialog':
+    case 'media_library.ui':
+      $modal->setSetting('theme', 'black');
+      $modal->setSetting('theme_content', 'black');
+      $modal->setModalSetting('nest', TRUE);
+      $modal->addModalClass('is-admin');
+      break;
+  }
+  if ($context['route_name'] === 'media_library.ui') {
+  }
+  if ($modal->getSetting(['modal', 'title']) == 'Add or select media') {
+    $modal->setModalSetting('width', '80%');
+  }
+  switch ($modal->getSetting(['modal', 'title'])) {
+    case 'Add or select media':
+    case 'Edit media':
+      $modal->setModalSetting('icon', 'regular-photo-video');
+      $modal->setSetting('theme', 'black');
+      $modal->setSetting('theme_content', 'black');
+      $modal->setModalSetting('nest', TRUE);
+      $modal->addModalClass('is-admin');
+      break;
+  }
+}
+
+/**
+ * Implements hook_exo_form_settings_alter().
+ */
+function exo_media_exo_form_settings_alter(array &$settings, array $context) {
+  switch ($context['route_name']) {
+    case 'editor.media_dialog':
+    case 'media_library.ui':
+      $settings['theme'] = 'black';
+      $settings['style'] = 'intersect';
+      break;
+  }
+}
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function exo_media_views_pre_render(ViewExecutable $view) {
+  if (isset($view) && ($view->storage->id() == 'media_library')) {
+    // For some reason, CKEditor media library does not include this library.
+    $view->element['#attached']['library'][] = 'media_library/widget';
   }
 }

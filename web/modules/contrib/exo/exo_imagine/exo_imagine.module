@@ -1,0 +1,111 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_imagine.module.
+ */
+
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function exo_imagine_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the exo_imagine module.
+    case 'help.page.exo_imagine':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Improved responsive image handler along with other image enhancements.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function exo_imagine_theme() {
+  return [
+    'exo_imagine' => [
+      'variables' => [
+        'item' => NULL,
+        'attributes' => [],
+        'tag' => 'div',
+        'image_picture_attributes' => [],
+        'image_attributes' => [],
+        'image_sources' => [],
+        'preview_picture_attributes' => [],
+        'preview_attributes' => [],
+        'preview_sources' => [],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_entity_ENTITY_TYPE_presave().
+ */
+function exo_imagine_entity_view_display_presave(EntityViewDisplayInterface $entity) {
+  /** @var \Drupal\exo_imagine\ExoImagineManager $manager */
+  $manager = \Drupal::service('exo_imagine.manager');
+  /** @var \Drupal\exo\ExoSettingsInterface $settings */
+  $settings = \Drupal::service('exo_imagine.settings');
+  $usage = $settings->getSetting('usage');
+  if ($entity->isNew()) {
+    $added = exo_imagine_get_component_breakpoints($entity);
+    $removed = [];
+  }
+  else {
+    $original = exo_imagine_get_component_breakpoints($entity->original);
+    $current = exo_imagine_get_component_breakpoints($entity);
+    $added = array_diff_key($current, $original);
+    $removed = array_diff_key($original, $current);
+  }
+  foreach ($removed as $breakpoint) {
+    $key = $manager->getImageStyleId($breakpoint['width'], $breakpoint['height'], $breakpoint['unique'] ?? '');
+    $usage[$key] = $usage[$key] ?? 0;
+    $usage[$key] -= 1;
+    if ($usage[$key] < 1) {
+      $manager->deleteImageStyleByProperties($breakpoint['width'], $breakpoint['height'], $breakpoint['unique'] ?? '');
+      // Remove preview.
+      $specs = $manager->getPreviewSpecs($breakpoint['width'], $breakpoint['height'], $breakpoint['unique'] ?? '');
+      $manager->deleteImageStyleByProperties($specs['width'], $specs['height'], $specs['unique'], $specs['quality']);
+      unset($usage[$key]);
+    }
+  }
+  foreach ($added as $breakpoint) {
+    if (!empty($breakpoint['width']) || !empty($breakpoint['height'])) {
+      $key = $manager->getImageStyleId($breakpoint['width'], $breakpoint['height'], $breakpoint['unique'] ?? '');
+      $usage[$key] = $usage[$key] ?? 0;
+      $usage[$key] += 1;
+      $manager->getImageStyle($breakpoint['width'], $breakpoint['height'], $breakpoint['unique'] ?? '');
+    }
+  }
+  $settings->setSetting('usage', $usage)->save();
+}
+
+/**
+ * Get the component breakpoint settings.
+ *
+ * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $entity
+ *   The entity.
+ *
+ * @return array
+ *   An array of breakpoint settings.
+ */
+function exo_imagine_get_component_breakpoints(EntityViewDisplayInterface $entity) {
+  $breakpoints = [];
+  foreach ($entity->getComponents() as $component) {
+    if (isset($component['type']) && substr($component['type'], 0, 11) === 'exo_imagine') {
+      if (!empty($component['settings']['breakpoints'])) {
+        foreach ($component['settings']['breakpoints'] as $breakpoint) {
+          $breakpoints[implode('', $breakpoint)] = $breakpoint;
+        }
+      }
+    }
+  }
+  return $breakpoints;
+}

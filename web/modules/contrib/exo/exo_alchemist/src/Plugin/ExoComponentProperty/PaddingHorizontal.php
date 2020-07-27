@@ -10,22 +10,4 @@ namespace Drupal\exo_alchemist\Plugin\ExoComponentProperty;
  *   label = @Translation("Padding: Horizontal"),
  * )
  */
-class PaddingHorizontal extends ClassAttribute {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $type = 'exo_radios_slider';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $options = [
-    '0' => '0',
-    '30' => '30',
-    '60' => '60',
-    '90' => '90',
-    '120' => '120',
-  ];
-
-}
+class PaddingHorizontal extends Padding {}

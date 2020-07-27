@@ -1,0 +1,5 @@
+throbber: throbber_wave
+hide_ajax_message: true
+always_fullscreen: true
+show_admin_paths: true
+throbber_position: body

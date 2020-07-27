@@ -117,7 +117,6 @@ class SiteSettingsGeneralForm extends FormBase {
       // with little damage to the render element attributes of the inner form.
       $inner_form = ['#parents' => [$key]];
       $inner_form = $inner_form_object->buildForm($inner_form, $inner_form_state);
-      // ksm($inner_form_state->getStorage());
       $form[$key] = [
         '#type' => 'container',
         '#title' => $inner_form_object->getEntity()->type->entity->label(),
