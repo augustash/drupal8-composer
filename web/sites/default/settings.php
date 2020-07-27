@@ -14,7 +14,7 @@ $settings['container_yamls'][] = __DIR__ . '/services.yml';
  *      a local development environment, to ensure that
  *      the site settings remain consistent.
  */
-include __DIR__ . "/settings.pantheon.php";
+require __DIR__ . "/settings.pantheon.php";
 
 /**
  * Skipping permissions hardening will make scaffolding
@@ -26,9 +26,17 @@ include __DIR__ . "/settings.pantheon.php";
 // $settings['skip_permissions_hardening'] = TRUE;
 
 /**
- * If there is a local settings file, then include it
+ * If there is a local settings file, then include it.
  */
 $local_settings = __DIR__ . "/settings.local.php";
+
 if (file_exists($local_settings)) {
   include $local_settings;
+}
+
+/**
+ * Disable config changes in production.
+ */
+if (PHP_SAPI !== 'cli') {
+  $settings['config_readonly'] = TRUE;
 }
