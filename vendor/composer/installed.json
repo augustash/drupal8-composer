@@ -66,6 +66,23 @@
         ]
     },
     {
+        "name": "algolia/places",
+        "version": "1.18.2",
+        "version_normalized": "1.18.2.0",
+        "dist": {
+            "type": "tar",
+            "url": "https://registry.npmjs.org/places.js/-/places.js-1.18.2.tgz"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "algolia.places"
+        },
+        "installation-source": "dist"
+    },
+    {
         "name": "asm89/stack-cors",
         "version": "1.2.0",
         "version_normalized": "1.2.0.0",
@@ -165,6 +182,125 @@
             "GPL-2.0-or-later"
         ],
         "description": "Drupal code generator"
+    },
+    {
+        "name": "choices/choices",
+        "version": "9.0.1",
+        "version_normalized": "9.0.1.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/jshjohnson/Choices/archive/v9.0.1.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "choices"
+        },
+        "installation-source": "dist"
+    },
+    {
+        "name": "ckeditor/autogrow",
+        "version": "4.14.0",
+        "version_normalized": "4.14.0.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://download.ckeditor.com/autogrow/releases/autogrow_4.14.0.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "ckeditor.autogrow"
+        },
+        "installation-source": "dist"
+    },
+    {
+        "name": "ckeditor/codemirror",
+        "version": "v1.17.12",
+        "version_normalized": "1.17.12.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/w8tcha/CKEditor-CodeMirror-Plugin/releases/download/v1.17.12/CKEditor-CodeMirror-Plugin.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "ckeditor.codemirror"
+        },
+        "installation-source": "dist"
+    },
+    {
+        "name": "ckeditor/fakeobjects",
+        "version": "4.14.0",
+        "version_normalized": "4.14.0.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://download.ckeditor.com/fakeobjects/releases/fakeobjects_4.14.0.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "ckeditor.fakeobjects"
+        },
+        "installation-source": "dist"
+    },
+    {
+        "name": "ckeditor/image",
+        "version": "4.14.0",
+        "version_normalized": "4.14.0.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://download.ckeditor.com/image/releases/image_4.14.0.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "ckeditor.image"
+        },
+        "installation-source": "dist"
+    },
+    {
+        "name": "ckeditor/link",
+        "version": "4.14.0",
+        "version_normalized": "4.14.0.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://download.ckeditor.com/link/releases/link_4.14.0.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "ckeditor.link"
+        },
+        "installation-source": "dist"
+    },
+    {
+        "name": "codemirror/codemirror",
+        "version": "5.53.2",
+        "version_normalized": "5.53.2.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/components/codemirror/archive/5.53.2.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "codemirror"
+        },
+        "installation-source": "dist"
     },
     {
         "name": "composer/installers",
@@ -2770,6 +2906,130 @@
         }
     },
     {
+        "name": "drupal/webform",
+        "version": "5.19.0",
+        "version_normalized": "5.19.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupalcode.org/project/webform.git",
+            "reference": "8.x-5.19"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/webform-8.x-5.19.zip",
+            "reference": "8.x-5.19",
+            "shasum": "90a2084c2647bca791cc8b18a7e2a3b49f3da7ea"
+        },
+        "require": {
+            "drupal/core": "^8.8"
+        },
+        "require-dev": {
+            "drupal/address": "~1.0",
+            "drupal/bootstrap": "~3.0",
+            "drupal/captcha": "~1.0",
+            "drupal/chosen": "~2.0",
+            "drupal/clientside_validation": "~3.0",
+            "drupal/clientside_validation_jquery": "*",
+            "drupal/devel": "~3.0",
+            "drupal/entity_print": "~2.0",
+            "drupal/gnode": "*",
+            "drupal/group": "~1.0",
+            "drupal/lingotek": "~3.0",
+            "drupal/mailsystem": "~4.0",
+            "drupal/paragraphs": "~1.0",
+            "drupal/select2": "~1.0",
+            "drupal/smtp": "~1.0",
+            "drupal/styleguide": "~1.0",
+            "drupal/telephone_validation": "~2.0",
+            "drupal/token": "~1.0",
+            "drupal/webform_access": "*",
+            "drupal/webform_attachment": "*",
+            "drupal/webform_clientside_validation": "*",
+            "drupal/webform_devel": "*",
+            "drupal/webform_entity_print": "*",
+            "drupal/webform_group": "*",
+            "drupal/webform_node": "*",
+            "drupal/webform_options_limit": "*",
+            "drupal/webform_scheduled_email": "*",
+            "drupal/webform_share": "*",
+            "drupal/webform_ui": "*"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "drupal": {
+                "version": "8.x-5.19",
+                "datestamp": "1593681136",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            },
+            "drush": {
+                "services": {
+                    "drush.services.yml": "^9"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0-or-later"
+        ],
+        "authors": [
+            {
+                "name": "Jacob Rockowitz (jrockowitz)",
+                "homepage": "https://www.drupal.org/u/jrockowitz",
+                "role": "Maintainer"
+            },
+            {
+                "name": "Alexander Trotsenko (bucefal91)",
+                "homepage": "https://www.drupal.org/u/bucefal91",
+                "role": "Co-maintainer"
+            },
+            {
+                "name": "Contributors",
+                "homepage": "https://www.drupal.org/node/7404/committers",
+                "role": "Contributor"
+            },
+            {
+                "name": "fenstrat",
+                "homepage": "https://www.drupal.org/user/362649"
+            },
+            {
+                "name": "jrockowitz",
+                "homepage": "https://www.drupal.org/user/371407"
+            },
+            {
+                "name": "podarok",
+                "homepage": "https://www.drupal.org/user/116002"
+            },
+            {
+                "name": "quicksketch",
+                "homepage": "https://www.drupal.org/user/35821"
+            },
+            {
+                "name": "sanchiz",
+                "homepage": "https://www.drupal.org/user/1671246"
+            },
+            {
+                "name": "tedbow",
+                "homepage": "https://www.drupal.org/user/240860"
+            },
+            {
+                "name": "torotil",
+                "homepage": "https://www.drupal.org/user/865256"
+            }
+        ],
+        "description": "Enables the creation of webforms and questionnaires.",
+        "homepage": "https://drupal.org/project/webform",
+        "support": {
+            "source": "https://git.drupalcode.org/project/webform",
+            "issues": "https://www.drupal.org/project/issues/webform?version=8.x",
+            "docs": "https://www.drupal.org/docs/8/modules/webform",
+            "forum": "https://drupal.stackexchange.com/questions/tagged/webform"
+        }
+    },
+    {
         "name": "drush/drush",
         "version": "9.7.2",
         "version_normalized": "9.7.2.0",
@@ -2926,12 +3186,12 @@
         "version_normalized": "0.9.1.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/njh/easyrdf.git",
+            "url": "https://github.com/easyrdf/easyrdf.git",
             "reference": "acd09dfe0555fbcfa254291e433c45fdd4652566"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/njh/easyrdf/zipball/acd09dfe0555fbcfa254291e433c45fdd4652566",
+            "url": "https://api.github.com/repos/easyrdf/easyrdf/zipball/acd09dfe0555fbcfa254291e433c45fdd4652566",
             "reference": "acd09dfe0555fbcfa254291e433c45fdd4652566",
             "shasum": ""
         },
@@ -3398,12 +3658,12 @@
         "version_normalized": "2.1.0.0",
         "source": {
             "type": "git",
-            "url": "git@github.com:jacerider/exo.git",
+            "url": "git@github.com:ashenrayne/exo.git",
             "reference": "4e73f4ccc31812b3c6d4804c805db81933a42b34"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/jacerider/exo/zipball/4e73f4ccc31812b3c6d4804c805db81933a42b34",
+            "url": "https://api.github.com/repos/ashenrayne/exo/zipball/4e73f4ccc31812b3c6d4804c805db81933a42b34",
             "reference": "4e73f4ccc31812b3c6d4804c805db81933a42b34",
             "shasum": "",
             "mirrors": [
@@ -3514,6 +3774,210 @@
             "issues": "https://github.com/jacerider/valet/issues",
             "source": "https://github.com/jacerider/valet"
         }
+    },
+    {
+        "name": "jquery/chosen",
+        "version": "1.8.7",
+        "version_normalized": "1.8.7.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/harvesthq/chosen/releases/download/v1.8.7/chosen_v1.8.7.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "jquery.chosen"
+        },
+        "installation-source": "dist"
+    },
+    {
+        "name": "jquery/geocomplete",
+        "version": "1.7.0",
+        "version_normalized": "1.7.0.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/ubilabs/geocomplete/archive/1.7.0.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "jquery.geocomplete"
+        },
+        "installation-source": "dist"
+    },
+    {
+        "name": "jquery/hotkeys",
+        "version": "0.2.0",
+        "version_normalized": "0.2.0.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/jeresig/jquery.hotkeys/archive/0.2.0.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "jquery.hotkeys"
+        },
+        "installation-source": "dist"
+    },
+    {
+        "name": "jquery/icheck",
+        "version": "1.0.2 ",
+        "version_normalized": "1.0.2.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/fronteed/icheck/archive/1.0.2.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "jquery.icheck"
+        },
+        "installation-source": "dist"
+    },
+    {
+        "name": "jquery/image-picker",
+        "version": "0.3.1",
+        "version_normalized": "0.3.1.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/rvera/image-picker/archive/0.3.1.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "jquery.image-picker"
+        },
+        "installation-source": "dist"
+    },
+    {
+        "name": "jquery/inputmask",
+        "version": "5.0.3",
+        "version_normalized": "5.0.3.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/RobinHerbots/jquery.inputmask/archive/5.0.3.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "jquery.inputmask"
+        },
+        "installation-source": "dist"
+    },
+    {
+        "name": "jquery/intl-tel-input",
+        "version": "16.1.0",
+        "version_normalized": "16.1.0.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/jackocnr/intl-tel-input/archive/v16.1.0.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "jquery.intl-tel-input"
+        },
+        "installation-source": "dist"
+    },
+    {
+        "name": "jquery/rateit",
+        "version": "1.1.3",
+        "version_normalized": "1.1.3.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/gjunge/rateit.js/archive/1.1.3.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "jquery.rateit"
+        },
+        "installation-source": "dist"
+    },
+    {
+        "name": "jquery/select2",
+        "version": "4.0.13",
+        "version_normalized": "4.0.13.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/select2/select2/archive/4.0.13.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "jquery.select2"
+        },
+        "installation-source": "dist"
+    },
+    {
+        "name": "jquery/textcounter",
+        "version": "0.9.0",
+        "version_normalized": "0.9.0.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/ractoon/jQuery-Text-Counter/archive/0.9.0.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "jquery.textcounter"
+        },
+        "installation-source": "dist"
+    },
+    {
+        "name": "jquery/timepicker",
+        "version": "1.13.10",
+        "version_normalized": "1.13.10.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/jonthornton/jquery-timepicker/archive/1.13.10.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "jquery.timepicker"
+        },
+        "installation-source": "dist"
+    },
+    {
+        "name": "jquery/toggles",
+        "version": "4.0.0",
+        "version_normalized": "4.0.0.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/simontabor/jquery-toggles/archive/v4.0.0.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "jquery.toggles"
+        },
+        "installation-source": "dist"
     },
     {
         "name": "league/container",
@@ -4096,6 +4560,23 @@
         ]
     },
     {
+        "name": "progress-tracker/progress-tracker",
+        "version": "1.4.0",
+        "version_normalized": "1.4.0.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/NigelOToole/progress-tracker/archive/v1.4.0.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "progress-tracker"
+        },
+        "installation-source": "dist"
+    },
+    {
         "name": "psr/container",
         "version": "1.0.0",
         "version_normalized": "1.0.0.0",
@@ -4404,6 +4885,23 @@
         "homepage": "https://github.com/rvtraveller/qs-composer-installer"
     },
     {
+        "name": "signature_pad/signature_pad",
+        "version": "2.3.0",
+        "version_normalized": "2.3.0.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/szimek/signature_pad/archive/v2.3.0.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "signature_pad"
+        },
+        "installation-source": "dist"
+    },
+    {
         "name": "stack/builder",
         "version": "v1.0.5",
         "version_normalized": "1.0.5.0",
@@ -4500,6 +4998,23 @@
             }
         ],
         "description": "Automatic BASH completion for Symfony Console Component based applications."
+    },
+    {
+        "name": "svg-pan-zoom/svg-pan-zoom",
+        "version": "3.6.1",
+        "version_normalized": "3.6.1.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/ariutta/svg-pan-zoom/archive/3.6.1.zip"
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "extra": {
+            "installer-name": "svg-pan-zoom"
+        },
+        "installation-source": "dist"
     },
     {
         "name": "symfony-cmf/routing",
@@ -6697,6 +7212,57 @@
             }
         ],
         "description": "A robust cross-platform utility for normalizing, comparing and modifying file paths."
+    },
+    {
+        "name": "wikimedia/composer-merge-plugin",
+        "version": "v1.4.1",
+        "version_normalized": "1.4.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/composer-merge-plugin.git",
+            "reference": "81c6ac72a24a67383419c7eb9aa2b3437f2ab100"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/composer-merge-plugin/zipball/81c6ac72a24a67383419c7eb9aa2b3437f2ab100",
+            "reference": "81c6ac72a24a67383419c7eb9aa2b3437f2ab100",
+            "shasum": ""
+        },
+        "require": {
+            "composer-plugin-api": "^1.0",
+            "php": ">=5.3.2"
+        },
+        "require-dev": {
+            "composer/composer": "~1.0.0",
+            "jakub-onderka/php-parallel-lint": "~0.8",
+            "phpunit/phpunit": "~4.8|~5.0",
+            "squizlabs/php_codesniffer": "~2.1.0"
+        },
+        "time": "2017-04-25T02:31:25+00:00",
+        "type": "composer-plugin",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.3.x-dev"
+            },
+            "class": "Wikimedia\\Composer\\MergePlugin"
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Wikimedia\\Composer\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Bryan Davis",
+                "email": "bd808@wikimedia.org"
+            }
+        ],
+        "description": "Composer plugin to merge multiple composer.json files"
     },
     {
         "name": "zaporylie/composer-drupal-optimizations",
