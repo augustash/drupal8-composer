@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Load services definition file.
  */
 $settings['container_yamls'][] = __DIR__ . '/services.yml';
@@ -24,6 +25,11 @@ require __DIR__ . "/settings.pantheon.php";
  * https://www.drupal.org/project/drupal/issues/3091285
  */
 // $settings['skip_permissions_hardening'] = TRUE;
+
+/**
+ * Place the config directory outside of the Drupal root.
+ */
+$settings['config_sync_directory'] = dirname(DRUPAL_ROOT) . '/config';
 
 /**
  * If there is a local settings file, then include it.
