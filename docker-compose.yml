@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 
 # will use the default driver which should be "bridge"; if run via stack,
 # will be a load-balanced overlay network
@@ -18,7 +18,7 @@ services:
     networks:
       - ash-net
     ports:
-      - "3306:3306"
+      - "${MYSQL_PORT:-3306}:3306"
     volumes:
       - data-db:/var/lib/mysql
       - ./docker/mysql/mysqld.cnf:/etc/mysql/conf.d/mysqld.cnf:ro
@@ -30,7 +30,7 @@ services:
     networks:
       - ash-net
     ports:
-      - "6379:6379"
+      - "${CACHE_PORT:-6379}:6379"
     volumes:
       - ./docker/redis/volatile.conf:/usr/local/etc/redis/redis.conf:ro
     command:
@@ -41,8 +41,8 @@ services:
     networks:
       - ash-net
     ports:
-      - "1025:1025"
-      - "8025:8025"
+      - "${MAILHOG_PORT:-1025}:1025"
+      - "${MAILHOG_WEB_PORT:-8025}:8025"
     environment:
       - PUID=501
       - PGID=1000
