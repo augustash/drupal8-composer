@@ -1,0 +1,12 @@
+name: Disable user 1 edit
+description: Disables editing of user 1, even if users can administer users.
+package: Administration
+type: module
+core: 8.x
+core_version_requirement: ^8 || ^9
+configure: disable_user_1_edit.config_form
+
+# Information added by Drupal.org packaging script on 2020-06-03
+version: '8.x-1.4'
+project: 'disable_user_1_edit'
+datestamp: 1591191353
