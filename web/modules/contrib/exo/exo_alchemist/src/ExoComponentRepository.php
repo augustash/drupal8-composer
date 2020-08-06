@@ -14,7 +14,7 @@ use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\Core\Plugin\Context\EntityContext;
 use Drupal\layout_builder\Entity\LayoutBuilderEntityViewDisplay;
 use Drupal\layout_builder\Entity\LayoutEntityDisplayInterface;
-use Drupal\layout_builder\OverridesSectionStorageInterface;
+use Drupal\layout_builder\SectionComponent;
 
 /**
  * Class ExoComponentRepository.
@@ -65,14 +65,62 @@ class ExoComponentRepository {
    *   The component entities.
    */
   public function getComponents(EntityInterface $entity, $use_tempstore = FALSE) {
-    $components = [];
+    $exo_components = [];
     $sections = $this->getEntitySections($entity, $use_tempstore);
     foreach ($sections as $section) {
-      foreach ($section->getComponents() as $component) {
-        $components[] = $this->extractBlockEntity($component->getPlugin());
+      $components = $section->getComponents();
+      uasort($components, ['Drupal\exo_alchemist\ExoComponentRepository', 'sortComponents']);
+      foreach ($components as $component) {
+        if ($exo_component = $this->extractBlockEntity($component->getPlugin())) {
+          $exo_components[] = $exo_component;
+        }
       }
     }
-    return $components;
+    return $exo_components;
+  }
+
+  /**
+   * Get first component attached to an entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity.
+   * @param bool $use_tempstore
+   *   Flag indicating if the tempstore storage should be used.
+   *
+   * @return \Drupal\block_content\Entity\BlockContent
+   *   The component entity.
+   */
+  public function getFirstComponent(EntityInterface $entity, $use_tempstore = FALSE) {
+    $sections = $this->getEntitySections($entity, $use_tempstore);
+    if (!empty($sections)) {
+      /** @var \Drupal\layout_builder\Section $section */
+      $section = reset($sections);
+      $components = $section->getComponents();
+      if (!empty($components)) {
+        uasort($components, ['Drupal\exo_alchemist\ExoComponentRepository', 'sortComponents']);
+        $component = reset($components);
+        return $this->extractBlockEntity($component->getPlugin());
+      }
+    }
+    return NULL;
+  }
+
+  /**
+   * Get first component definition attached to an entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity.
+   * @param bool $use_tempstore
+   *   Flag indicating if the tempstore storage should be used.
+   *
+   * @return \Drupal\exo_alchemist\Definition\ExoComponentDefinition
+   *   The component definition.
+   */
+  public function getFirstComponentDefinition(EntityInterface $entity, $use_tempstore = FALSE) {
+    if ($component = $this->getFirstComponent($entity, $use_tempstore)) {
+      return $this->exoComponentManager->getEntityComponentDefinition($component);
+    }
+    return NULL;
   }
 
   /**
@@ -138,7 +186,7 @@ class ExoComponentRepository {
         if ($component->hasField($field_name)) {
           if ($items) {
             foreach ($component->get($field_name) as $item) {
-              $items->appendItem($item);
+              $items->appendItem($item->getValue());
             }
           }
           else {
@@ -224,7 +272,7 @@ class ExoComponentRepository {
       }
     }
     $section_storage = $this->sectionStorageManager()->findByContext($contexts, new CacheableMetadata());
-    if (!$entity instanceof LayoutEntityDisplayInterface && !$section_storage instanceof OverridesSectionStorageInterface) {
+    if (!$entity instanceof LayoutEntityDisplayInterface && !$section_storage instanceof ExoComponentSectionStorageInterface) {
       $section_storage = $this->sectionStorageManager()->load('overrides', $contexts, new CacheableMetadata());
     }
     if ($section_storage && $use_tempstore && $this->layoutTempstoreRepository()->has($section_storage)) {
@@ -251,6 +299,13 @@ class ExoComponentRepository {
    */
   private function layoutTempstoreRepository() {
     return $this->layoutTempstoreRepository ?: \Drupal::service('layout_builder.tempstore_repository');
+  }
+
+  /**
+   * Sorts by weight.
+   */
+  public static function sortComponents(SectionComponent $a, SectionComponent $b) {
+    return $a->getWeight() - $b->getWeight();
   }
 
 }

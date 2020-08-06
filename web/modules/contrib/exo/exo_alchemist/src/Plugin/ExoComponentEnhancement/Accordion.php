@@ -2,6 +2,7 @@
 
 namespace Drupal\exo_alchemist\Plugin\ExoComponentEnhancement;
 
+use Drupal\Component\Utility\Html;
 use Drupal\exo_alchemist\ExoComponentAttribute;
 use Drupal\exo_alchemist\Plugin\ExoComponentEnhancementBase;
 
@@ -31,15 +32,28 @@ class Accordion extends ExoComponentEnhancementBase {
    * {@inheritdoc}
    */
   public function view(array $contexts) {
+    $id = Html::getId($this->getEnhancementDefinition()->id());
     $is_layout_builder = $this->isLayoutBuilder($contexts);
     $view = [
       '#attached' => [
         'library' => ['exo_alchemist/enhancement.accordion'],
       ],
-      'wrapper' => new ExoComponentAttribute(['class' => ['exo-enhancement--accordion-wrapper']], $is_layout_builder),
-      'item' => new ExoComponentAttribute(['class' => ['exo-enhancement--accordion-item']], $is_layout_builder),
-      'trigger' => new ExoComponentAttribute(['class' => ['exo-enhancement--accordion-trigger']], $is_layout_builder),
-      'content' => new ExoComponentAttribute(['class' => ['exo-enhancement--accordion-content']], $is_layout_builder),
+      'wrapper' => new ExoComponentAttribute([
+        'class' => ['ee--accordion-wrapper'],
+        'data-ee--accordion-id' => $id,
+      ], $is_layout_builder),
+      'item' => new ExoComponentAttribute([
+        'class' => ['ee--accordion-item'],
+        'data-ee--accordion-id' => $id,
+      ], $is_layout_builder),
+      'trigger' => new ExoComponentAttribute([
+        'class' => ['ee--accordion-trigger'],
+        'data-ee--accordion-id' => $id,
+      ], $is_layout_builder),
+      'content' => new ExoComponentAttribute([
+        'class' => ['ee--accordion-content'],
+        'data-ee--accordion-id' => $id,
+      ], $is_layout_builder),
     ];
     if ($is_layout_builder) {
       $view['trigger']->events(TRUE);

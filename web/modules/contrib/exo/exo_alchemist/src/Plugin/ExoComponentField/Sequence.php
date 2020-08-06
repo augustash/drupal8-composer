@@ -290,6 +290,7 @@ class Sequence extends EntityReferenceBase {
         'modifier' => $field->getAdditionalValue('sequence_modifier'),
         'modifiers' => [],
         'modifier_globals' => FALSE,
+        'enhancements' => [],
         'computed' => TRUE,
       ] + $field->toArray() + $field->getComponent()->toArray();
       // Sequence fields do not need to be inherited.

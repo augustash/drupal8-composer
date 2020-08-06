@@ -29,11 +29,11 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\exo_alchemist\Definition\ExoComponentDefinition;
 use Drupal\exo_alchemist\Plugin\Discovery\ExoComponentInstalledDiscovery;
-use Drupal\exo_icon\ExoIconTranslationTrait;
 use Drupal\layout_builder\LayoutEntityHelperTrait;
 use Drupal\layout_builder\SectionComponent;
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\exo_alchemist\ExoComponentEnhancementManager;
+use Drupal\exo_icon\ExoIconTranslatableMarkup;
 
 /**
  * Provides the default exo_component manager.
@@ -41,7 +41,6 @@ use Drupal\exo_alchemist\ExoComponentEnhancementManager;
 class ExoComponentManager extends DefaultPluginManager implements ContextAwarePluginManagerInterface, ExoComponentContextInterface {
 
   use CategorizingPluginManagerTrait;
-  use ExoIconTranslationTrait;
   use FilteredPluginManagerTrait;
   use LayoutEntityHelperTrait;
   use ExoComponentContextTrait;
@@ -1290,7 +1289,8 @@ class ExoComponentManager extends DefaultPluginManager implements ContextAwarePl
       ];
       $this->moduleHandler->alter('exo_component_component_ops', $ops);
       foreach ($ops as $key => $data) {
-        $icon = $this->icon($data['label'])->match([
+        $icon = new ExoIconTranslatableMarkup($data['label']);
+        $icon = $icon->match([
           'exo_alchemist',
           'local_task',
           'admin',

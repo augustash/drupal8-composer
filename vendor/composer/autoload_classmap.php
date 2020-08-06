@@ -1378,6 +1378,7 @@ return array(
     'Drupal\\Core\\Block\\BlockManager' => $baseDir . '/web/core/lib/Drupal/Core/Block/BlockManager.php',
     'Drupal\\Core\\Block\\BlockManagerInterface' => $baseDir . '/web/core/lib/Drupal/Core/Block/BlockManagerInterface.php',
     'Drupal\\Core\\Block\\BlockPluginInterface' => $baseDir . '/web/core/lib/Drupal/Core/Block/BlockPluginInterface.php',
+    'Drupal\\Core\\Block\\BlockPluginTrait' => $baseDir . '/web/core/lib/Drupal/Core/Block/BlockPluginTrait.php',
     'Drupal\\Core\\Block\\MainContentBlockPluginInterface' => $baseDir . '/web/core/lib/Drupal/Core/Block/MainContentBlockPluginInterface.php',
     'Drupal\\Core\\Block\\MessagesBlockPluginInterface' => $baseDir . '/web/core/lib/Drupal/Core/Block/MessagesBlockPluginInterface.php',
     'Drupal\\Core\\Block\\Plugin\\Block\\Broken' => $baseDir . '/web/core/lib/Drupal/Core/Block/Plugin/Block/Broken.php',

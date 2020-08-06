@@ -290,6 +290,7 @@
       border-radius: 0;
       font-weight: normal;
       transition: background-color $global-speed;
+      cursor: pointer;
 
       &.primary {
         font-weight: bold;

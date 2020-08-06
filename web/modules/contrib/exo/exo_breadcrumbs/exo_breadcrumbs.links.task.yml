@@ -1,0 +1,4 @@
+exo_breadcrumbs.settings:
+  route_name: exo_breadcrumbs.settings
+  base_route: exo_breadcrumbs.settings
+  title: 'Settings'

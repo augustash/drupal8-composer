@@ -11,6 +11,8 @@ use Drupal\exo_alchemist\Plugin\ExoComponentFieldComputedBase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
+use Drupal\exo_alchemist\Plugin\ExoComponentFieldDisplayInterface;
+use Drupal\exo_alchemist\Plugin\ExoComponentFieldDisplayTrait;
 use Drupal\exo_alchemist\Plugin\ExoComponentFieldFormInterface;
 use Drupal\exo_alchemist\Plugin\ExoComponentFieldFormTrait;
 use Drupal\exo_alchemist\Plugin\ExoComponentFieldPreviewEntityTrait;
@@ -23,10 +25,11 @@ use Drupal\exo_alchemist\Plugin\ExoComponentFieldPreviewEntityTrait;
  *   deriver = "\Drupal\exo_alchemist\Plugin\Derivative\ExoComponentDisplayEntityDeriver"
  * )
  */
-class EntityDisplay extends ExoComponentFieldComputedBase implements ContextAwarePluginInterface, ContainerFactoryPluginInterface, ExoComponentFieldFormInterface {
+class EntityDisplay extends ExoComponentFieldComputedBase implements ContextAwarePluginInterface, ContainerFactoryPluginInterface, ExoComponentFieldFormInterface, ExoComponentFieldDisplayInterface {
 
   use ExoComponentFieldFormTrait;
   use ExoComponentFieldPreviewEntityTrait;
+  use ExoComponentFieldDisplayTrait;
 
   /**
    * The entity type manager.
@@ -57,14 +60,6 @@ class EntityDisplay extends ExoComponentFieldComputedBase implements ContextAwar
   protected $bundle;
 
   /**
-   * Component definition.
-   *
-   * @var \Drupal\exo_alchemist\Definition\ExoComponentDefinition
-   *   The component definition.
-   */
-  protected $componentDefinition;
-
-  /**
    * Constructs a new FieldBlock.
    *
    * @param array $configuration
@@ -84,8 +79,8 @@ class EntityDisplay extends ExoComponentFieldComputedBase implements ContextAwar
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entity_type_manager;
     $this->logger = $logger;
-    $this->entityTypeId = $this->getEntityTypeId();
-    $this->bundle = $this->getBundle();
+    $this->entityTypeId = $this->getDisplayedEntityTypeId();
+    $this->bundle = $this->getDisplayedBundle();
   }
 
   /**
@@ -105,20 +100,15 @@ class EntityDisplay extends ExoComponentFieldComputedBase implements ContextAwar
    * {@inheritdoc}
    */
   public function propertyInfo() {
-    $component = $this->getComponentDefinition();
-    $info = $this->exoComponentManager()->getPropertyInfo($component);
     $properties = [
       'entity' => $this->t('The entity object.'),
       'entity_id' => $this->t('The entity id.'),
+      'entity_label' => $this->t('The entity label.'),
       'entity_type_id' => $this->t('The entity type id.'),
       'entity_view_url' => $this->t('The entity canonical url.'),
       'entity_edit_url' => $this->t('The entity edit url.'),
     ];
-    foreach ($info as $key => $data) {
-      if ($key !== '_global') {
-        $properties += $data['properties'];
-      }
-    }
+    $properties += $this->propertyInfoFieldDisplay();
     return $properties;
   }
 
@@ -127,8 +117,7 @@ class EntityDisplay extends ExoComponentFieldComputedBase implements ContextAwar
    */
   public function onFieldInstall() {
     parent::onFieldInstall();
-    $this->getEntityViewMode()->save();
-    $this->getEntityViewDisplay()->set('status', TRUE)->save();
+    $this->onFieldInstallFieldDisplay();
   }
 
   /**
@@ -136,8 +125,7 @@ class EntityDisplay extends ExoComponentFieldComputedBase implements ContextAwar
    */
   public function onFieldUpdate() {
     parent::onFieldUpdate();
-    $this->getEntityViewMode()->save();
-    $this->getEntityViewDisplay()->save();
+    $this->onFieldUpdateFieldDisplay();
   }
 
   /**
@@ -145,26 +133,24 @@ class EntityDisplay extends ExoComponentFieldComputedBase implements ContextAwar
    */
   public function onFieldUninstall() {
     parent::onFieldUninstall();
-    $this->getEntityViewDisplay()->delete();
-    $this->getEntityViewMode()->delete();
+    $this->onFieldUninstallFieldDisplay();
   }
 
   /**
    * {@inheritdoc}
    */
   public function viewValue(ContentEntityInterface $entity, array $contexts) {
-    $definition = $this->getComponentDefinition();
     $values = [];
     if ($entity = $this->getReferencedEntity($contexts)) {
       $contexts['layout_builder.entity'] = EntityContext::fromEntity($entity);
       unset($contexts['layout_entity']);
-      // $contexts['layout_entity'] = EntityContext::fromEntity($entity);
       $values['entity'] = $entity;
       $values['entity_id'] = $entity->id();
+      $values['entity_label'] = $entity->label();
       $values['entity_type_id'] = $entity->getEntityTypeId();
       $values['entity_view_url'] = $entity->toUrl()->toString();
       $values['entity_edit_url'] = $entity->toUrl('edit-form')->toString();
-      $values += $this->exoComponentManager()->viewEntityValues($definition, $entity, $contexts);
+      $values += $this->viewValueFieldDisplay($entity, $contexts);
     }
     return $values;
   }
@@ -202,69 +188,12 @@ class EntityDisplay extends ExoComponentFieldComputedBase implements ContextAwar
   }
 
   /**
-   * Get the component view mode.
-   */
-  protected function getViewMode() {
-    return $this->getFieldDefinition()->safeId();
-  }
-
-  /**
-   * Get the entity view mode.
-   *
-   * @return \Drupal\Core\Entity\Entity\EntityViewModeInterface
-   *   The entity view mode.
-   */
-  protected function getEntityViewMode() {
-    $storage = $this->entityTypeManager->getStorage('entity_view_mode');
-    $view_mode = $this->getViewMode();
-    $id = $this->entityTypeId . '.' . $view_mode;
-    $display = $storage->load($id);
-    if (!$display) {
-      $display = $storage->create([
-        'id' => $id,
-        'label' => $this->getFieldDefinition()->getComponent()->getLabel() . ': ' . $this->getFieldDefinition()->getLabel(),
-        'targetEntityType' => $this->entityTypeId,
-      ]);
-    }
-    return $display;
-  }
-
-  /**
-   * Get the entity view display.
-   *
-   * @return \Drupal\Core\Entity\Display\EntityViewDisplayInterface
-   *   The entity view display.
-   */
-  protected function getEntityViewDisplay() {
-    $view_mode = $this->getViewMode();
-    $id = $this->entityTypeId . '.' . $this->bundle . '.' . $view_mode;
-    $storage = $this->entityTypeManager->getStorage('entity_view_display');
-    $display = $storage->load($id);
-    if (!$display) {
-      $display = $storage->create([
-        'id' => $id,
-        'targetEntityType' => $this->entityTypeId,
-        'bundle' => $this->bundle,
-        'mode' => $view_mode,
-      ]);
-    }
-    return $display;
-  }
-
-  /**
    * {@inheritdoc}
    *
    * Pass alter to children.
    */
   public function formAlter(array &$form, FormStateInterface $form_state) {
-    $field_name = $form_state->get('exo_component_key');
-    $definition = $this->getComponentDefinition();
-    if ($field = $definition->getField($field_name)) {
-      $component_field = $this->exoComponentManager()->getExoComponentFieldManager()->createFieldInstance($field);
-      if ($component_field instanceof ExoComponentFieldFormInterface) {
-        $component_field->formAlter($form, $form_state);
-      }
-    }
+    $this->formAlterFieldDisplay($form, $form_state);
   }
 
   /**
@@ -273,14 +202,7 @@ class EntityDisplay extends ExoComponentFieldComputedBase implements ContextAwar
    * Pass validate to children.
    */
   public function formValidate(array $form, FormStateInterface $form_state) {
-    $field_name = $form_state->get('exo_component_key');
-    $definition = $this->getComponentDefinition();
-    if ($field = $definition->getField($field_name)) {
-      $component_field = $this->exoComponentManager()->getExoComponentFieldManager()->createFieldInstance($field);
-      if ($component_field instanceof ExoComponentFieldFormInterface) {
-        $component_field->formValidate($form, $form_state);
-      }
-    }
+    $this->formValidateFieldDisplay($form, $form_state);
   }
 
   /**
@@ -289,33 +211,20 @@ class EntityDisplay extends ExoComponentFieldComputedBase implements ContextAwar
    * Pass submit to children.
    */
   public function formSubmit(array $form, FormStateInterface $form_state) {
-    $field_name = $form_state->get('exo_component_key');
-    $definition = $this->getComponentDefinition();
-    if ($field = $definition->getField($field_name)) {
-      $component_field = $this->exoComponentManager()->getExoComponentFieldManager()->createFieldInstance($field);
-      if ($component_field instanceof ExoComponentFieldFormInterface) {
-        $component_field->formSubmit($form, $form_state);
-      }
-    }
+    $this->formSubmitFieldDisplay($form, $form_state);
   }
 
   /**
-   * Get entity type id.
-   *
-   * @return string
-   *   The entity type id.
+   * {@inheritdoc}
    */
-  public function getEntityTypeId() {
+  public function getDisplayedEntityTypeId() {
     return static::getEntityTypeIdFromPluginId($this->getPluginId());
   }
 
   /**
-   * Get bundle id.
-   *
-   * @return string
-   *   The bundle id.
+   * {@inheritdoc}
    */
-  public function getBundle() {
+  public function getDisplayedBundle() {
     return static::getBundleFromPluginId($this->getPluginId());
   }
 
@@ -345,69 +254,6 @@ class EntityDisplay extends ExoComponentFieldComputedBase implements ContextAwar
   public static function getBundleFromPluginId($plugin_id) {
     $parts = explode(static::DERIVATIVE_SEPARATOR, $plugin_id, 4);
     return $parts[2];
-  }
-
-  /**
-   * Get the component definition.
-   *
-   * @return \Drupal\exo_alchemist\Definition\ExoComponentDefinition
-   *   The component definition.
-   */
-  protected function getComponentDefinition() {
-    if (!isset($this->componentDefinition)) {
-      $field = $this->getFieldDefinition();
-      $view_mode = $this->getViewMode();
-      $definition = [
-        'id' => $field->id(),
-        'label' => $field->getComponent()->getLabel() . ': ' . $field->getLabel(),
-        'description' => $field->getComponent()->getDescription(),
-        'fields' => [],
-        'modifier_globals' => FALSE,
-        'computed' => TRUE,
-      ] + $field->toArray() + $field->getComponent()->toArray();
-      /** @var \Drupal\exo_alchemist\Entity\ExoLayoutBuilderEntityViewDisplay $display */
-      $display = $this->getEntityViewDisplay();
-      foreach ($display->getComponents() as $id => $component) {
-        $field_key = $id;
-        $field_name = $id;
-        // Add fieldupe module support.
-        if (substr($id, 0, 9) === 'fieldupe_') {
-          /** @var \Drupal\fieldupe\Entity\Fieldupe $dupe */
-          $dupe = $this->entityTypeManager->getStorage('fieldupe')->load($id);
-          if ($dupe) {
-            $field_name = $dupe->getParentField();
-            // Shorten the key a bit.
-            $field_key = str_replace('fieldupe_' . $dupe->getParentEntityType() . '_' . $dupe->getParentBundle() . '_', 'dupe_', $id);
-          }
-        }
-        $definition['fields'][$field_key] = [
-          'type' => 'display_component:' . $this->entityTypeId . ':' . $this->bundle,
-          'label' => $display->getComponentLabel($id),
-          'component_name' => $id,
-          'field_name' => $field_name,
-          'view_mode' => $view_mode,
-          'computed' => TRUE,
-        ];
-      }
-      $this->exoComponentManager()->processDefinition($definition, $this->getPluginId());
-      /** @var \Drupal\exo_alchemist\Definition\ExoComponentDefinition $definition */
-      $definition->addParentField($field);
-      $this->componentDefinition = $definition;
-    }
-    return $this->componentDefinition;
-  }
-
-  /**
-   * Get the eXo component manager.
-   *
-   * @return \Drupal\exo_alchemist\ExoComponentManager
-   *   The eXo component manager.
-   */
-  public function exoComponentManager() {
-    if (!isset($this->exoComponentManager)) {
-      $this->exoComponentManager = \Drupal::service('plugin.manager.exo_component');
-    }
-    return $this->exoComponentManager;
   }
 
 }

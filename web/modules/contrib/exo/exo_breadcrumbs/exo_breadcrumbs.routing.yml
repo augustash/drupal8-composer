@@ -1,0 +1,9 @@
+exo_breadcrumbs.settings:
+  path: '/admin/config/exo/breadcrumbs'
+  defaults:
+    _form: '\Drupal\exo_breadcrumbs\Form\ExoBreadcrumbsSettingsForm'
+    _title: 'eXo Breadcrumbs Settings'
+  requirements:
+    _permission: 'administer exo breadcrumbs'
+  options:
+    _admin_route: TRUE

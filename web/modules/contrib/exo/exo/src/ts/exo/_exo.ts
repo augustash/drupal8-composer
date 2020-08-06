@@ -130,10 +130,6 @@ class Exo {
     this.$document.trigger('exoReady');
     this.displaceContent();
     this.resizeContent();
-    if (window.localStorage) {
-      window.localStorage.setItem('exoBodySize', JSON.stringify(displace.offsets));
-      window.localStorage.setItem('exoContentHeight', String(this.$exoContent.height()));
-    }
 
     // Once all the dependencies have finished, unleashed the init.
     this.debug('log', this.label, 'Reveal Promises', this.revealPromises);
@@ -215,11 +211,14 @@ class Exo {
     offsets = offsets || displace.offsets;
     this.debug('log', this.label, 'displaceContent', offsets);
     this.$exoBody.css({
-      paddingTop:displace.offsets.top,
-      paddingBottom:displace.offsets.bottom,
-      paddingLeft:displace.offsets.left,
-      paddingRight:displace.offsets.right,
+      paddingTop: offsets.top,
+      paddingBottom: offsets.bottom,
+      paddingLeft: offsets.left,
+      paddingRight: offsets.right,
     });
+    if (window.localStorage) {
+      window.localStorage.setItem('exoBodySize', JSON.stringify(offsets));
+    }
   }
 
   /**
@@ -229,6 +228,9 @@ class Exo {
     const height = this.$window.height() - (parseInt(this.$exoBody.css('paddingTop')) + parseInt(this.$exoBody.css('paddingBottom')));
     this.debug('log', this.label, 'resizeContent', height);
     this.$exoContent.css('min-height', height);
+    if (window.localStorage) {
+      window.localStorage.setItem('exoContentHeight', String(this.$exoContent.height()));
+    }
   }
 
   /**

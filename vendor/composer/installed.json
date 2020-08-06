@@ -2320,17 +2320,17 @@
     },
     {
         "name": "drupal/core",
-        "version": "8.9.2",
-        "version_normalized": "8.9.2.0",
+        "version": "8.9.3",
+        "version_normalized": "8.9.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/drupal/core.git",
-            "reference": "8f0e24555c093669ce41edbb30637fe19df16802"
+            "reference": "ee02fd4cbe4ac148b4d7e297ec63b3459983862e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/drupal/core/zipball/8f0e24555c093669ce41edbb30637fe19df16802",
-            "reference": "8f0e24555c093669ce41edbb30637fe19df16802",
+            "url": "https://api.github.com/repos/drupal/core/zipball/ee02fd4cbe4ac148b4d7e297ec63b3459983862e",
+            "reference": "ee02fd4cbe4ac148b4d7e297ec63b3459983862e",
             "shasum": ""
         },
         "require": {
@@ -2497,7 +2497,7 @@
             "drupal/workflows": "self.version",
             "drupal/workspaces": "self.version"
         },
-        "time": "2020-07-08T18:53:45+00:00",
+        "time": "2020-08-05T21:49:40+00:00",
         "type": "drupal-core",
         "extra": {
             "drupal-scaffold": {
@@ -2553,8 +2553,8 @@
     },
     {
         "name": "drupal/core-composer-scaffold",
-        "version": "8.9.2",
-        "version_normalized": "8.9.2.0",
+        "version": "8.9.3",
+        "version_normalized": "8.9.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/drupal/core-composer-scaffold.git",
@@ -2602,17 +2602,17 @@
     },
     {
         "name": "drupal/core-recommended",
-        "version": "8.9.2",
-        "version_normalized": "8.9.2.0",
+        "version": "8.9.3",
+        "version_normalized": "8.9.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/drupal/core-recommended.git",
-            "reference": "8301ff766f17ce8a9eb36d3ffd183cbfff01dad6"
+            "reference": "db5c2fdd4bf3e72aee8c862eca72dd445e704d71"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/drupal/core-recommended/zipball/8301ff766f17ce8a9eb36d3ffd183cbfff01dad6",
-            "reference": "8301ff766f17ce8a9eb36d3ffd183cbfff01dad6",
+            "url": "https://api.github.com/repos/drupal/core-recommended/zipball/db5c2fdd4bf3e72aee8c862eca72dd445e704d71",
+            "reference": "db5c2fdd4bf3e72aee8c862eca72dd445e704d71",
             "shasum": ""
         },
         "require": {
@@ -2624,7 +2624,7 @@
             "doctrine/common": "v2.7.3",
             "doctrine/inflector": "v1.2.0",
             "doctrine/lexer": "1.0.2",
-            "drupal/core": "8.9.2",
+            "drupal/core": "8.9.3",
             "easyrdf/easyrdf": "0.9.1",
             "egulias/email-validator": "2.1.17",
             "guzzlehttp/guzzle": "6.5.4",
@@ -2675,7 +2675,7 @@
         "conflict": {
             "webflo/drupal-core-strict": "*"
         },
-        "time": "2020-07-08T18:53:45+00:00",
+        "time": "2020-08-05T21:49:40+00:00",
         "type": "metapackage",
         "notification-url": "https://packagist.org/downloads/",
         "license": [
@@ -3660,17 +3660,17 @@
     },
     {
         "name": "jacerider/exo",
-        "version": "2.2",
-        "version_normalized": "2.2.0.0",
+        "version": "2.4",
+        "version_normalized": "2.4.0.0",
         "source": {
             "type": "git",
             "url": "git@github.com:ashenrayne/exo.git",
-            "reference": "ad1b29238b78e1633fdd658eadfaebbe86e21240"
+            "reference": "13fde23484e58f572ffdedb2ada50740d7447095"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ashenrayne/exo/zipball/ad1b29238b78e1633fdd658eadfaebbe86e21240",
-            "reference": "ad1b29238b78e1633fdd658eadfaebbe86e21240",
+            "url": "https://api.github.com/repos/ashenrayne/exo/zipball/13fde23484e58f572ffdedb2ada50740d7447095",
+            "reference": "13fde23484e58f572ffdedb2ada50740d7447095",
             "shasum": "",
             "mirrors": [
                 {
@@ -3679,7 +3679,7 @@
                 }
             ]
         },
-        "time": "2020-06-17T21:21:41+00:00",
+        "time": "2020-07-31T20:09:26+00:00",
         "type": "drupal-module",
         "installation-source": "dist",
         "license": [
@@ -6569,8 +6569,8 @@
     },
     {
         "name": "symfony/polyfill-php80",
-        "version": "v1.18.0",
-        "version_normalized": "1.18.0.0",
+        "version": "v1.18.1",
+        "version_normalized": "1.18.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/polyfill-php80.git",

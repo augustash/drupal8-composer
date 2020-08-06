@@ -28,6 +28,10 @@ class Select extends ExoFormBase {
    * {@inheritdoc}
    */
   public function preRender($element) {
+    // Ignore webform fields where select2 is enabled.
+    if (!empty($element['#select2'])) {
+      return $element;
+    }
     $element = parent::preRender($element);
     $element['#wrapper_attributes']['class'][] = 'exo-form-select';
     $element['#wrapper_attributes']['class'][] = 'exo-form-select-js';

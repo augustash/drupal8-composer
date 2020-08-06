@@ -8,7 +8,6 @@ use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\exo_alchemist\ExoComponentFieldManager;
 use Drupal\exo_alchemist\ExoComponentValue;
 use Drupal\exo_alchemist\ExoComponentValues;
 
@@ -76,6 +75,16 @@ abstract class ExoComponentFieldFieldableBase extends ExoComponentFieldBase impl
       $this->cleanValue($item, $delta, $values->has($delta));
     }
     return $this->getValues($values, $items);
+  }
+
+  /**
+   * Check if defaults exist for this field.
+   *
+   * @return bool
+   *   TRUE if defaults exist.
+   */
+  protected function hasDefault() {
+    return $this->getFieldDefinition()->hasDefault();
   }
 
   /**
@@ -219,7 +228,7 @@ abstract class ExoComponentFieldFieldableBase extends ExoComponentFieldBase impl
     $paths = [];
     $field = $this->getFieldDefinition();
     $delta = 0;
-    if ($field->isRequired() && $field->isEditable() && !$field->hasDefault() && !$this->getDefaultValue($delta)) {
+    if ($field->isRequired() && $field->isEditable() && !$this->hasDefault() && !$this->getDefaultValue($delta)) {
       $paths[] = $this->getItemParentsAsPath($delta);
     }
     return $paths;

@@ -30,7 +30,7 @@ function exo_fixed_element_info_alter(&$type) {
 function exo_fixed_page_pre_render(array $element) {
   $exo_settings = \Drupal::service('exo_fixed.settings');
   $theme = \Drupal::service('theme.manager')->getActiveTheme();
-  if ($enabled_regions = $exo_settings->getSetting([
+  if ($exo_settings->getSetting([
     'themes',
     $theme->getName(),
   ])) {
@@ -41,26 +41,58 @@ function exo_fixed_page_pre_render(array $element) {
         $region,
         'status',
       ])) {
-        $html_id = Html::getUniqueId('exo-fixed-' . $region);
-        $element[$region]['#theme_wrappers']['exo_fixed_wrapper'] = ['#weight' => -1000];
-        $element[$region]['#exo_wrapper_attributes']['id'] = $html_id;
-        $element[$region]['#exo_wrapper_attributes']['class'][] = 'exo-fixed';
-        $element[$region]['#exo_wrapper_attributes']['class'][] = 'exo-fixed-' . $region;
-        $element[$region]['#attributes']['class'][] = 'exo-fixed-region';
-        $element[$region]['#attached']['library'][] = 'exo_fixed/base';
-        $element[$region]['#attached']['drupalSettings']['exoFixed']['regions'][$region] = [
-          'type' => $exo_settings->getSetting([
-            'themes',
-            $theme->getName(),
-            $region,
-            'type',
-          ]),
-          'selector' => '#' . $html_id,
-        ];
+        exo_fixed_element($element[$region], $region, $exo_settings->getSetting([
+          'themes',
+          $theme->getName(),
+          $region,
+          'type',
+        ]));
+        // $html_id = Html::getUniqueId('exo-fixed-' . $region);
+        // $element[$region]['#theme_wrappers']['exo_fixed_wrapper'] = ['#weight' => -1000];
+        // $element[$region]['#exo_wrapper_attributes']['id'] = $html_id;
+        // $element[$region]['#exo_wrapper_attributes']['class'][] = 'exo-fixed';
+        // $element[$region]['#exo_wrapper_attributes']['class'][] = 'exo-fixed-' . $region;
+        // $element[$region]['#attributes']['class'][] = 'exo-fixed-region';
+        // $element[$region]['#attached']['library'][] = 'exo_fixed/base';
+        // $element[$region]['#attached']['drupalSettings']['exoFixed']['regions'][$region] = [
+        //   'type' => $exo_settings->getSetting([
+        //     'themes',
+        //     $theme->getName(),
+        //     $region,
+        //     'type',
+        //   ]),
+        //   'selector' => '#' . $html_id,
+        // ];
       }
     }
   }
   return $element;
+}
+
+/**
+ * Make element fixed.
+ *
+ * @param array $element
+ *   The element to make into a fixed element.
+ * @param string $id
+ *   A unique id.
+ * @param string $type
+ *   Either 'always', 'scroll' or 'sticky'
+ *
+ * @param array $element
+ */
+function exo_fixed_element(array &$element, $id, $type = 'always') {
+  $html_id = Html::getUniqueId('exo-fixed-' . $id);
+  $element['#theme_wrappers']['exo_fixed_wrapper'] = ['#weight' => -1000];
+  $element['#exo_wrapper_attributes']['id'] = $html_id;
+  $element['#exo_wrapper_attributes']['class'][] = 'exo-fixed';
+  $element['#exo_wrapper_attributes']['class'][] = 'exo-fixed-' . Html::getClass($id);
+  $element['#attributes']['class'][] = 'exo-fixed-element';
+  $element['#attached']['library'][] = 'exo_fixed/base';
+  $element['#attached']['drupalSettings']['exoFixed']['elements'][$id] = [
+    'type' => $type,
+    'selector' => '#' . $html_id,
+  ];
 }
 
 /**

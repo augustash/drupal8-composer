@@ -107,9 +107,10 @@ class PageTitle extends Text implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   public function viewEmptyValue(array $contexts) {
+    $title = $this->t('Dynamic Page Title');
     if ($this->isLayoutBuilder($contexts)) {
       $entity = $contexts['layout_builder.entity']->getContextValue();
-      $title = $entity->isNew() ? $this->t('Dynamic Page Title') : $contexts['layout_builder.entity']->getContextValue()->label();
+      $title = $entity->isNew() ? $title : $contexts['layout_builder.entity']->getContextValue()->label();
       $title = [
         '#type' => 'inline_template',
         '#template' => '{{ title }} <span class="exo-alchemist-component-description">{{ description }}</span>',
@@ -119,8 +120,8 @@ class PageTitle extends Text implements ContainerFactoryPluginInterface {
         ],
       ];
     }
-    else {
-      $title = $this->titleResolver->getTitle($this->request, $this->routeMatch->getRouteObject());
+    elseif ($route_object = $this->routeMatch->getRouteObject()) {
+      $title = $this->titleResolver->getTitle($this->request, $route_object);
     }
     return [
       'value' => $title,

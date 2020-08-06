@@ -9,6 +9,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\exo_alchemist\ExoComponentManager;
 use Drupal\exo_alchemist\Plugin\ExoComponentField\EntityDisplay;
+use Drupal\exo_alchemist\Plugin\ExoComponentFieldDisplayInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -64,8 +65,15 @@ class ExoAlchemistLocalTasks extends DeriverBase implements ContainerDeriverInte
    */
   public function getDerivativeDefinitions($base_plugin_definition) {
     foreach ($this->exoComponentManager->getInstalledDefinitions() as $definition) {
-      $fields = $definition->getFieldsByType('display') + $definition->getFieldsByType('reference_display');
-      foreach ($fields as $field) {
+      foreach ($definition->getFields() as $field) {
+        /** @var \Drupal\exo_alchemist\Plugin\ExoComponentField\EntityDisplay $component_field */
+        $component_field = $this->exoComponentManager->getExoComponentFieldManager()->createFieldInstance($field);
+        if (!$component_field instanceof ExoComponentFieldDisplayInterface) {
+          continue;
+        }
+        if (!$component_field->useDisplay()) {
+          continue;
+        }
         $view_mode = $field->safeId();
         $this->derivatives[$field->safeId()] = [
           'route_name' => "exo_alchemist.component.display.{$view_mode}",

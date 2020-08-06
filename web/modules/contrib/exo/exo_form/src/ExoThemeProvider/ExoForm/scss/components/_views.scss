@@ -17,7 +17,7 @@
     }
 
     > .scroll {
-      margin: $global-margin 0;
+      margin: $global-margin 0 0;
 
       > * {
         &:first-child {
@@ -108,6 +108,10 @@
     .views-group-box .form-item {
       margin: 0;
     }
+
+    > .description {
+      margin-bottom: $global-margin;
+    }
   }
 
   .views-offset-top {
@@ -129,11 +133,19 @@
   }
 
   .views-override:not(:empty) {
-    padding: 0 $global-padding;
+    padding: 0 $global-padding / 2;
+    background: none;
+    // margin-left: -($global-margin / 2);
+    // margin-right: -($global-margin / 2);
+  }
+
+  .views-filterable-options {
+    border-top: 0;
   }
 
   .views-filterable-options-controls {
     display: flex;
+    width: 100%;
 
     .form-item {
       width: auto;

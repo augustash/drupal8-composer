@@ -179,7 +179,7 @@ function exo_media_page_attachments_alter(array &$attachments) {
   if (isset($attachments['#attached']['html_head'])) {
     foreach ($attachments['#attached']['html_head'] as $key => $items) {
       foreach ($items as $key1 => $item) {
-        if (isset($item['#attributes']['content']) && strpos($item['#attributes']['content'], '?h=') !== FALSE) {
+        if (isset($item['#attributes']['content']) && is_string($item['#attributes']['content']) && strpos($item['#attributes']['content'], '?h=') !== FALSE) {
           $attachments['#attached']['html_head'][$key][$key1]['#attributes']['content'] = preg_replace('/\?h=[a-z0-9]+\&/', '?', $item['#attributes']['content']);
         }
       }

@@ -1,0 +1,9 @@
+services:
+  exo_breadcrumbs.breadcrumb:
+    class: Drupal\exo_breadcrumbs\Breadcrumb\BreadcrumbFormatter
+    parent: system.breadcrumb.default
+    tags:
+      - { name: breadcrumb_builder, priority: 100 }
+  exo_breadcrumbs.settings:
+    class: Drupal\exo_breadcrumbs\ExoBreadcrumbsSettings
+    arguments: ['@config.factory']

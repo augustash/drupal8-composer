@@ -86,7 +86,7 @@ class Textarea extends ExoComponentFieldFieldableBase {
   public function formAlter(array &$form, FormStateInterface $form_state) {
     foreach (Element::children($form['widget']) as $delta) {
       $form['widget'][$delta]['#allowed_formats'] = [
-        $form['widget'][$delta]['#format'],
+        $this->getFieldDefinition()->getAdditionalValue('textarea_format'),
       ];
       // Support allowed_formats module.
       if (function_exists('_allowed_formats_remove_textarea_help')) {

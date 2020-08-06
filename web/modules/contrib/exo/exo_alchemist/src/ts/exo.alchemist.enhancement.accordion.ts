@@ -7,48 +7,43 @@
     protected $triggers:JQuery;
     protected $contents:JQuery;
     protected $current:JQuery;
+    protected id:string = '';
     protected speed:number = 5000;
     protected interval:number;
 
     constructor($wrapper:JQuery) {
       this.$wrapper = $wrapper;
-      this.$items = $wrapper.find('.exo-enhancement--accordion-item');
-      this.$triggers = $wrapper.find('.exo-enhancement--accordion-trigger');
-      this.$contents = $wrapper.find('.exo-enhancement--accordion-content');
+      this.id = $wrapper.data('ee--accordion-id');
+      this.$items = $wrapper.find('.ee--accordion-item[data-ee--accordion-id="' + this.id + '"]');
+      this.$triggers = $wrapper.find('.ee--accordion-trigger[data-ee--accordion-id="' + this.id + '"]');
+      this.$contents = $wrapper.find('.ee--accordion-content[data-ee--accordion-id="' + this.id + '"]');
       this.$contents.hide();
       if (this.isLayoutBuilder()) {
         Drupal.ExoAlchemistAdmin.lockNestedFields(this.$items);
         $(document).off('exoComponentFieldEditActive.exo.alchemist.enhancement.accordion').on('exoComponentFieldEditActive.exo.alchemist.enhancement.accordion', (e, element) => {
           const $element = $(element);
-          if ($element.hasClass('exo-enhancement--accordion-item')) {
+          if ($element.hasClass('ee--accordion-item')) {
             this.show($element, false);
             Drupal.ExoAlchemistAdmin.sizeFieldOverlay($element);
             Drupal.ExoAlchemistAdmin.sizeTarget($element);
           }
         });
-        // const $active = this.$items.find('.exo-component-field-edit-active');
-        // if ($active.length) {
-        //   this.show($active, false);
-        // }
-        // else {
-        //   this.show(this.$triggers.first(), false);
-        // }
       }
       this.show(this.$triggers.first(), false);
       this.$triggers.on('click.exo.alchemist.enhancement.accordion', e => {
         e.preventDefault();
-        this.show($(e.target));
+        this.show($(e.currentTarget));
       });
     }
 
     public show($trigger:JQuery, animate?:boolean):void {
       animate = typeof animate !== 'undefined' ? animate : true;
-      const $item = $trigger.closest('.exo-enhancement--accordion-item');
-      const $contents = $item.find('.exo-enhancement--accordion-content');
+      const $item = $trigger.closest('.ee--accordion-item[data-ee--accordion-id="' + this.id + '"]');
+      const $contents = $item.find('.ee--accordion-content[data-ee--accordion-id="' + this.id + '"]');
       if ($contents.length) {
         const current = $item.hasClass('show');
         const $shown = this.$items.filter('.show');
-        const $shownContent = $shown.find('.exo-enhancement--accordion-content');
+        const $shownContent = $shown.find('.ee--accordion-content[data-ee--accordion-id="' + this.id + '"]');
         if (this.isLayoutBuilder()) {
           if (current) {
             return;
@@ -92,7 +87,7 @@
    */
   Drupal.behaviors.exoAlchemistEnhancementAccordion = {
     attach: function(context) {
-      $('.exo-enhancement--accordion-wrapper').once('exo.alchemist.enhancement').each(function () {
+      $('.ee--accordion-wrapper').once('exo.alchemist.enhancement').each(function () {
         new ExoAlchemistEnhancementAccordion($(this));
       });
     }

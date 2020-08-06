@@ -59,26 +59,28 @@ class BlockComponentRenderArrayBeforeCore implements EventSubscriberInterface {
       return;
     }
     $configuration = $block->getConfiguration();
-    if (!empty($configuration['block_uuid'])) {
-      /** @var \Drupal\block_content\BlockContentInterface $inline_block */
-      $inline_block = $this->exoComponentManager->entityLoadByRevisionId($configuration['block_revision_id']);
-      if (!$inline_block || $inline_block->uuid() !== $configuration['block_uuid']) {
-        $inline_block = $this->exoComponentManager->entityLoadByUuid($configuration['block_uuid']);
-        if ($inline_block) {
-          $configuration['block_revision_id'] = $inline_block->getRevisionId();
+    if (!empty($configuration['block_revision_id'])) {
+      if (!empty($configuration['block_uuid'])) {
+        /** @var \Drupal\block_content\BlockContentInterface $inline_block */
+        $inline_block = $this->exoComponentManager->entityLoadByRevisionId($configuration['block_revision_id']);
+        if (!$inline_block || $inline_block->uuid() !== $configuration['block_uuid']) {
+          $inline_block = $this->exoComponentManager->entityLoadByUuid($configuration['block_uuid']);
+          if ($inline_block) {
+            $configuration['block_revision_id'] = $inline_block->getRevisionId();
+          }
+          $block->setConfiguration($configuration);
+        }
+      }
+      else {
+        // There are instances where a block revision may no longer exist.
+        // Layout builder will white screen when this happens. In order to avoid
+        // this, we check to make sure it exists and if it does not, we unset it.
+        $inline_block = $this->exoComponentManager->entityLoadByRevisionId($configuration['block_revision_id']);
+        if (empty($inline_block)) {
+          $configuration['block_revision_id'] = NULL;
         }
         $block->setConfiguration($configuration);
       }
-    }
-    else {
-      // There are instances where a block revision may no longer exist.
-      // Layout builder will white screen when this happens. In order to avoid
-      // this, we check to make sure it exists and if it does not, we unset it.
-      $inline_block = $this->exoComponentManager->entityLoadByRevisionId($configuration['block_revision_id']);
-      if (empty($inline_block)) {
-        $configuration['block_revision_id'] = NULL;
-      }
-      $block->setConfiguration($configuration);
     }
 
   }

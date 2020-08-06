@@ -62,9 +62,9 @@ services:
   exo_alchemist.generator:
     class: Drupal\exo_alchemist\ExoComponentGenerator
     arguments: ['@database', '@layout_builder.tempstore_repository', '@plugin.manager.exo_component', '@plugin.manager.layout_builder.section_storage', '@uuid']
-  logger.channel.exo_alchemist:
-    parent: logger.channel_base
-    arguments: ['exo_alchemist']
   exo_alchemist.repository:
     class: Drupal\exo_alchemist\ExoComponentRepository
     arguments: ['@plugin.manager.exo_component']
+  logger.channel.exo_alchemist:
+    parent: logger.channel_base
+    arguments: ['exo_alchemist']

@@ -94,7 +94,7 @@ class ExoToolbarSection extends RenderElement {
         'section' => $element['#exo_toolbar_section_id'],
       ];
       $exo_toolbar_item = ExoToolbarItem::create([
-        'id' => 'create_' . implode($properties, '_'),
+        'id' => 'create_' . implode('_', $properties),
         'plugin' => $plugin_id,
         'weight' => $exo_toolbar_section->getSort() == 'asc' ? 1000 : -1000,
         'settings' => $properties,

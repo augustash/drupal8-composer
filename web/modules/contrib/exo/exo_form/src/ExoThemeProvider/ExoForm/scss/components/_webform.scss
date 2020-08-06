@@ -55,3 +55,49 @@
 .webform-details-toggle-state-wrapper {
   margin-left: $global-margin;
 }
+
+.exo-form.webform-filter-form {
+  margin-bottom: $global-margin;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.webform-forms {
+
+  tbody {
+
+    td {
+      vertical-align: middle;
+
+      &:first-child {
+        width: 40%;
+
+        a {
+          font-weight: 700 !important;
+        }
+      }
+    }
+  }
+}
+
+.webform-ui-elements-table {
+
+  tbody {
+
+    td {
+      vertical-align: middle;
+
+      &:first-child {
+        white-space: nowrap;
+
+        a {
+          font-weight: 700 !important;
+          max-width: rem-calc(300);
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+uuid: 802121ae-fdfd-4ba9-86bd-dd67e5981f06
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: exo_component
+label: Component
+description: ''
+matchers:
+  e5cc46f5-eaff-4c5f-a07a-9949cd59a42e:
+    uuid: e5cc46f5-eaff-4c5f-a07a-9949cd59a42e
+    id: 'entity:node'
+    weight: 0
+    settings:
+      bundles: {  }
+      group_by_bundle: true
+      include_unpublished: false
+      substitution_type: canonical
+      metadata: Content
+      limit: 50
+  328e9986-79ca-478a-8628-1ec636e7093b:
+    uuid: 328e9986-79ca-478a-8628-1ec636e7093b
+    id: 'entity:media'
+    weight: 0
+    settings:
+      metadata: ''
+      bundles:
+        document: document
+        image: image
+      group_by_bundle: true
+      substitution_type: media
+      limit: 50

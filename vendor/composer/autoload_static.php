@@ -1984,6 +1984,7 @@ class ComposerStaticInit3e9cae8dfa855afafd820c446e5f03ba
         'Drupal\\Core\\Block\\BlockManager' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Block/BlockManager.php',
         'Drupal\\Core\\Block\\BlockManagerInterface' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Block/BlockManagerInterface.php',
         'Drupal\\Core\\Block\\BlockPluginInterface' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Block/BlockPluginInterface.php',
+        'Drupal\\Core\\Block\\BlockPluginTrait' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Block/BlockPluginTrait.php',
         'Drupal\\Core\\Block\\MainContentBlockPluginInterface' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Block/MainContentBlockPluginInterface.php',
         'Drupal\\Core\\Block\\MessagesBlockPluginInterface' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Block/MessagesBlockPluginInterface.php',
         'Drupal\\Core\\Block\\Plugin\\Block\\Broken' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Block/Plugin/Block/Broken.php',

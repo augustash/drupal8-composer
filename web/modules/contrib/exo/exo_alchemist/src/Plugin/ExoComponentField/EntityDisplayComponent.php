@@ -13,7 +13,6 @@ use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Drupal\exo_alchemist\ExoComponentSectionStorageInterface;
 use Drupal\exo_alchemist\Plugin\ExoComponentFieldFormInterface;
 use Drupal\exo_alchemist\Plugin\ExoComponentFieldFormTrait;
-use Drupal\exo_alchemist\Plugin\SectionStorage\ExoOverridesSectionStorage;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -121,6 +120,9 @@ class EntityDisplayComponent extends ExoComponentFieldComputedBase implements Co
         '@entity_type_id' => $this->entityTypeId,
         '@bundle' => $this->bundle,
       ]),
+      'value' => $this->t('The raw value of @id.', [
+        '@id' => $this->getComponentName(),
+      ]),
     ];
     return $properties;
   }
@@ -160,14 +162,15 @@ class EntityDisplayComponent extends ExoComponentFieldComputedBase implements Co
    *   The build.
    */
   protected static function getEntityBuild(ContentEntityInterface $entity, $view_mode) {
-    if (!isset(static::$entityBuilds[$entity->uuid()])) {
+    $key = $entity->uuid() . '.' . $view_mode;
+    if (!isset(static::$entityBuilds[$key])) {
       /** @var \Drupal\Core\Entity\EntityViewBuilder $view_builder */
       $view_builder = \Drupal::entityTypeManager()->getViewBuilder($entity->getEntityTypeId());
       $build = $view_builder->view($entity, $view_mode);
       $build = $view_builder->build($build);
-      static::$entityBuilds[$entity->uuid()] = $build;
+      static::$entityBuilds[$key] = $build;
     }
-    return static::$entityBuilds[$entity->uuid()];
+    return static::$entityBuilds[$key];
   }
 
   /**
@@ -189,6 +192,14 @@ class EntityDisplayComponent extends ExoComponentFieldComputedBase implements Co
       }
       $value['#field_attributes']['class'][] = 'entity--field';
       $value['render'] = $build[$component_name];
+      $value['value'] = NULL;
+      try {
+        $value['value'] = $parent_entity->get($component_name)->first()->getValue();
+      }
+      catch (\InvalidArgumentException $e) {
+        // Translation module throws errors when we are dealing with extra
+        // fields.
+      }
     }
     return $value;
   }

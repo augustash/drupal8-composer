@@ -5,7 +5,6 @@ namespace Drupal\exo_alchemist\Plugin;
 use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Url;
-use Drupal\exo_alchemist\Definition\ExoComponentDefinitionField;
 use Drupal\exo_alchemist\ExoComponentValue;
 
 /**

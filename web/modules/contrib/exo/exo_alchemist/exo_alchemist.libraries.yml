@@ -74,6 +74,15 @@ enhancement.accordion:
     - core/jquery.once
     - core/drupalSettings
 
+enhancement.tabs:
+  version: VERSION
+  js:
+    js/exo.alchemist.enhancement.tabs.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupalSettings
+
 
 ################################################################################
 ## eXo Theme Provider

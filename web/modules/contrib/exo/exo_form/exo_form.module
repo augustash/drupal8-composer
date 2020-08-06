@@ -186,30 +186,28 @@ function exo_form_preprocess_exo_icon_browser(&$variables) {
  * our defaults are not loaded. As a result, they are added back here.
  */
 function exo_form_form_alter_process(&$element) {
-  if ($element['#type'] === 'form') {
-    // We do not need to process the actual form.
-    return;
-  }
-  if (isset($element['#exo_theme'])) {
-    $theme = !empty($element['#exo_theme']) ? $element['#exo_theme'] : NULL;
-    $classes = exo_form_classes($theme);
-    $element['#theme_wrappers'][] = 'exo_form_element_container';
-    if (!isset($element['#exo_form_attributes']['class'])) {
-      $element['#exo_form_attributes']['class'] = [];
+  if (isset($element['#type']) && $element['#type'] !== 'form') {
+    if (isset($element['#exo_theme'])) {
+      $theme = !empty($element['#exo_theme']) ? $element['#exo_theme'] : NULL;
+      $classes = exo_form_classes($theme);
+      $element['#theme_wrappers'][] = 'exo_form_element_container';
+      if (!isset($element['#exo_form_attributes']['class'])) {
+        $element['#exo_form_attributes']['class'] = [];
+      }
+      $element['#exo_form_attributes']['class'] = array_merge($element['#exo_form_attributes']['class'], $classes);
+      $element['#exo_form_attributes']['data-exo-theme'] = $theme;
     }
-    $element['#exo_form_attributes']['class'] = array_merge($element['#exo_form_attributes']['class'], $classes);
-    $element['#exo_form_attributes']['data-exo-theme'] = $theme;
-  }
-  if (isset($element['#type'])) {
-    $exo_form_plugin_manager = \Drupal::service('plugin.manager.exo_form');
-    if (isset($element['#process'])) {
-      if (!in_array('exo_form_element_process', $element['#process']) && $exo_form_plugin_manager->getPluginsByType($element['#type'])) {
-        array_unshift($element['#process'], 'exo_form_element_process');
+    if (isset($element['#type'])) {
+      $exo_form_plugin_manager = \Drupal::service('plugin.manager.exo_form');
+      if (isset($element['#process'])) {
+        if (!in_array('exo_form_element_process', $element['#process']) && $exo_form_plugin_manager->getPluginsByType($element['#type'])) {
+          array_unshift($element['#process'], 'exo_form_element_process');
+        }
       }
     }
-  }
-  elseif (isset($element['#markup']) && isset($element['#theme_wrappers']) && in_array('container', $element['#theme_wrappers'])) {
-    $element['#theme_wrappers'][] = 'exo_form_element_container';
+    elseif (isset($element['#markup']) && isset($element['#theme_wrappers']) && in_array('container', $element['#theme_wrappers'])) {
+      $element['#theme_wrappers'][] = 'exo_form_element_container';
+    }
   }
   foreach (Element::children($element) as $id) {
     $child_element = &$element[$id];
@@ -822,4 +820,11 @@ function exo_form_form_revision_overview_form_alter(&$form, FormStateInterface $
     $element['select_column_one']['#exo_form_default'] = TRUE;
     $element['select_column_two']['#exo_form_default'] = TRUE;
   }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function exo_form_form_webform_filter_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['filter']['#type'] = 'container';
 }

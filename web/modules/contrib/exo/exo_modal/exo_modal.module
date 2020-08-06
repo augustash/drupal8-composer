@@ -240,6 +240,11 @@ function exo_modal_ajax_render_alter(array &$data) {
  */
 function exo_modal_exo_modal_alter(ExoModalInterface $modal, array $context) {
   $route_name = $context['route_name'];
+  if (\Drupal::service('router.admin_context')->isAdminRoute()) {
+    $modal->setSetting('theme', 'primary');
+    $modal->setSetting('theme_content', 'white');
+  }
+  $use_full = FALSE;
   // Block builder.
   if (substr($route_name, 0, 6) == 'block.') {
     $use_full = TRUE;

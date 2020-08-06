@@ -24,8 +24,11 @@
         });
       }).parent().addClass('exo-form-table-compact');
 
-      $(context).find('table').once('exo.form.td.dropbutton').each((index, element) => {
+      $(context).find('table').once('exo.form.table').each((index, element) => {
         const $table = $(element);
+        if (!$table.closest('form.exo-form').length) {
+          $table.addClass('exo-form-table-wrap');
+        }
         if ($table.outerWidth() > $table.parent().outerWidth() + 2) {
           $table.wrap('<div class="exo-form-table-overflow" />');
         }

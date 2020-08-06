@@ -8,9 +8,9 @@
     &.exo-section-edit {
       border: 1px dashed gray(20);
 
-      a {
-        pointer-events: auto;
-      }
+      // a {
+      //   pointer-events: auto;
+      // }
     }
 
     .exo-section {
@@ -68,11 +68,19 @@
   }
 }
 
+.exo-component-field-edit {
+  cursor: pointer;
+}
+
 .exo-component-edit,
 .exo-component-edit-active .exo-component-edit {
   cursor: pointer;
 
   * {
+    pointer-events: none;
+  }
+
+  .exo-component-field-edit {
     pointer-events: none;
   }
 
@@ -143,10 +151,6 @@
       opacity: 1;
     }
   }
-}
-
-.exo-component-field-edit {
-  cursor: pointer;
 }
 
 .exo-alchemist-shade {

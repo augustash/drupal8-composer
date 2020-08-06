@@ -14,6 +14,7 @@ use Drupal\Core\Render\Element;
  *   element_types = {
  *     "checkboxes",
  *     "webform_entity_checkboxes",
+ *     "webform_roles",
  *     "exo_checkboxes",
  *   }
  * )

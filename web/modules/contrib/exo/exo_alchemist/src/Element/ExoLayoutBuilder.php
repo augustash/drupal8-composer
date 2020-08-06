@@ -168,6 +168,7 @@ class ExoLayoutBuilder extends LayoutBuilder {
     $build = parent::layout($section_storage);
     $build['#attached']['library'][] = 'exo_alchemist/admin';
     $build['#attached']['drupalSettings']['exoAlchemist']['icons']['close'] = $this->icon('Close')->setIcon('regular-times')->toString();
+    $build['#attributes']['class'][] = 'exo-layout-builder';
 
     if ($this->isDefaultStorage($section_storage)) {
       $build[] = $this->buildFooterAddSectionLink($section_storage, count($section_storage));

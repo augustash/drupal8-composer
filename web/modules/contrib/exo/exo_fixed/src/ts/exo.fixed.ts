@@ -2,7 +2,7 @@
 
   class ExoFixed extends ExoData {
     protected $wrapper:JQuery;
-    protected $region:JQuery;
+    protected $element:JQuery;
     protected offset:{top: number; left: number;};
     protected floatOffset:number;
     protected floatStart:number = 0;
@@ -28,7 +28,7 @@
           if (data !== null) {
             this.type = Drupal.Exo.isMobile() ? 'scroll' : this.get('type');
             this.lastDirection = this.type === 'scroll' ? 'up' : 'down';
-            this.$region = this.$wrapper.find('.exo-fixed-region');
+            this.$element = this.$wrapper.find('.exo-fixed-element');
             this.bind();
 
             // When we start display from mid page we do not want any animations
@@ -77,27 +77,30 @@
       this.fixed = false;
       this.themed = false;
       this.$wrapper.removeAttr('style');
-      this.$region.removeAttr('style');
-      this.$region.removeClass('exo-fixed-float exo-fixed-hide exo-fixed-theme');
+      this.$element.removeAttr('style');
+      this.$element.removeClass('exo-fixed-float exo-fixed-hide exo-fixed-theme');
     }
 
     protected calcSize() {
-      this.offset = this.$region.offset();
+      this.offset = this.$element.offset();
       this.floatOffset = 0;
-      $('.exo-fixed-region').each((index, element) => {
+      $('.exo-fixed').each((index, element) => {
+        if (element === this.$wrapper.get(0)) {
+          return;
+        }
         if ($(element).offset().top < this.offset.top) {
           this.floatOffset += $(element).height();
         }
       });
-      this.width = Math.min(this.$region.outerWidth(), Drupal.Exo.$window.width());
-      this.height = this.$region.outerHeight();
-      this.floatStart = this.offset.top - this.floatOffset - displace.offsets.top;
+      this.width = Math.min(this.$element.outerWidth(), Drupal.Exo.$window.width());
+      this.height = this.type === 'sticky' ? this.$element.parent().outerHeight() : this.$element.outerHeight();
+      this.floatStart = Math.round(this.offset.top - this.floatOffset - displace.offsets.top);
       this.floatStart = this.floatStart >= 0 ? this.floatStart : 0;
       // Settings to -1 means it will continue to be floated. This will only
       // apply to items that are flush to the top.
       this.floatEnd = this.floatStart === 0 ? -1 : this.floatStart;
-      this.themeStart = this.floatStart + this.height;
-      this.themeEnd = this.floatEnd + this.height;
+      this.themeStart = Math.round(this.floatStart + this.height);
+      this.themeEnd = Math.round(this.floatEnd + this.height);
       if (this.type === 'scroll') {
         this.floatStart = this.floatEnd + this.height;
         this.themeStart = this.floatStart;
@@ -111,27 +114,27 @@
 
     protected onScroll() {
       var scrollTop = Math.max(Drupal.Exo.$window.scrollTop(), 0);
-
+      var direction = scrollTop > this.lastScrollTop ? 'down' : 'up';
       if (Math.abs(this.lastScrollTop - scrollTop) > 50) {
-        this.lastDirection = scrollTop > this.lastScrollTop ? 'down' : 'up';
+        this.lastDirection = direction;
         this.lastScrollTop = scrollTop;
       }
 
-      if (this.themed === false && this.lastDirection === 'down' && scrollTop > this.themeStart) {
+      if (this.themed === false && direction === 'down' && scrollTop >= this.themeStart) {
         this.themed = true;
-        this.$region.addClass('exo-fixed-theme');
+        this.$element.addClass('exo-fixed-theme');
       }
-      else if (this.themed === true && this.lastDirection === 'up' && scrollTop <= this.themeEnd) {
+      else if (this.themed === true && direction === 'up' && scrollTop <= this.themeEnd) {
         this.themed = false;
-        this.$region.removeClass('exo-fixed-theme');
+        this.$element.removeClass('exo-fixed-theme');
       }
 
       if (this.type === 'scroll') {
         if (this.lastDirection === 'down') {
-          this.$region.addClass('exo-fixed-hide');
+          this.$element.addClass('exo-fixed-hide');
         }
         else {
-          this.$region.removeClass('exo-fixed-no-animations exo-fixed-hide');
+          this.$element.removeClass('exo-fixed-no-animations exo-fixed-hide');
         }
       }
 
@@ -148,27 +151,35 @@
     protected doFloat() {
       this.fixed = true;
       if (this.type === 'scroll') {
-        this.$region.addClass('exo-fixed-no-animations exo-fixed-hide');
+        this.$element.addClass('exo-fixed-no-animations exo-fixed-hide');
       }
-      this.$region.css({
-        position: 'fixed',
-        marginLeft: (this.offset.left - displace.offsets.left),
-        marginRight: (this.offset.left - displace.offsets.right),
-        maxWidth: this.width,
-        top: this.floatOffset + displace.offsets.top,
-        left: displace.offsets.left,
-        right: displace.offsets.right
-      });
-      this.$region.addClass('exo-fixed-float');
-      // this.$region.attr('data-offset-top', '');
+      if (this.type === 'sticky') {
+        this.$element.css({
+          position: 'sticky',
+          top: this.floatOffset + displace.offsets.top,
+        });
+      }
+      else {
+        this.$element.css({
+          position: 'fixed',
+          marginLeft: (this.offset.left - displace.offsets.left),
+          marginRight: (this.offset.left - displace.offsets.right),
+          maxWidth: this.width,
+          top: this.floatOffset + displace.offsets.top,
+          left: displace.offsets.left,
+          right: displace.offsets.right
+        });
+      }
+      this.$element.addClass('exo-fixed-float');
+      // this.$element.attr('data-offset-top', '');
       // displace.calculateOffset('top');
     }
 
     protected unFloat() {
       this.reset();
       this.setSize();
-      this.$region.removeClass('exo-fixed-float');
-      // this.$region.removeAttr('data-offset-top');
+      this.$element.removeClass('exo-fixed-float');
+      // this.$element.removeAttr('data-offset-top');
       // displace.calculateOffset('top');
     }
   }
@@ -177,39 +188,52 @@
    * Fixed build behavior.
    */
   Drupal.behaviors.exoFixed = {
+    ready: false,
+
     attach: function(context) {
-      if (typeof drupalSettings.exoFixed !== 'undefined' && typeof drupalSettings.exoFixed.regions !== 'undefined') {
-        Drupal.Exo.event('ready').on('exo.fixed', function () {
-          const data = [];
-          const sortByWeight = function(a, b) {
-            var top1 = a.top;
-            var top2 = b.top;
-            return ((top1 < top2) ? -1 : ((top1 > top2) ? 1 : 0));
-          }
-          for (const regionId in drupalSettings.exoFixed.regions) {
-            if (drupalSettings.exoFixed.regions.hasOwnProperty(regionId)) {
-              const settings = drupalSettings.exoFixed.regions[regionId];
-              if (settings.hasOwnProperty('selector')) {
-                let $element = $(settings.selector).first().once('exo.fixed');
-                if ($element.length) {
-                  data.push({
-                    id: regionId,
-                    $element: $element,
-                    settings: settings,
-                    top: $element.offset().top,
-                  });
-                }
-              }
+      if (typeof drupalSettings.exoFixed !== 'undefined' && typeof drupalSettings.exoFixed.elements !== 'undefined') {
+        let self = this;
+        if (self.ready === false) {
+          Drupal.Exo.event('ready').on('exo.fixed', function () {
+            self.ready = true;
+            self.build();
+          });
+        }
+        else {
+          self.build();
+        }
+      }
+    },
+
+    build: function () {
+      const data = [];
+      const sortByWeight = function(a, b) {
+        var top1 = a.top;
+        var top2 = b.top;
+        return ((top1 < top2) ? -1 : ((top1 > top2) ? 1 : 0));
+      }
+      for (const elementId in drupalSettings.exoFixed.elements) {
+        if (drupalSettings.exoFixed.elements.hasOwnProperty(elementId)) {
+          const settings = drupalSettings.exoFixed.elements[elementId];
+          if (settings.hasOwnProperty('selector')) {
+            let $element = $(settings.selector).first().once('exo.fixed');
+            if ($element.length) {
+              data.push({
+                id: elementId,
+                $element: $element,
+                settings: settings,
+                top: $element.offset().top,
+              });
             }
           }
-          if (data.length) {
-            data.sort(sortByWeight);
-            data.forEach((region) => {
-              region.$element.imagesLoaded(() => {
-                new ExoFixed(region.id, region.$element).build(region.settings);
-              });
-            });
-          }
+        }
+      }
+      if (data.length) {
+        data.sort(sortByWeight);
+        data.forEach((element) => {
+          element.$element.imagesLoaded(() => {
+            new ExoFixed(element.id, element.$element).build(element.settings);
+          });
         });
       }
     }

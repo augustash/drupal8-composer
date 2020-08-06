@@ -713,7 +713,7 @@ function exo_alchemist_exo_modal_alter(ExoModalInterface $modal, array $context)
       $modal->setModalSetting('width', '100%');
     }
   }
-  if ($context['route_name'] == 'editor.link_dialog') {
+  if (in_array($context['route_name'], ['editor.link_dialog', 'linkit.linkit_dialog'])) {
     $modal->setSetting('theme', 'black');
     $modal->setSetting('theme_content', 'black');
     $modal->setModalSetting('nest', TRUE);

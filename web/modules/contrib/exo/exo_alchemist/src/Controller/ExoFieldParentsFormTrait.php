@@ -196,7 +196,7 @@ trait ExoFieldParentsFormTrait {
     foreach ($definition->getFields() as $field) {
       $field_name = $field->safeId();
       if ($entity->hasField($field_name)) {
-        if ($entity->get($field_name)->isEmpty() && $field->isRequired()) {
+        if ($entity->get($field_name)->isEmpty() && !$field->isRequired()) {
           ExoComponentFieldManager::setHiddenFieldName($entity, $field->getName());
         }
         else {

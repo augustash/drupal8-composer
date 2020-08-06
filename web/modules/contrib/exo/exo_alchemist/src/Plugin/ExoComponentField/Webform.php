@@ -7,7 +7,6 @@ use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\exo_alchemist\Plugin\ExoComponentFieldDisplayFormTrait;
-use Drupal\exo_alchemist\Plugin\ExoComponentFieldPreviewEntityTrait;
 use Drupal\webform\WebformInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -25,7 +24,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class Webform extends EntityReferenceBase implements ContainerFactoryPluginInterface {
   use ExoComponentFieldDisplayFormTrait;
-  use ExoComponentFieldPreviewEntityTrait;
 
   /**
    * The renderer.
@@ -40,7 +38,7 @@ class Webform extends EntityReferenceBase implements ContainerFactoryPluginInter
   protected $entityType = 'webform';
 
   /**
-   * Creates a PageTitle instance.
+   * Creates a Webform instance.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.

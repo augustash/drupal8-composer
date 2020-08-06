@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @file
+ * Contains exo_breadcrumbs.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function exo_breadcrumbs_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the exo_breadcrumbs module.
+    case 'help.page.exo_breadcrumbs':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides breadcrumb enhancements.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+

@@ -7,6 +7,7 @@ use Drupal\Core\Routing\RouteSubscriberBase;
 use Drupal\Core\Routing\RoutingEvents;
 use Drupal\exo_alchemist\ExoComponentManager;
 use Drupal\exo_alchemist\Plugin\ExoComponentField\EntityDisplay;
+use Drupal\exo_alchemist\Plugin\ExoComponentFieldDisplayInterface;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 
@@ -59,12 +60,17 @@ class RouteSubscriber extends RouteSubscriberBase {
     }
 
     foreach ($this->exoComponentManager->getInstalledDefinitions() as $definition) {
-      $fields = $definition->getFieldsByType('display') + $definition->getFieldsByType('reference_display');
-      foreach ($fields as $field) {
+      foreach ($definition->getFields() as $field) {
         /** @var \Drupal\exo_alchemist\Plugin\ExoComponentField\EntityDisplay $component_field */
         $component_field = $this->exoComponentManager->getExoComponentFieldManager()->createFieldInstance($field);
-        $entity_type_id = $component_field->getEntityTypeId();
-        $bundle = $component_field->getBundle();
+        if (!$component_field instanceof ExoComponentFieldDisplayInterface) {
+          continue;
+        }
+        if (!$component_field->useDisplay()) {
+          continue;
+        }
+        $entity_type_id = $component_field->getDisplayedEntityTypeId();
+        $bundle = $component_field->getDisplayedBundle();
         $view_mode = $field->safeId();
         $path = "/admin/config/exo/alchemist/library/{definition}";
         $route = new Route(
