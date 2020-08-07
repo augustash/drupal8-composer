@@ -1,0 +1,21 @@
+uuid: d2a6897e-95f8-4436-9dce-314d6ab46676
+langcode: en
+status: true
+dependencies:
+  module:
+    - exo_site_settings
+    - telephone
+_core:
+  default_config_hash: dgIrX-5ULOLKEdn-QnWGp-jhvFdWREf7l9ePIIUbl_M
+id: exo_site_settings.field_phone
+field_name: field_phone
+entity_type: exo_site_settings
+type: telephone
+settings: {  }
+module: telephone
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

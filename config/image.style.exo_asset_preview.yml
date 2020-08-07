@@ -1,0 +1,17 @@
+uuid: ad0a2670-e45f-4e8b-bd56-0070c5737326
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: ExsDSUuq0IaLO0Nlfr7w4UIL7mxP1ebDBjIaP-fs0Kg
+name: exo_asset_preview
+label: 'eXo Asset Preview'
+effects:
+  78a01c7a-94cc-48b7-a7b3-f981982242c4:
+    uuid: 78a01c7a-94cc-48b7-a7b3-f981982242c4
+    id: image_scale
+    weight: 1
+    data:
+      width: null
+      height: 20
+      upscale: false

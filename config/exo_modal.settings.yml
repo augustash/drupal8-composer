@@ -1,0 +1,84 @@
+exo_default: 1
+exo_preset: ''
+theme: primary
+theme_content: white
+trigger:
+  text: Trigger
+  icon: ''
+  icon_only: false
+modal:
+  preset: ''
+  title: ''
+  subtitle: ''
+  icon: ''
+  iconText: ''
+  inherit: false
+  width: 600
+  height: null
+  top: ''
+  bottom: ''
+  left: ''
+  right: ''
+  borderBottom: true
+  padding: 0
+  radius: 3
+  ajax: null
+  contentAjax: null
+  contentSelector: null
+  iframe: false
+  iframeHeight: 400
+  iframeWidth: 800
+  iframeResponsive: false
+  iframeURL: null
+  focusInput: true
+  group: ''
+  nest: false
+  loop: false
+  navigateCaption: true
+  navigateArrows: true
+  history: false
+  restoreDefaultContent: false
+  destroyOnClose: false
+  autoOpen: false
+  bodyOverflow: true
+  fullscreen: false
+  openFullscreen: false
+  openTall: false
+  closeOnEscape: true
+  closeButton: true
+  closeInBody: false
+  smartActions: true
+  appendTo: '#exo-modals'
+  appendToOverlay: '#exo-modals'
+  appendToNavigate: '#exo-modals'
+  class: ''
+  appendToClosest: false
+  overlay: true
+  overlayClose: true
+  overlayColor: '#000000'
+  timeout: 0
+  timeoutProgressbar: false
+  pauseOnHover: false
+  transitionIn: comingIn
+  transitionOut: comingOut
+  transitionInOverlay: fadeIn
+  transitionOutOverlay: fadeOut
+  transitionInPanel: fadeInLeft
+  transitionOutPanel: fadeOutLeft
+  onFullscreen: null
+  onResize: null
+  onOpening: null
+  onOpened: null
+  onClosing: null
+  onClosed: null
+  afterRender: null
+panel:
+  text: Trigger
+  icon: ''
+  icon_only: false
+  return_text: Return
+  return_icon: ''
+  return_icon_only: false
+  width: null
+_core:
+  default_config_hash: zOESoIHkks70VNXup8WnoyVAbuwPqEqBazcpEuJvpK4

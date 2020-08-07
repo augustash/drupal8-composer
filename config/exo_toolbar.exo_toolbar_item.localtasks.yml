@@ -1,0 +1,24 @@
+uuid: 97ef1bda-dddb-4333-9ece-6bfdee9daa47
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_toolbar.exo_toolbar.default
+_core:
+  default_config_hash: BzxlSbQAwSIop8T1QLkQ_lpj8Pm8w22pIE3TlN9SaQo
+id: localtasks
+toolbar: default
+region: top_alt
+section: right
+weight: 0
+plugin: local_tasks
+settings:
+  id: local_tasks
+  title: 'Local Tasks'
+  provider: exo_toolbar
+  mark_only_horizontal: 0
+  icon: ''
+  badge_type: ''
+  badge_settings: {  }
+  toolbar_item_id: null
+visibility: {  }

@@ -1,0 +1,23 @@
+uuid: 9756861f-9d3a-45d1-9610-b777eccd49f8
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_site_settings.exo_site_settings_type.general
+    - field.storage.exo_site_settings.field_phone
+  module:
+    - telephone
+_core:
+  default_config_hash: P-keflaRI6JOVfOcXpgUBJcDn6hm1TXoYuK-pdq5nrk
+id: exo_site_settings.general.field_phone
+field_name: field_phone
+entity_type: exo_site_settings
+bundle: general
+label: Phone
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: telephone

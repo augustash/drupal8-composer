@@ -1,0 +1,10 @@
+uuid: 457335a5-0ebd-4f93-9750-7e2d7470efd9
+langcode: en
+status: true
+dependencies:
+  module:
+    - exo_icon
+id: exo_icon_package.token
+label: Token
+targetEntityType: exo_icon_package
+cache: true

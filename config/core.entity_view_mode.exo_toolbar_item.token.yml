@@ -1,0 +1,10 @@
+uuid: 4fcd2827-6489-4e98-bd21-1bd6eb55bac9
+langcode: en
+status: true
+dependencies:
+  module:
+    - exo_toolbar
+id: exo_toolbar_item.token
+label: Token
+targetEntityType: exo_toolbar_item
+cache: true

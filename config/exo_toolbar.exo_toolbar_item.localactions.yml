@@ -1,0 +1,24 @@
+uuid: 2b1491f6-682a-47fb-8365-9f57b4cfebca
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_toolbar.exo_toolbar.default
+_core:
+  default_config_hash: 9b30l3hcfm-QyyWFlFewAZCo9J36gzuiJyub_ujIDEY
+id: localactions
+toolbar: default
+region: top_alt
+section: left
+weight: 1
+plugin: local_actions
+settings:
+  id: local_actions
+  title: 'Local Actions'
+  provider: exo_toolbar
+  mark_only_horizontal: 0
+  icon: ''
+  badge_type: ''
+  badge_settings: {  }
+  toolbar_item_id: null
+visibility: {  }

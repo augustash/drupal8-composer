@@ -1,0 +1,21 @@
+uuid: 0c5037ce-db0b-4d14-bfd5-666e87e191dc
+langcode: en
+status: true
+dependencies:
+  module:
+    - exo_site_settings
+    - link
+_core:
+  default_config_hash: LAH70mcJRtr_csO1xHNmXW4WBpMhRTee-CJeH50L7aQ
+id: exo_site_settings.field_facebook
+field_name: field_facebook
+entity_type: exo_site_settings
+type: link
+settings: {  }
+module: link
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

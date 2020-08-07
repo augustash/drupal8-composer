@@ -1,0 +1,10 @@
+uuid: ecfefbd7-ecec-481e-aaae-8a7e74a96bf7
+langcode: en
+status: true
+dependencies:
+  module:
+    - exo_site_settings
+id: exo_site_settings_type.token
+label: Token
+targetEntityType: exo_site_settings_type
+cache: true

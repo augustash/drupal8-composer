@@ -1,0 +1,27 @@
+uuid: 74f9110a-312d-4551-b353-e1cdb6b4c3ab
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_site_settings.exo_site_settings_type.general
+    - field.storage.exo_site_settings.field_email
+  module:
+    - exo_site_settings
+third_party_settings:
+  exo_site_settings:
+    config_name: system.site
+    config_key: mail
+_core:
+  default_config_hash: LL4gjU7swRS3592q-23YsgIStjaqsYCrd2hfhkjic3Y
+id: exo_site_settings.general.field_email
+field_name: field_email
+entity_type: exo_site_settings
+bundle: general
+label: Email
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: email

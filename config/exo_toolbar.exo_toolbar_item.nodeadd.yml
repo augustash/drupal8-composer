@@ -1,0 +1,31 @@
+uuid: 4bfdc611-97d6-46f7-9cb1-f18d654e9064
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_toolbar.exo_toolbar.default
+_core:
+  default_config_hash: V_1RevH54ynHrtfBYQxnR72edUEUdIBTzk7eyuCxFIg
+id: nodeadd
+toolbar: default
+region: top
+section: left
+weight: 1
+plugin: node_add
+settings:
+  title: 'Add Content'
+  dialog_type: tip
+  dialog_settings:
+    id: tip
+    animate_in: comingIn
+    animate_out: comingOut
+  id: node_add
+  provider: exo_toolbar
+  icon: regular-plus-circle
+  bundles: {  }
+  type: include
+  mark_only_horizontal: 0
+  badge_type: ''
+  badge_settings: {  }
+  toolbar_item_id: null
+visibility: {  }

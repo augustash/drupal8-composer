@@ -1,0 +1,26 @@
+uuid: 5642b9f7-3946-4015-a35b-3fa6c00eb3eb
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_toolbar.exo_toolbar.default
+_core:
+  default_config_hash: lBS6DUXucqLmW4ZVb7TSOR5YihvMdkCbm1gfH_j16MQ
+id: exo_site_settings
+toolbar: default
+region: top
+section: right
+weight: -1
+plugin: link
+settings:
+  id: link
+  title: Settings
+  provider: exo_toolbar
+  url: 'internal:/admin/settings'
+  target: 0
+  mark_only_horizontal: 1
+  icon: regular-cog
+  badge_type: ''
+  badge_settings: {  }
+  toolbar_item_id: null
+visibility: {  }

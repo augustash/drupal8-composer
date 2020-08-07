@@ -1,0 +1,21 @@
+uuid: 92d2b6cc-cb78-4555-a75a-2b6f154bf8de
+langcode: en
+status: true
+dependencies:
+  module:
+    - exo_site_settings
+    - link
+_core:
+  default_config_hash: zwsxloecG6BrEKQVFWS6Fc1VekySU3bBEUQSarBHCO8
+id: exo_site_settings.field_instagram
+field_name: field_instagram
+entity_type: exo_site_settings
+type: link
+settings: {  }
+module: link
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

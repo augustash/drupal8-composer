@@ -1,0 +1,25 @@
+modifier: '16'
+hotkey: '32'
+position: overlay
+toolbar_disable: 0
+plugins:
+  menu:
+    enabled: 1
+    settings:
+      menus:
+        - admin
+        - devel
+  node:
+    enabled: 0
+  node_add:
+    enabled: 1
+  node_type:
+    enabled: 1
+  views:
+    enabled: 1
+  user:
+    enabled: 0
+    settings:
+      roles: {  }
+_core:
+  default_config_hash: Yjg_zjF3zHl1U7zilPOkFSOr_g7qlfUR22JF--GrgK8

@@ -1,0 +1,21 @@
+uuid: 2683ca85-f89c-425a-a377-3b6e78850482
+langcode: en
+status: true
+dependencies:
+  module:
+    - exo_site_settings
+    - link
+_core:
+  default_config_hash: 0HIJ1IuNup-MOUjeaxNVoHG9gSZxs7Lqfbgcz56SKpU
+id: exo_site_settings.field_twitter
+field_name: field_twitter
+entity_type: exo_site_settings
+type: link
+settings: {  }
+module: link
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

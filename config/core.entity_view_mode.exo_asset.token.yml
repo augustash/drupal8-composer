@@ -1,0 +1,10 @@
+uuid: ccd58a1e-ca60-4af9-99dd-6ed5be590f50
+langcode: en
+status: true
+dependencies:
+  module:
+    - exo_asset
+id: exo_asset.token
+label: Token
+targetEntityType: exo_asset
+cache: true

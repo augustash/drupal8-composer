@@ -1,0 +1,10 @@
+uuid: 1cadaade-401a-4060-bfc8-4830304f3a24
+langcode: en
+status: true
+dependencies:
+  module:
+    - path_alias
+id: path_alias.token
+label: Token
+targetEntityType: path_alias
+cache: true

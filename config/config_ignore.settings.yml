@@ -1,0 +1,12 @@
+ignored_config_entities:
+  0: system.site
+  2: core.menu.static_menu_link_overrides
+  4: site_settings.site
+  6: 'system.menu.*'
+  8: 'webform.webform.*'
+  10: 'webform.webform_options.*'
+  12: 'image.style.drimage*'
+  14: 'image.style.exo_image_*'
+  16: 'search_api.server.*'
+_core:
+  default_config_hash: UVH1aJ4b44UM-VdPVN7hNNuuVqfReJxwfVeDQH1Hvsk

@@ -1,0 +1,10 @@
+uuid: dc13ecc1-ad3a-496e-919a-3a2ad16f8d52
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: eCZsj4HdOj4QXjZVBly849Q_M4duTiEtPwHMJFqs0Sg
+id: social
+label: Social
+weight: -9
+aggregate: true

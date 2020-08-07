@@ -1,0 +1,29 @@
+uuid: 51b99d8a-14a5-478a-9e1f-7a1e5aba9b3d
+langcode: en
+status: true
+dependencies:
+  config:
+    - exo_toolbar.exo_toolbar.default
+_core:
+  default_config_hash: Fsz5S9Zg4fPJ2X6voIgTviualOI6tHp3JuWFj47rg28
+id: user
+toolbar: default
+region: top
+section: right
+weight: 0
+plugin: user
+settings:
+  dialog_type: tip
+  dialog_settings:
+    id: tip
+    animate_in: comingIn
+    animate_out: comingOut
+  id: user
+  title: User
+  provider: exo_toolbar
+  mark_only_horizontal: 0
+  icon: ''
+  badge_type: ''
+  badge_settings: {  }
+  toolbar_item_id: null
+visibility: {  }
