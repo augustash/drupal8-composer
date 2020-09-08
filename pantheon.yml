@@ -1,5 +1,5 @@
 api_version: 1
-drush_version: 9
+drush_version: 10
+enforce_https: transitional
 php_version: 7.3
 web_docroot: true
-
